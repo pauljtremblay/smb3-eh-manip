@@ -16,12 +16,13 @@ def compute_opencv():
     # image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
     # cv2.imshow("Test", img)
     template = cv2.imread("data/smb3Frame106.png")
+    grayscale_template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
     cap = cv2.VideoCapture(2)
     if not cap.isOpened():
         print("Cannot open camera")
         exit()
     i = 0
-    iterations = 100
+    iterations = 100000
     start = timer()
     while i != iterations:
         i += 1
@@ -29,17 +30,19 @@ def compute_opencv():
         if not ret:
             print("Can't receive frame (stream end?). Exiting ...")
             break
+        # cv2.imshow("frame", frame)
         # Our operations on the frame come here
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        breakpoint()
-        result = cv2.matchTemplate(gray, template, cv2.TM_CCOEFF)
+        # breakpoint()
+        result = cv2.matchTemplate(gray, grayscale_template, cv2.TM_CCOEFF)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
         height, width = template.shape[:2]
         top_left = max_loc
         bottom_right = (top_left[0] + width, top_left[1] + height)
         cv2.rectangle(frame, top_left, bottom_right, (0, 0, 255), 5)
-        cv2.imshow("test", frame)
-        cv2.waitKey(0)
+        cv2.imshow("frame", frame)
+        cv2.imshow("grayscale_template", grayscale_template)
+        cv2.waitKey(1)
         # cv2.imshow("frame", frame)
         # if cv2.waitKey(1) & 0xFF == ord("q"):
         #     break
