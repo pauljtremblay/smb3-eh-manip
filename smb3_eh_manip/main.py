@@ -16,7 +16,7 @@ def main():
 
 
 def compute_opencv_old():
-    template = cv2.imread("data/smb3Frame106.png")
+    template = cv2.imread("data/smb3FceuxFrame106.png")
     template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
     # frame_target_height = template.shape[0]
     # frame_target_width = 360  # int(frame_target_height * 16.0 / 9.0)
@@ -102,7 +102,7 @@ def compute_opencv(grayscale=False):
 
 
 def compute_opencv_pyscreeze_opencv(rescale=True):
-    template = cv2.imread("data/smb3Frame106.png")
+    template = cv2.imread("data/smb3FceuxFrame106.png")
     frame_target_height = template.shape[0]
     frame_target_width = 346  # int(frame_target_height * 16.0 / 9.0)
     cap = cv2.VideoCapture(2)
@@ -137,7 +137,7 @@ def compute_opencv_pyscreeze_opencv(rescale=True):
 
 
 def compute_opencv_pyscreeze_python():
-    template = cv2.imread("data/smb3Frame106.png")
+    template = cv2.imread("data/smb3FceuxFrame106.png")
     cap = cv2.VideoCapture(2)
     if not cap.isOpened():
         print("Cannot open camera")
@@ -173,7 +173,7 @@ def compute_pyautogui():
     i = 0
     iterations = 10
     while i != iterations:
-        result = pyautogui.locateCenterOnScreen("data/smb3Frame106.png")
+        result = pyautogui.locateCenterOnScreen("data/smb3FceuxFrame106.png")
         i += 1
     if result:
         buttonx, buttony = result
