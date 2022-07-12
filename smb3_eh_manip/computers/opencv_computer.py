@@ -3,48 +3,56 @@ import logging
 import cv2
 import numpy as np
 
-from smb3_eh_manip.ehvideo import EHVideo
-
 RESET_FRAME_IMAGE_PATH = "data/everdriveReset.png"
 START_FRAME_IMAGE_PATH = "data/smb3OpencvFrame.png"
+CAPTURE_WINDOW_TITLE = "capture"
 
 
 class OpencvComputer:
-    def compute(self, video_capture_source=2, show_capture_video=False):
-        self.ehvideo = EHVideo()
-        self.ehvideo.reset()
+    def __init__(
+        self,
+        player,
+        start_frame_image_path,
+        video_capture_source=2,
+        show_capture_video=True,
+    ):
+        self.player = player
+        self.start_frame_image_path = start_frame_image_path
+        self.video_capture_source = video_capture_source
+        self.show_capture_video = show_capture_video
+
+    def compute(self):
+        self.player.reset()
         reset_template = cv2.imread(RESET_FRAME_IMAGE_PATH)
-        template = cv2.imread(START_FRAME_IMAGE_PATH)
-        cap = cv2.VideoCapture(video_capture_source)
+        template = cv2.imread(self.start_frame_image_path)
+        cap = cv2.VideoCapture(self.video_capture_source)
         if not cap.isOpened():
             logging.info("Cannot open camera")
             exit()
-        i = 0
         while True:
-            i += 1
             ret, frame = cap.read()
             if not ret:
                 logging.info("Can't receive frame (stream end?). Exiting ...")
                 break
-            if self.ehvideo.playing and list(
+            if self.player.playing and list(
                 OpencvComputer.locate_all_opencv(reset_template, frame)
             ):
-                self.ehvideo.reset()
+                self.player.reset()
                 logging.info(f"Detected reset")
-            if not self.ehvideo.playing:
+            if not self.player.playing:
                 results = list(OpencvComputer.locate_all_opencv(template, frame))
-                if show_capture_video:
+                if self.show_capture_video:
                     for x, y, needleWidth, needleHeight in results:
                         top_left = (x, y)
                         bottom_right = (x + needleWidth, y + needleHeight)
                         cv2.rectangle(frame, top_left, bottom_right, (0, 0, 255), 5)
                 if results:
-                    self.ehvideo.reset()
-                    self.ehvideo.set_playing(True)
+                    self.player.reset()
+                    self.player.set_playing(True)
                     logging.info(f"Detected start frame")
-            if show_capture_video:
-                cv2.imshow("frame", frame)
-            self.ehvideo.render()
+            if self.show_capture_video:
+                cv2.imshow(CAPTURE_WINDOW_TITLE, frame)
+            self.player.render()
             cv2.waitKey(1)
         cap.release()
         cv2.destroyAllWindows()
