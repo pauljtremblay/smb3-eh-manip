@@ -26,6 +26,7 @@ class EHVideo:
         # the video does not start at the beginning, the capture card adds
         # latency, and monitor. so let's fast forward the video so it visually
         # appears the same.
+        self.release()
         self.playing = False
         self.video = cv2.VideoCapture(VIDEO_PATH)
         if self.video is None:
@@ -39,8 +40,7 @@ class EHVideo:
         )
         height = int(self.video.get(cv2.CAP_PROP_FRAME_HEIGHT))
         width = int(self.video.get(cv2.CAP_PROP_FRAME_WIDTH))
-        print(f"height: {height} width: {width}")
-        cv2.imshow("ehvideo", np.zeros(shape=[width, height, 3], dtype=np.uint8))
+        cv2.imshow("ehvideo", np.zeros(shape=[height, width, 3], dtype=np.uint8))
 
     def set_playing(self, playing):
         self.playing = playing

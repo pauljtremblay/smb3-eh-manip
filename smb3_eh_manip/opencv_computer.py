@@ -1,43 +1,48 @@
+import logging
+
 import cv2
 import numpy as np
 
 from smb3_eh_manip.ehvideo import EHVideo
 
+RESET_FRAME_IMAGE_PATH = "data/everdriveReset.png"
 START_FRAME_IMAGE_PATH = "data/smb3OpencvFrame.png"
-GRAYSCALE_DEFAULT = False
 
 
 class OpencvComputer:
-    def compute(self, video_capture_source=2, grayscale=GRAYSCALE_DEFAULT):
+    def compute(self, video_capture_source=2):
         self.ehvideo = EHVideo()
         self.ehvideo.reset()
+        reset_template = cv2.imread(RESET_FRAME_IMAGE_PATH)
         template = cv2.imread(START_FRAME_IMAGE_PATH)
-        if grayscale:
-            template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
         cap = cv2.VideoCapture(video_capture_source)
         if not cap.isOpened():
-            print("Cannot open camera")
+            logging.info("Cannot open camera")
             exit()
         i = 0
         while True:
             i += 1
             ret, frame = cap.read()
             if not ret:
-                print("Can't receive frame (stream end?). Exiting ...")
+                logging.info("Can't receive frame (stream end?). Exiting ...")
                 break
-            if grayscale:
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            results = list(OpencvComputer.locate_all_opencv(template, frame))
-            if grayscale:
-                frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
-            for x, y, needleWidth, needleHeight in results:
-                top_left = (x, y)
-                bottom_right = (x + needleWidth, y + needleHeight)
-                cv2.rectangle(frame, top_left, bottom_right, (0, 0, 255), 5)
-            if results:
-                self.ehvideo.set_playing(True)
+            if self.ehvideo.playing and list(
+                OpencvComputer.locate_all_opencv(reset_template, frame)
+            ):
+                self.ehvideo.reset()
+                logging.info(f"Detected reset")
+            if not self.ehvideo.playing:
+                results = list(OpencvComputer.locate_all_opencv(template, frame))
+                for x, y, needleWidth, needleHeight in results:
+                    top_left = (x, y)
+                    bottom_right = (x + needleWidth, y + needleHeight)
+                    cv2.rectangle(frame, top_left, bottom_right, (0, 0, 255), 5)
+                if results:
+                    self.ehvideo.reset()
+                    self.ehvideo.set_playing(True)
+                    logging.info(f"Detected start frame")
             cv2.imshow("frame", frame)
-            cv2.imshow("grayscale_template", template)
+            cv2.imshow("start frame template", template)
             self.ehvideo.render()
             cv2.waitKey(1)
         cap.release()
