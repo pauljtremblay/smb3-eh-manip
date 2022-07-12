@@ -1,15 +1,16 @@
-import logging
-
-from timeit import default_timer as timer
 import cv2
 import numpy as np
 
-ITERATIONS = 3000
+from smb3_eh_manip.ehvideo import EHVideo
+
 START_FRAME_IMAGE_PATH = "data/smb3OpencvFrame.png"
+GRAYSCALE_DEFAULT = False
 
 
 class OpencvComputer:
-    def compute(grayscale=False):
+    def compute(self, grayscale=GRAYSCALE_DEFAULT):
+        self.ehvideo = EHVideo()
+        self.ehvideo.reset()
         template = cv2.imread(START_FRAME_IMAGE_PATH)
         if grayscale:
             template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
@@ -18,8 +19,7 @@ class OpencvComputer:
             print("Cannot open camera")
             exit()
         i = 0
-        start = timer()
-        while i != ITERATIONS:
+        while True:
             i += 1
             ret, frame = cap.read()
             if not ret:
@@ -34,17 +34,18 @@ class OpencvComputer:
                 top_left = (x, y)
                 bottom_right = (x + needleWidth, y + needleHeight)
                 cv2.rectangle(frame, top_left, bottom_right, (0, 0, 255), 5)
+            if results:
+                self.ehvideo.set_playing(True)
             cv2.imshow("frame", frame)
             cv2.imshow("grayscale_template", template)
+            self.ehvideo.render()
             cv2.waitKey(1)
-        end = timer()
         cap.release()
         cv2.destroyAllWindows()
-        buttonx = -1
-        buttony = -1
-        logging.info(f"x {buttonx} y {buttony} duration {((end-start)/ITERATIONS)}s")
 
+    @classmethod
     def locate_all_opencv(
+        cls,
         needleImage,
         haystackImage,
         limit=10000,
