@@ -5,6 +5,7 @@ from smb3_eh_manip.ehvideo import EHVideo
 
 START_FRAME_IMAGE_PATH = "data/smb3OpencvFrame.png"
 GRAYSCALE_DEFAULT = False
+VIDEO_CAPTURE_SOURCE = 2
 
 
 class OpencvComputer:
@@ -14,7 +15,7 @@ class OpencvComputer:
         template = cv2.imread(START_FRAME_IMAGE_PATH)
         if grayscale:
             template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
-        cap = cv2.VideoCapture(2)
+        cap = cv2.VideoCapture(VIDEO_CAPTURE_SOURCE)
         if not cap.isOpened():
             print("Cannot open camera")
             exit()
