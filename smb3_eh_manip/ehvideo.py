@@ -13,7 +13,7 @@ CAPTURE_CARD_LATENCY_MS = 36
 MONITOR_LATENCY_MS = 2
 LATENCY_FRAMES = int((MONITOR_LATENCY_MS + CAPTURE_CARD_LATENCY_MS) / NES_MS_PER_FRAME)
 EXTRA_OVERHEAD_FRAMES = (
-    100  # TODO this is egregious and immeasurable surely we can optimize this
+    110  # TODO this is egregious and immeasurable surely we can optimize this
 )
 
 

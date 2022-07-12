@@ -10,7 +10,7 @@ START_FRAME_IMAGE_PATH = "data/smb3OpencvFrame.png"
 
 
 class OpencvComputer:
-    def compute(self, video_capture_source=2):
+    def compute(self, video_capture_source=2, show_capture_video=False):
         self.ehvideo = EHVideo()
         self.ehvideo.reset()
         reset_template = cv2.imread(RESET_FRAME_IMAGE_PATH)
@@ -33,15 +33,17 @@ class OpencvComputer:
                 logging.info(f"Detected reset")
             if not self.ehvideo.playing:
                 results = list(OpencvComputer.locate_all_opencv(template, frame))
-                for x, y, needleWidth, needleHeight in results:
-                    top_left = (x, y)
-                    bottom_right = (x + needleWidth, y + needleHeight)
-                    cv2.rectangle(frame, top_left, bottom_right, (0, 0, 255), 5)
+                if show_capture_video:
+                    for x, y, needleWidth, needleHeight in results:
+                        top_left = (x, y)
+                        bottom_right = (x + needleWidth, y + needleHeight)
+                        cv2.rectangle(frame, top_left, bottom_right, (0, 0, 255), 5)
                 if results:
                     self.ehvideo.reset()
                     self.ehvideo.set_playing(True)
                     logging.info(f"Detected start frame")
-            cv2.imshow("frame", frame)
+            if show_capture_video:
+                cv2.imshow("frame", frame)
             self.ehvideo.render()
             cv2.waitKey(1)
         cap.release()
