@@ -42,7 +42,6 @@ class OpencvComputer:
                     self.ehvideo.set_playing(True)
                     logging.info(f"Detected start frame")
             cv2.imshow("frame", frame)
-            cv2.imshow("start frame template", template)
             self.ehvideo.render()
             cv2.waitKey(1)
         cap.release()
