@@ -1,5 +1,5 @@
 from smb3_eh_manip.logging import initialize_logging
-from smb3_eh_manip.computers.opencv_computer import OpencvComputer
+from smb3_eh_manip.opencv_computer import OpencvComputer
 
 
 def main():
