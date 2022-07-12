@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 # rounded
 NES_FRAMERATE = 60.0988139
@@ -36,6 +37,10 @@ class EHVideo:
             cv2.CAP_PROP_POS_FRAMES,
             VIDEO_OFFSET_FRAMES + LATENCY_FRAMES + EXTRA_OVERHEAD_FRAMES,
         )
+        height = int(self.video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        width = int(self.video.get(cv2.CAP_PROP_FRAME_WIDTH))
+        print(f"height: {height} width: {width}")
+        cv2.imshow("ehvideo", np.zeros(shape=[width, height, 3], dtype=np.uint8))
 
     def set_playing(self, playing):
         self.playing = playing
