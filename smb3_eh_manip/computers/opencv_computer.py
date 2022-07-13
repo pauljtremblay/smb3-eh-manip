@@ -18,6 +18,7 @@ class OpencvComputer:
         self.start_frame_image_path = start_frame_image_path
         self.video_capture_source = video_capture_source
         self.show_capture_video = show_capture_video
+        self.autoreset = config.getboolean("app", "autoreset")
 
     def compute(self):
         self.player.reset()
@@ -32,8 +33,10 @@ class OpencvComputer:
             if not ret:
                 logging.info("Can't receive frame (stream end?). Exiting ...")
                 break
-            if self.player.playing and list(
-                OpencvComputer.locate_all_opencv(reset_template, frame)
+            if (
+                self.autoreset
+                and self.player.playing
+                and list(OpencvComputer.locate_all_opencv(reset_template, frame))
             ):
                 self.player.reset()
                 logging.info(f"Detected reset")
@@ -63,7 +66,7 @@ class OpencvComputer:
         limit=10000,
         region=None,
         step=1,
-        confidence=0.999,
+        confidence=float(config.get("app", "confidence")),
     ):
         """
         TODO - rewrite this
