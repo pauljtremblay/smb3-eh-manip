@@ -3,9 +3,7 @@ import logging
 import cv2
 import numpy as np
 
-RESET_FRAME_IMAGE_PATH = "data/everdriveReset.png"
-START_FRAME_IMAGE_PATH = "data/smb3OpencvFrame.png"
-CAPTURE_WINDOW_TITLE = "capture"
+from smb3_eh_manip.settings import config
 
 
 class OpencvComputer:
@@ -13,8 +11,8 @@ class OpencvComputer:
         self,
         player,
         start_frame_image_path,
-        video_capture_source=2,
-        show_capture_video=True,
+        video_capture_source=config.getint("app", "video_capture_source"),
+        show_capture_video=config.getboolean("app", "show_capture_video"),
     ):
         self.player = player
         self.start_frame_image_path = start_frame_image_path
@@ -23,7 +21,7 @@ class OpencvComputer:
 
     def compute(self):
         self.player.reset()
-        reset_template = cv2.imread(RESET_FRAME_IMAGE_PATH)
+        reset_template = cv2.imread(config.get("app", "reset_image_path"))
         template = cv2.imread(self.start_frame_image_path)
         cap = cv2.VideoCapture(self.video_capture_source)
         if not cap.isOpened():
@@ -51,7 +49,7 @@ class OpencvComputer:
                     self.player.set_playing(True)
                     logging.info(f"Detected start frame")
             if self.show_capture_video:
-                cv2.imshow(CAPTURE_WINDOW_TITLE, frame)
+                cv2.imshow("capture", frame)
             self.player.render()
             cv2.waitKey(1)
         cap.release()
