@@ -21,6 +21,8 @@ class EhComputer(OpencvComputer):
                 "ehvideo",
                 config.get("app", "eh_video_path"),
                 config.getint("app", "latency_frames") + VIDEO_OFFSET_FRAMES,
-            ),
+            )
+            if config.getboolean("app", "enable_video_player")  # pardon nasty ternary
+            else None,
             config.get("app", "eh_start_frame_image_path"),
         )

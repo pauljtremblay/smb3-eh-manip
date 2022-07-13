@@ -2,6 +2,7 @@ import logging
 
 import cv2
 import numpy as np
+import keyboard
 
 from smb3_eh_manip.settings import config
 
@@ -19,9 +20,11 @@ class OpencvComputer:
         self.video_capture_source = video_capture_source
         self.show_capture_video = show_capture_video
         self.autoreset = config.getboolean("app", "autoreset")
+        self.playing = False
 
     def compute(self):
-        self.player.reset()
+        if self.player:
+            self.player.reset()
         reset_template = cv2.imread(config.get("app", "reset_image_path"))
         template = cv2.imread(self.start_frame_image_path)
         cap = cv2.VideoCapture(self.video_capture_source)
@@ -35,12 +38,14 @@ class OpencvComputer:
                 break
             if (
                 self.autoreset
-                and self.player.playing
+                and self.playing
                 and list(OpencvComputer.locate_all_opencv(reset_template, frame))
             ):
-                self.player.reset()
+                self.playing = False
+                if self.player:
+                    self.player.reset()
                 logging.info(f"Detected reset")
-            if not self.player.playing:
+            if not self.playing:
                 results = list(OpencvComputer.locate_all_opencv(template, frame))
                 if self.show_capture_video:
                     for x, y, needleWidth, needleHeight in results:
@@ -48,12 +53,16 @@ class OpencvComputer:
                         bottom_right = (x + needleWidth, y + needleHeight)
                         cv2.rectangle(frame, top_left, bottom_right, (0, 0, 255), 5)
                 if results:
-                    self.player.reset()
-                    self.player.set_playing(True)
+                    if self.player:
+                        self.player.reset()
+                    self.playing = True
+                    if config.getboolean("app", "enable_fceux_tas_start"):
+                        keyboard.press_and_release("pause")
                     logging.info(f"Detected start frame")
             if self.show_capture_video:
                 cv2.imshow("capture", frame)
-            self.player.render()
+            if self.playing and self.player:
+                self.player.render()
             cv2.waitKey(1)
         cap.release()
         cv2.destroyAllWindows()

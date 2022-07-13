@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="smb3-eh-manip",
-    version="0.1.0",
+    version="0.2.0",
     description=("Ingest video data to render smb3 eh manip stimuli"),
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -19,6 +19,6 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=True,
-    install_requires=["opencv-python"],
+    install_requires=["opencv-python", "keyboard"],
     test_suite="tests",
 )

@@ -40,6 +40,12 @@ To configure this, ensure `show_capture_video` is set to true, run the tool,
 and see if the capture window is correct. You should see your nes output.
 Note: this can be the path to a video, if you'd like :shrug:
 
+`enable_video_player` Enabled/disables a TAS EH video playing directly from
+this tool upon seeing the trigger frame.
+
+`enable_fceux_tas_start` Enable/disables sending fceux the 'pause' keystroke
+when the trigger frame has been detected.
+
 `latency_frames` We need to measure the perceived latency of what frame this
 tool thinks we are playing against the monitor the player is perceiving. We
 need to offset the beginning of TAS playback that amount.
