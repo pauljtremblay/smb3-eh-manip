@@ -9,7 +9,6 @@ NES_MS_PER_FRAME = 1000.0 / NES_FRAMERATE
 # avermedia livegamer 4k as seen here: https://i.imgur.com/V3MtlkP.png
 CAPTURE_CARD_LATENCY_MS = 36
 MONITOR_LATENCY_MS = 2
-LATENCY_FRAMES = config.getint("app", "latency_frames")
 # I measured mine as 4, so i will avoid the following calculations
 # LATENCY_FRAMES = int((MONITOR_LATENCY_MS + CAPTURE_CARD_LATENCY_MS) / NES_MS_PER_FRAME)
 VIDEO_OFFSET_FRAMES = 106
@@ -21,7 +20,7 @@ class EhComputer(OpencvComputer):
             VideoPlayer(
                 "ehvideo",
                 config.get("app", "eh_video_path"),
-                LATENCY_FRAMES + VIDEO_OFFSET_FRAMES,
+                config.getint("app", "latency_frames") + VIDEO_OFFSET_FRAMES,
             ),
             config.get("app", "eh_start_frame_image_path"),
         )
