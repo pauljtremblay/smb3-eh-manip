@@ -1,8 +1,9 @@
 import logging
+import time
 
 import cv2
 import numpy as np
-import keyboard
+import pyautogui
 
 from smb3_eh_manip.settings import config
 
@@ -44,6 +45,14 @@ class OpencvComputer:
                 self.playing = False
                 if self.player:
                     self.player.reset()
+                if config.getboolean("app", "enable_fceux_tas_start"):
+                    pyautogui.press("pause")
+                    # TODO need to pause, rewind, increment forward TAS
+                    # time.sleep(0.001)
+                    # with pyautogui.hold("shift"):
+                    #    pyautogui.press("pageup")
+                    # for _i in range(offset):
+                    #    pyautogui.press("backslash")
                 logging.info(f"Detected reset")
             if not self.playing:
                 results = list(OpencvComputer.locate_all_opencv(template, frame))
@@ -57,7 +66,7 @@ class OpencvComputer:
                         self.player.reset()
                     self.playing = True
                     if config.getboolean("app", "enable_fceux_tas_start"):
-                        keyboard.press_and_release("pause")
+                        pyautogui.press("pause")
                     logging.info(f"Detected start frame")
             if self.show_capture_video:
                 cv2.imshow("capture", frame)

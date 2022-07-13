@@ -12,6 +12,7 @@ MONITOR_LATENCY_MS = 2
 # I measured mine as 4, so i will avoid the following calculations
 # LATENCY_FRAMES = int((MONITOR_LATENCY_MS + CAPTURE_CARD_LATENCY_MS) / NES_MS_PER_FRAME)
 VIDEO_OFFSET_FRAMES = 106
+OFFSET_FRAMES = config.getint("app", "latency_frames") + VIDEO_OFFSET_FRAMES
 
 
 class EhComputer(OpencvComputer):
@@ -20,7 +21,7 @@ class EhComputer(OpencvComputer):
             VideoPlayer(
                 "ehvideo",
                 config.get("app", "eh_video_path"),
-                config.getint("app", "latency_frames") + VIDEO_OFFSET_FRAMES,
+                OFFSET_FRAMES,
             )
             if config.getboolean("app", "enable_video_player")  # pardon nasty ternary
             else None,
