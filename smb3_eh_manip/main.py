@@ -1,9 +1,19 @@
+from signal import signal, SIGINT
+
 from smb3_eh_manip.logging import initialize_logging
 from smb3_eh_manip.settings import config
 from smb3_eh_manip.computers import EhComputer, CalibrationComputer, TwoOneComputer
 
 
+def handler(_signum, _frame):
+    global computer
+    print("SIGINT or CTRL-C detected. Exiting gracefully")
+    computer.release()
+    exit()
+
+
 def main():
+    global computer
     initialize_logging()
     if config.get("app", "computer") == "eh":
         computer = EhComputer()
@@ -15,4 +25,5 @@ def main():
 
 
 if __name__ == "__main__":
+    signal(SIGINT, handler)
     main()

@@ -40,6 +40,11 @@ To configure this, ensure `show_capture_video` is set to true, run the tool,
 and see if the capture window is correct. You should see your nes output.
 Note: this can be the path to a video, if you'd like :shrug:
 
+`write_capture_video` Writes the capture card video to a file, by default,
+capture.avi in the current working directory. This can be used to get trigger
+images directly from the capture card in a complementary way to how the tool
+works.
+
 `enable_video_player` Enabled/disables a TAS EH video playing directly from
 this tool upon seeing the trigger frame.
 
@@ -83,6 +88,12 @@ Set `computer` to `eh` and optionally set `show_capture_video` to `false`.
 Run the app. Ensure it is synced with the TAS.
 
 Revel in victory.
+
+TODO
+----
+
+* Start eh video playback in new thread
+* Develop practice methodology (starting from 2-1, validate if runner ended on correct frame)
 
 Development
 -----------

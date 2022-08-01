@@ -21,7 +21,10 @@ class OpencvComputer:
         self.video_capture_source = video_capture_source
         self.show_capture_video = show_capture_video
         self.autoreset = config.getboolean("app", "autoreset")
+        self.enable_fceux_tas_start = config.getboolean("app", "enable_fceux_tas_start")
+        self.write_capture_video = config.getboolean("app", "write_capture_video")
         self.playing = False
+        self.should_release = False
 
     def compute(self):
         if self.player:
@@ -32,11 +35,21 @@ class OpencvComputer:
         if not cap.isOpened():
             logging.info("Cannot open camera")
             exit()
-        while True:
+        if self.write_capture_video:
+            path = config.get("app", "write_capture_video_path")
+            fps = float(cap.get(cv2.CAP_PROP_FPS)) or 60
+            height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            output = cv2.VideoWriter(
+                path, cv2.VideoWriter_fourcc(*"MPEG"), fps, (width, height)
+            )
+        while not self.should_release:
             ret, frame = cap.read()
             if not ret:
                 logging.info("Can't receive frame (stream end?). Exiting ...")
                 break
+            if self.write_capture_video:
+                output.write(frame)
             if (
                 self.autoreset
                 and self.playing
@@ -45,7 +58,7 @@ class OpencvComputer:
                 self.playing = False
                 if self.player:
                     self.player.reset()
-                if config.getboolean("app", "enable_fceux_tas_start"):
+                if self.enable_fceux_tas_start:
                     pyautogui.press("pause")
                     # TODO need to pause, rewind, increment forward TAS
                     # time.sleep(0.001)
@@ -65,7 +78,7 @@ class OpencvComputer:
                     if self.player:
                         self.player.reset()
                     self.playing = True
-                    if config.getboolean("app", "enable_fceux_tas_start"):
+                    if self.enable_fceux_tas_start:
                         pyautogui.press("pause")
                     logging.info(f"Detected start frame")
             if self.show_capture_video:
@@ -73,8 +86,12 @@ class OpencvComputer:
             if self.playing and self.player:
                 self.player.render()
             cv2.waitKey(1)
+        output.release()
         cap.release()
         cv2.destroyAllWindows()
+
+    def release(self):
+        self.should_release = True
 
     @classmethod
     def locate_all_opencv(
