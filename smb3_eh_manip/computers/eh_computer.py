@@ -18,12 +18,8 @@ OFFSET_FRAMES = config.getint("app", "latency_frames") + VIDEO_OFFSET_FRAMES
 class EhComputer(OpencvComputer):
     def __init__(self):
         super().__init__(
-            VideoPlayer(
-                "ehvideo",
-                config.get("app", "eh_video_path"),
-                OFFSET_FRAMES,
-            )
-            if config.getboolean("app", "enable_video_player")  # pardon nasty ternary
-            else None,
+            "ehvideo",
+            config.get("app", "eh_video_path"),
+            OFFSET_FRAMES,
             config.get("app", "eh_start_frame_image_path"),
         )

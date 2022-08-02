@@ -1,22 +1,26 @@
 import logging
-import time
+import vlc
 
 import cv2
 import numpy as np
 import pyautogui
 
-from smb3_eh_manip.settings import config
+from smb3_eh_manip.settings import config, NES_MS_PER_FRAME
 
 
 class OpencvComputer:
     def __init__(
         self,
-        player,
+        player_window_title,
+        player_video_path,
+        player_seek_to_frame,
         start_frame_image_path,
         video_capture_source=config.getint("app", "video_capture_source"),
         show_capture_video=config.getboolean("app", "show_capture_video"),
     ):
-        self.player = player
+        self.player_window_title = player_window_title
+        self.player_video_path = player_video_path
+        self.player_seek_to_frame = player_seek_to_frame
         self.start_frame_image_path = start_frame_image_path
         self.video_capture_source = video_capture_source
         self.show_capture_video = show_capture_video
@@ -25,10 +29,9 @@ class OpencvComputer:
         self.write_capture_video = config.getboolean("app", "write_capture_video")
         self.playing = False
         self.should_release = False
+        self.enable_video_player = config.getboolean("app", "enable_video_player")
 
     def compute(self):
-        if self.player:
-            self.player.reset()
         reset_template = cv2.imread(config.get("app", "reset_image_path"))
         template = cv2.imread(self.start_frame_image_path)
         cap = cv2.VideoCapture(self.video_capture_source)
@@ -43,6 +46,8 @@ class OpencvComputer:
             output = cv2.VideoWriter(
                 path, cv2.VideoWriter_fourcc(*"MPEG"), fps, (width, height)
             )
+        if self.enable_video_player:
+            self.start_video_player()
         while not self.should_release:
             ret, frame = cap.read()
             if not ret:
@@ -56,8 +61,11 @@ class OpencvComputer:
                 and list(OpencvComputer.locate_all_opencv(reset_template, frame))
             ):
                 self.playing = False
-                if self.player:
-                    self.player.reset()
+                if self.enable_video_player:
+                    self.media_player.set_pause(True)
+                    self.media_player.set_time(
+                        int(self.player_seek_to_frame * NES_MS_PER_FRAME)
+                    )
                 if self.enable_fceux_tas_start:
                     pyautogui.press("pause")
                     # TODO need to pause, rewind, increment forward TAS
@@ -75,23 +83,33 @@ class OpencvComputer:
                         bottom_right = (x + needleWidth, y + needleHeight)
                         cv2.rectangle(frame, top_left, bottom_right, (0, 0, 255), 5)
                 if results:
-                    if self.player:
-                        self.player.reset()
                     self.playing = True
                     if self.enable_fceux_tas_start:
                         pyautogui.press("pause")
+                    if self.enable_video_player:
+                        self.media_player.set_pause(False)
                     logging.info(f"Detected start frame")
             if self.show_capture_video:
                 cv2.imshow("capture", frame)
-            if self.playing and self.player:
-                self.player.render()
             cv2.waitKey(1)
         output.release()
         cap.release()
         cv2.destroyAllWindows()
+        self.terminate_video_player()
 
     def release(self):
         self.should_release = True
+
+    def start_video_player(self):
+        self.media_player = vlc.MediaPlayer()
+        self.media_player.set_media(vlc.Media(self.player_video_path))
+        self.media_player.play()
+        self.media_player.set_pause(True)
+        self.media_player.set_time(int(self.player_seek_to_frame * NES_MS_PER_FRAME))
+
+    def terminate_video_player(self):
+        if self.media_player:
+            self.media_player.terminate()
 
     @classmethod
     def locate_all_opencv(
