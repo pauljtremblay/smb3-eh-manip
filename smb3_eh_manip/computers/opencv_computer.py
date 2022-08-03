@@ -1,4 +1,5 @@
 import logging
+import time
 
 import cv2
 import numpy as np
@@ -6,6 +7,8 @@ import pyautogui
 
 from smb3_eh_manip.settings import config
 from smb3_eh_manip.video_player import VideoPlayer
+
+CLEAR_SIGHTING_DURATION_SECONDS = 10
 
 
 class OpencvComputer:
@@ -23,8 +26,18 @@ class OpencvComputer:
         self.enable_fceux_tas_start = config.getboolean("app", "enable_fceux_tas_start")
         self.write_capture_video = config.getboolean("app", "write_capture_video")
         self.enable_video_player = config.getboolean("app", "enable_video_player")
+        self.track_end_stage_clear_text_time = config.getboolean(
+            "app", "track_end_stage_clear_text_time"
+        )
         self.playing = False
+        self.current_time = time.time()
+        self.start_time = -1
 
+        if self.track_end_stage_clear_text_time:
+            self.last_clear_sighting_time = -1
+            self.end_stage_clear_text_template = cv2.imread(
+                config.get("app", "end_stage_clear_text_path")
+            )
         self.reset_template = cv2.imread(config.get("app", "reset_image_path"))
         self.template = cv2.imread(self.start_frame_image_path)
         self.capture = cv2.VideoCapture(config.getint("app", "video_capture_source"))
@@ -43,6 +56,7 @@ class OpencvComputer:
             self.video_player = VideoPlayer(player_video_path, video_offset_frames)
 
     def tick(self):
+        self.current_time = time.time()
         ret, frame = self.capture.read()
         if not ret:
             logging.warn("Can't receive frame (stream end?). Exiting ...")
@@ -50,11 +64,27 @@ class OpencvComputer:
         if self.write_capture_video:
             self.output_video.write(frame)
         if (
+            self.track_end_stage_clear_text_time
+            and self.playing
+            and self.current_time - self.last_clear_sighting_time
+            > CLEAR_SIGHTING_DURATION_SECONDS
+            and list(
+                OpencvComputer.locate_all_opencv(
+                    self.end_stage_clear_text_template, frame
+                )
+            )
+        ):
+            self.last_clear_sighting_time = self.current_time
+            logging.info(
+                f"Cleared a level at {self.last_clear_sighting_time-self.start_time}"
+            )
+        if (
             self.autoreset
             and self.playing
             and list(OpencvComputer.locate_all_opencv(self.reset_template, frame))
         ):
             self.playing = False
+            self.start_time = -1
             if self.enable_video_player:
                 self.video_player.reset()
             if self.enable_fceux_tas_start:
@@ -75,6 +105,7 @@ class OpencvComputer:
                     cv2.rectangle(frame, top_left, bottom_right, (0, 0, 255), 5)
             if results:
                 self.playing = True
+                self.start_time = time.time()
                 if self.enable_fceux_tas_start:
                     pyautogui.press("pause")
                 if self.enable_video_player:

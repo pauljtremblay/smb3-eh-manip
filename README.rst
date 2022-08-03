@@ -70,6 +70,10 @@ ms in.
 `calibration` until the `latency_ms` is identified. The value `eh` is when
 attempting runs. `twoone` is experimental but should aid in practice.
 
+`track_end_stage_clear_text_time` [beta] after getting the end level card, the text
+"level clear" appears. With this set to true, the tool will write the time
+since the run started (start trigger was seen).
+
 Calibration
 -----------
 

@@ -18,7 +18,9 @@ write_capture_video = false
 write_capture_video_path = capture.avi
 autoreset = true
 confidence = 0.95
+track_end_stage_clear_text_time = false
 
+end_stage_clear_text_path = data/endStageClearText.png
 reset_image_path = data/reset.png
 calibration_start_frame_image_path = data/calibration/trigger.png
 calibration_video_path = data/calibration/video.mp4
