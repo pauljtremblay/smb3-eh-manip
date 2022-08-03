@@ -14,14 +14,11 @@ class OpencvComputer:
         player_window_title,
         player_video_path,
         start_frame_image_path,
-        video_capture_source=config.getint("app", "video_capture_source"),
-        show_capture_video=config.getboolean("app", "show_capture_video"),
         video_offset_frames=0,
     ):
         self.player_window_title = player_window_title
         self.start_frame_image_path = start_frame_image_path
-        self.video_capture_source = video_capture_source
-        self.show_capture_video = show_capture_video
+        self.show_capture_video = config.getboolean("app", "show_capture_video")
         self.autoreset = config.getboolean("app", "autoreset")
         self.enable_fceux_tas_start = config.getboolean("app", "enable_fceux_tas_start")
         self.write_capture_video = config.getboolean("app", "write_capture_video")
@@ -30,7 +27,7 @@ class OpencvComputer:
 
         self.reset_template = cv2.imread(config.get("app", "reset_image_path"))
         self.template = cv2.imread(self.start_frame_image_path)
-        self.capture = cv2.VideoCapture(self.video_capture_source)
+        self.capture = cv2.VideoCapture(config.getint("app", "video_capture_source"))
         if not self.capture.isOpened():
             logging.info("Cannot open camera")
             exit()
