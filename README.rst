@@ -92,7 +92,6 @@ Revel in victory.
 TODO
 ----
 
-* Start eh video playback in new thread
 * Develop practice methodology (starting from 2-1, validate if runner ended on correct frame)
 
 Development
