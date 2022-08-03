@@ -7,5 +7,6 @@ class CalibrationComputer(OpencvComputer):
         super().__init__(
             "calibrationvideo",
             config.get("app", "calibration_video_path"),
+            0,
             config.get("app", "calibration_start_frame_image_path"),
         )
