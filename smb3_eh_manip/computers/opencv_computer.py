@@ -13,14 +13,16 @@ class OpencvComputer:
         self,
         player_window_title,
         player_video_path,
-        player_seek_to_frame,
         start_frame_image_path,
         video_capture_source=config.getint("app", "video_capture_source"),
         show_capture_video=config.getboolean("app", "show_capture_video"),
+        video_offset_frames=0,
     ):
         self.player_window_title = player_window_title
         self.player_video_path = player_video_path
-        self.player_seek_to_frame = player_seek_to_frame
+        self.player_seek_to_frame = video_offset_frames + config.getint(
+            "app", "latency_frames"
+        )
         self.start_frame_image_path = start_frame_image_path
         self.video_capture_source = video_capture_source
         self.show_capture_video = show_capture_video
