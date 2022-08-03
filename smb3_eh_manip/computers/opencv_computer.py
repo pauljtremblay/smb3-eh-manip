@@ -30,6 +30,7 @@ class OpencvComputer:
         self.playing = False
         self.should_release = False
         self.enable_video_player = config.getboolean("app", "enable_video_player")
+        self.video_player_scale = float(config.get("app", "video_player_scale"))
 
     def compute(self):
         reset_template = cv2.imread(config.get("app", "reset_image_path"))
@@ -103,6 +104,7 @@ class OpencvComputer:
     def start_video_player(self):
         self.media_player = vlc.MediaPlayer()
         self.media_player.set_media(vlc.Media(self.player_video_path))
+        self.media_player.video_set_scale(self.video_player_scale)
         self.media_player.play()
         self.media_player.set_pause(True)
         self.media_player.set_time(int(self.player_seek_to_frame * NES_MS_PER_FRAME))
