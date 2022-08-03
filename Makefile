@@ -32,7 +32,7 @@ release-prod: clean
 	python setup.py sdist bdist_wheel
 	twine upload --repository pypi dist/*
 
-release: run-test release-test release-prod
+release: run-test release-test release-prod clean
 
 m: run-main
 main: init m
