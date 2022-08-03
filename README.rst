@@ -110,17 +110,14 @@ Run test suite to ensure everything works::
 Release
 -------
 
-To publish your plugin to pypi, sdist and wheels are registered, created and uploaded with::
+To run tests, publish your plugin to pypi test and prod, sdist and wheels are
+registered, created and uploaded with::
 
-    make release-test
-
-For test. After ensuring the package works, run the prod target and win::
-
-    make release-prod
+    make release
 
 License
 -------
 
-Copyright (c) 2021 Jon Robison
+Copyright (c) 2022 Jon Robison
 
 See LICENSE for details
