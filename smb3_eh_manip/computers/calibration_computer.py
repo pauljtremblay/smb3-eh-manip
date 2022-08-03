@@ -1,4 +1,3 @@
-from smb3_eh_manip.video_player import VideoPlayer
 from smb3_eh_manip.computers import OpencvComputer
 from smb3_eh_manip.settings import config
 
