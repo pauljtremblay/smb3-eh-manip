@@ -1,8 +1,8 @@
 [app]
 ; calibration, eh, or twoone
 computer = eh
-; measured value from calibration step
-latency_frames = 6
+; measured value from calibration step. should start at 0 when calibrating.
+latency_ms = 86
 ; when the trigger frame is detected, should we render a TAS eh video
 enable_video_player = true
 ; scale playback video

@@ -20,9 +20,9 @@ class OpencvComputer:
     ):
         self.player_window_title = player_window_title
         self.player_video_path = player_video_path
-        self.player_seek_to_frame = video_offset_frames + config.getint(
-            "app", "latency_frames"
-        )
+        self.player_seek_to_time = int(
+            video_offset_frames * NES_MS_PER_FRAME
+        ) + config.getint("app", "latency_ms")
         self.start_frame_image_path = start_frame_image_path
         self.video_capture_source = video_capture_source
         self.show_capture_video = show_capture_video
@@ -66,9 +66,7 @@ class OpencvComputer:
                 self.playing = False
                 if self.enable_video_player:
                     self.media_player.set_pause(True)
-                    self.media_player.set_time(
-                        int(self.player_seek_to_frame * NES_MS_PER_FRAME)
-                    )
+                    self.media_player.set_time(self.player_seek_to_time)
                 if self.enable_fceux_tas_start:
                     pyautogui.press("pause")
                     # TODO need to pause, rewind, increment forward TAS
@@ -109,7 +107,7 @@ class OpencvComputer:
         self.media_player.video_set_scale(self.video_player_scale)
         self.media_player.play()
         self.media_player.set_pause(True)
-        self.media_player.set_time(int(self.player_seek_to_frame * NES_MS_PER_FRAME))
+        self.media_player.set_time(self.player_seek_to_time)
 
     def terminate_video_player(self):
         if self.media_player:

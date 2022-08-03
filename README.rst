@@ -18,7 +18,13 @@ Install this package and dependencies via pip::
 Running
 -------
 
-Note: You must configure+calibrate before running!
+Copy the config.ini.sample file to the directory you'd like to run
+the tool from, and name it config.ini. When calibrating, consider setting
+latency_ms to 0, otherwise know the calibration video is offset that
+amount.
+
+Note: You must calibrate before eh attempts to set your latency_ms! See
+the calibration section, below.
 
 From a cmd prompt, powershell, or terminal with working python3::
 
@@ -51,17 +57,17 @@ this tool upon seeing the trigger frame.
 `enable_fceux_tas_start` Enable/disables sending fceux the 'pause' keystroke
 when the trigger frame has been detected.
 
-`latency_frames` We need to measure the perceived latency of what frame this
+`latency_ms` We need to measure the perceived latency of what frame this
 tool thinks we are playing against the monitor the player is perceiving. We
 need to offset the beginning of TAS playback that amount.
 
 Example: it takes ~36ms for the avermedia 4k capture card to show frames on
 screen, 30.66ms for that to get to this tool and render a video frame. That's
-[conveniently ;)] 66.6ms, or 4 nes frames. So we should begin the playback 4
-frames in.
+[conveniently ;)] 66.6ms, or 4 nes frames. So we should begin the playback 66
+ms in.
 
 `computer` Select what the tool is comparing against. Initially this should be
-`calibration` until the `latency_frames` are identified. The value `eh` is when
+`calibration` until the `latency_ms` is identified. The value `eh` is when
 attempting runs. `twoone` is experimental but should aid in practice.
 
 Calibration
@@ -75,7 +81,7 @@ setting, and compare the frame counts.
 
 Example: After starting 1-1, I took about a second to take a picture. The ingame
 timer on my tv was 55, and the ingame timer on the TAS was 50. Thus, my
-`latency_frames` should be set to `5` in `config.ini`.
+`latency_is` should be set to 5*16.64=83 in `config.ini`.
 
 Note: I am not convinced this is consistent when running+recording with OBS.
 More testing is required. This is extremely important to be consistent, otherwise
