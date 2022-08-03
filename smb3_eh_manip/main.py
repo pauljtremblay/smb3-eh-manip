@@ -8,8 +8,8 @@ from smb3_eh_manip.computers import EhComputer, CalibrationComputer, TwoOneCompu
 def handler(_signum, _frame):
     global computer
     print("SIGINT or CTRL-C detected. Exiting gracefully")
-    computer.release()
-    exit()
+    computer.terminate()
+    computer = None
 
 
 def main():
@@ -21,7 +21,8 @@ def main():
         computer = TwoOneComputer()
     else:
         computer = CalibrationComputer()
-    computer.compute()
+    while computer is not None:
+        computer.tick()
 
 
 if __name__ == "__main__":

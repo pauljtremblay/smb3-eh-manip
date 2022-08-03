@@ -24,4 +24,4 @@ class VideoPlayer:
         self.media_player.set_time(self.player_seek_to_time)
 
     def terminate(self):
-        self.media_player.terminate()
+        self.media_player.stop()

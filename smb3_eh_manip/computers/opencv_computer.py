@@ -25,75 +25,74 @@ class OpencvComputer:
         self.autoreset = config.getboolean("app", "autoreset")
         self.enable_fceux_tas_start = config.getboolean("app", "enable_fceux_tas_start")
         self.write_capture_video = config.getboolean("app", "write_capture_video")
-        self.playing = False
-        self.should_release = False
         self.enable_video_player = config.getboolean("app", "enable_video_player")
-        if self.enable_video_player:
-            self.video_player = VideoPlayer(player_video_path, video_offset_frames)
+        self.playing = False
 
-    def compute(self):
-        reset_template = cv2.imread(config.get("app", "reset_image_path"))
-        template = cv2.imread(self.start_frame_image_path)
-        cap = cv2.VideoCapture(self.video_capture_source)
-        if not cap.isOpened():
+        self.reset_template = cv2.imread(config.get("app", "reset_image_path"))
+        self.template = cv2.imread(self.start_frame_image_path)
+        self.capture = cv2.VideoCapture(self.video_capture_source)
+        if not self.capture.isOpened():
             logging.info("Cannot open camera")
             exit()
         if self.write_capture_video:
             path = config.get("app", "write_capture_video_path")
-            fps = float(cap.get(cv2.CAP_PROP_FPS)) or 60
-            height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-            output = cv2.VideoWriter(
+            fps = float(self.capture.get(cv2.CAP_PROP_FPS)) or 60
+            height = int(self.capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            width = int(self.capture.get(cv2.CAP_PROP_FRAME_WIDTH))
+            self.output_video = cv2.VideoWriter(
                 path, cv2.VideoWriter_fourcc(*"MPEG"), fps, (width, height)
             )
-        while not self.should_release:
-            ret, frame = cap.read()
-            if not ret:
-                logging.info("Can't receive frame (stream end?). Exiting ...")
-                break
-            if self.write_capture_video:
-                output.write(frame)
-            if (
-                self.autoreset
-                and self.playing
-                and list(OpencvComputer.locate_all_opencv(reset_template, frame))
-            ):
-                self.playing = False
-                if self.enable_video_player:
-                    self.video_player.reset()
+        if self.enable_video_player:
+            self.video_player = VideoPlayer(player_video_path, video_offset_frames)
+
+    def tick(self):
+        ret, frame = self.capture.read()
+        if not ret:
+            logging.warn("Can't receive frame (stream end?). Exiting ...")
+            exit()
+        if self.write_capture_video:
+            self.output_video.write(frame)
+        if (
+            self.autoreset
+            and self.playing
+            and list(OpencvComputer.locate_all_opencv(self.reset_template, frame))
+        ):
+            self.playing = False
+            if self.enable_video_player:
+                self.video_player.reset()
+            if self.enable_fceux_tas_start:
+                pyautogui.press("pause")
+                # TODO need to pause, rewind, increment forward TAS
+                # time.sleep(0.001)
+                # with pyautogui.hold("shift"):
+                #    pyautogui.press("pageup")
+                # for _i in range(offset):
+                #    pyautogui.press("backslash")
+            logging.info(f"Detected reset")
+        if not self.playing:
+            results = list(OpencvComputer.locate_all_opencv(self.template, frame))
+            if self.show_capture_video:
+                for x, y, needleWidth, needleHeight in results:
+                    top_left = (x, y)
+                    bottom_right = (x + needleWidth, y + needleHeight)
+                    cv2.rectangle(frame, top_left, bottom_right, (0, 0, 255), 5)
+            if results:
+                self.playing = True
                 if self.enable_fceux_tas_start:
                     pyautogui.press("pause")
-                    # TODO need to pause, rewind, increment forward TAS
-                    # time.sleep(0.001)
-                    # with pyautogui.hold("shift"):
-                    #    pyautogui.press("pageup")
-                    # for _i in range(offset):
-                    #    pyautogui.press("backslash")
-                logging.info(f"Detected reset")
-            if not self.playing:
-                results = list(OpencvComputer.locate_all_opencv(template, frame))
-                if self.show_capture_video:
-                    for x, y, needleWidth, needleHeight in results:
-                        top_left = (x, y)
-                        bottom_right = (x + needleWidth, y + needleHeight)
-                        cv2.rectangle(frame, top_left, bottom_right, (0, 0, 255), 5)
-                if results:
-                    self.playing = True
-                    if self.enable_fceux_tas_start:
-                        pyautogui.press("pause")
-                    if self.enable_video_player:
-                        self.video_player.play()
-                    logging.info(f"Detected start frame")
-            if self.show_capture_video:
-                cv2.imshow("capture", frame)
-            cv2.waitKey(1)
-        output.release()
-        cap.release()
-        cv2.destroyAllWindows()
-        self.video_player.terminate()
+                if self.enable_video_player:
+                    self.video_player.play()
+                logging.info(f"Detected start frame")
+        if self.show_capture_video:
+            cv2.imshow("capture", frame)
+        cv2.waitKey(1)
 
-    def release(self):
-        self.should_release = True
+    def terminate(self):
+        self.video_player.terminate()
+        if self.write_capture_video:
+            self.output_video.release()
+        self.capture.release()
+        cv2.destroyAllWindows()
 
     @classmethod
     def locate_all_opencv(
