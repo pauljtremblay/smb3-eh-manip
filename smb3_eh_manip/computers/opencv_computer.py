@@ -90,7 +90,7 @@ class OpencvComputer:
         output.release()
         cap.release()
         cv2.destroyAllWindows()
-        self.self.video_player.terminate()
+        self.video_player.terminate()
 
     def release(self):
         self.should_release = True
