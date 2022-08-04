@@ -99,6 +99,23 @@ Run the app. Ensure it is synced with the TAS.
 
 Revel in victory.
 
+Notes
+-----
+
+.. csv-table:: End level score sum of digits maximums
+    :header: "Level", "Max Score"
+
+    "2-1", 29
+    "2-2", 23
+    "2-f", 17
+
+.. csv-table:: Success windows
+    :header: "Level", "Start Frame", "Window"
+
+    "2-1", 18046, "[purple]good-good"
+    "2-2", 19947, "[purple]good-good-good"
+    "2-f", 22669, "good-[purple]bad-good"
+
 TODO
 ----
 
