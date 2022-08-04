@@ -103,11 +103,12 @@ Notes
 -----
 
 .. csv-table:: End level score sum of digits maximums
-    :header: "Level", "Max Score"
+    :header: "Level", "Sum Score", "Target Score At End", "Target Notes"
 
-    "2-1", 29
-    "2-2", 23
-    "2-f", 17
+    "1-A", -, 65560, "Before wand grab"
+    "2-1", 29, 80610, "Before end card"
+    "2-2", 23, 95610, "Before end card"
+    "2-f", 17, 110860, "Before bag grab"
 
 .. csv-table:: Success windows
     :header: "Level", "Start Frame", "Window"
