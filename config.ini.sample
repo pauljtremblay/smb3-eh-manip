@@ -1,5 +1,5 @@
 [app]
-; calibration, eh, or twoone
+; calibration, eh, or twoone, eh_vcam
 computer = eh
 ; measured value from calibration step. should start at 0 when calibrating.
 latency_ms = 86
