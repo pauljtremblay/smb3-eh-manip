@@ -74,6 +74,27 @@ attempting runs. `twoone` is experimental but should aid in practice.
 "level clear" appears. With this set to true, the tool will write the time
 since the run started (start trigger was seen).
 
+`*_region` a comma separated list of x,y,width,height the tool uses to locate
+the corresponding image within the frame.
+
+Configure Regions
+-----------------
+
+The tools looks for specific images in the frame. It can look anywhere,
+however, this is computationally expensive and should be avoided.
+
+By manually setting the region the tool should use to look for the
+trigger, we greatly reduce the cpu load, commonly as much as 95%.
+
+`calibration_start_frame_image_region`, `eh_start_frame_image_region`,
+`reset_image_region` these are a set of x,y,width,height integers representing
+where the images are the tool uses to calibrate, start eh video, and reset
+(if using the optional autoreset function). Some examples which narfman0 uses:
+
+reset_image_region = 120,340,100,100
+calibration_start_frame_image_region = 139,318,30,40
+eh_start_frame_image_region = 100,320,44,74
+
 Calibration
 -----------
 
