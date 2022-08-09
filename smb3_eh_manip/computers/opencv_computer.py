@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 import pyautogui
 
-from smb3_eh_manip.settings import config
+from smb3_eh_manip.settings import config, get_config_region
 from smb3_eh_manip.video_player import VideoPlayer
 
 CLEAR_SIGHTING_DURATION_SECONDS = 10
@@ -54,6 +54,7 @@ class OpencvComputer:
             )
         if self.enable_video_player:
             self.video_player = VideoPlayer(player_video_path, video_offset_frames)
+        self.reset_image_region = get_config_region("app", "reset_image_region")
 
     def tick(self):
         self.current_time = time.time()
@@ -97,7 +98,11 @@ class OpencvComputer:
                 #    pyautogui.press("backslash")
             logging.info(f"Detected reset")
         if not self.playing:
-            results = list(OpencvComputer.locate_all_opencv(self.template, frame))
+            results = list(
+                OpencvComputer.locate_all_opencv(
+                    self.template, frame, region=self.reset_image_region
+                )
+            )
             if self.show_capture_video:
                 for x, y, needleWidth, needleHeight in results:
                     top_left = (x, y)
