@@ -18,9 +18,11 @@ class OpencvComputer:
         player_video_path,
         start_frame_image_path,
         video_offset_frames=0,
+        start_frame_image_region=None,
     ):
         self.player_window_title = player_window_title
         self.start_frame_image_path = start_frame_image_path
+        self.start_frame_image_region = start_frame_image_region
         self.show_capture_video = config.getboolean("app", "show_capture_video")
         self.autoreset = config.getboolean("app", "autoreset")
         self.enable_fceux_tas_start = config.getboolean("app", "enable_fceux_tas_start")
@@ -54,12 +56,9 @@ class OpencvComputer:
             )
         if self.enable_video_player:
             self.video_player = VideoPlayer(player_video_path, video_offset_frames)
-        self.eh_start_frame_image_region = get_config_region(
-            "app", "eh_start_frame_image_region"
-        )
         self.reset_image_region = get_config_region("app", "reset_image_region")
-        self.eh_end_stage_clear_text_region = get_config_region(
-            "app", "eh_end_stage_clear_text_region"
+        self.end_stage_clear_text_region = get_config_region(
+            "app", "end_stage_clear_text_region"
         )
 
     def tick(self):
@@ -79,7 +78,7 @@ class OpencvComputer:
                 OpencvComputer.locate_all_opencv(
                     self.end_stage_clear_text_template,
                     frame,
-                    region=self.eh_end_stage_clear_text_region,
+                    region=self.end_stage_clear_text_region,
                 )
             )
         ):
@@ -112,7 +111,7 @@ class OpencvComputer:
         if not self.playing:
             results = list(
                 OpencvComputer.locate_all_opencv(
-                    self.template, frame, region=self.eh_start_frame_image_region
+                    self.template, frame, region=self.start_frame_image_region
                 )
             )
             if self.show_capture_video:
