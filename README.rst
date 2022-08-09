@@ -105,8 +105,8 @@ Notes
 .. csv-table:: End level score sum of digits maximums
     :header: "Level", "Sum Score", "Target Score At End", "Target Notes"
 
-    "1-A", -, 65560, "Before wand grab"
-    "2-1", 29, 80610, "Before end card"
+    "1-A", -, 65610, "Before wand grab, 244 firekill"
+    "2-1", 29, 80660, "Before end card"
     "2-2", 23, 95610, "Before end card"
     "2-f", 17, 110860, "Before bag grab"
 
