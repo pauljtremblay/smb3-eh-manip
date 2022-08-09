@@ -1,5 +1,6 @@
 from asyncio.log import logger
 from signal import signal, SIGINT
+import time
 
 from smb3_eh_manip.logging import initialize_logging
 from smb3_eh_manip.settings import config
@@ -33,7 +34,10 @@ def main():
     else:
         logger.warn(f"Failed to find computer {computer_name}")
     while computer is not None:
+        start_time = time.time()
         computer.tick()
+        end_time = time.time()
+        logger.debug(f"Took {end_time-start_time}s to tick")
 
 
 if __name__ == "__main__":

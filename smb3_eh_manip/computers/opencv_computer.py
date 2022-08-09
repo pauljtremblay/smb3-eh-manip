@@ -54,7 +54,13 @@ class OpencvComputer:
             )
         if self.enable_video_player:
             self.video_player = VideoPlayer(player_video_path, video_offset_frames)
+        self.eh_start_frame_image_region = get_config_region(
+            "app", "eh_start_frame_image_region"
+        )
         self.reset_image_region = get_config_region("app", "reset_image_region")
+        self.eh_end_stage_clear_text_region = get_config_region(
+            "app", "eh_end_stage_clear_text_region"
+        )
 
     def tick(self):
         self.current_time = time.time()
@@ -71,7 +77,9 @@ class OpencvComputer:
             > CLEAR_SIGHTING_DURATION_SECONDS
             and list(
                 OpencvComputer.locate_all_opencv(
-                    self.end_stage_clear_text_template, frame
+                    self.end_stage_clear_text_template,
+                    frame,
+                    region=self.eh_end_stage_clear_text_region,
                 )
             )
         ):
@@ -82,7 +90,11 @@ class OpencvComputer:
         if (
             self.autoreset
             and self.playing
-            and list(OpencvComputer.locate_all_opencv(self.reset_template, frame))
+            and list(
+                OpencvComputer.locate_all_opencv(
+                    self.reset_template, frame, region=self.reset_image_region
+                )
+            )
         ):
             self.playing = False
             self.start_time = -1
@@ -100,7 +112,7 @@ class OpencvComputer:
         if not self.playing:
             results = list(
                 OpencvComputer.locate_all_opencv(
-                    self.template, frame, region=self.reset_image_region
+                    self.template, frame, region=self.eh_start_frame_image_region
                 )
             )
             if self.show_capture_video:
