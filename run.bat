@@ -1,0 +1,1 @@
+python -m smb3_eh_manip.main
