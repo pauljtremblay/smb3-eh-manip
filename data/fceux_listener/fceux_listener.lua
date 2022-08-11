@@ -1,5 +1,6 @@
 local socket = require("socket.core")
 local json = require("json")
+local ehhelper = require("ehhelper")
 
 function connect(address, port, laddress, lport)
     local sock, err = socket.tcp()
@@ -264,7 +265,7 @@ end
 
 parseCommandCoroutine = coroutine.create(parseCommand)
 
-function passiveUpdate()
+function listener_update()
     local message, err, part = sock2:receive("*all")
     if not message then
         message = part
@@ -279,11 +280,12 @@ end
 
 function main()
     while true do
-        passiveUpdate()
+        listener_update()
         emu.frameadvance()
+        ehhelper.update_boxes()
     end
 end
 
-gui.register(passiveUpdate) --undocumented. this function will call even if emulator paused
+gui.register(listener_update) --undocumented. this function will call even if emulator paused
 
 main()
