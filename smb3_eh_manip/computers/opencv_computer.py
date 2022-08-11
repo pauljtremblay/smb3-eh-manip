@@ -23,6 +23,7 @@ class OpencvComputer:
         self.player_window_title = player_window_title
         self.start_frame_image_path = start_frame_image_path
         self.start_frame_image_region = start_frame_image_region
+        self.video_offset_frames = video_offset_frames
         self.show_capture_video = config.getboolean("app", "show_capture_video")
         self.autoreset = config.getboolean("app", "autoreset")
         self.enable_fceux_tas_start = config.getboolean("app", "enable_fceux_tas_start")
@@ -103,7 +104,7 @@ class OpencvComputer:
                 self.video_player.reset()
             if self.enable_fceux_tas_start:
                 emu.pause()
-                # TODO reset: would be nice to set frame in TAS editor
+                taseditor.setplayback(self.video_offset_frames)
             logging.info(f"Detected reset")
         if not self.playing:
             results = list(
@@ -129,7 +130,8 @@ class OpencvComputer:
         cv2.waitKey(1)
 
     def terminate(self):
-        self.video_player.terminate()
+        if self.video_player:
+            self.video_player.terminate()
         if self.write_capture_video:
             self.output_video.release()
         self.capture.release()

@@ -420,6 +420,12 @@ class gui:
         return syncCall.call("gui.transparency", trans)
 
 
+class taseditor:
+    @classmethod
+    def setplayback(cls, frame):
+        return syncCall.call("taseditor.setplayback", frame)
+
+
 class messages:
     queue = []
 

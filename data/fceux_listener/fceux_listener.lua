@@ -242,6 +242,12 @@ commandTable["memory.readbyterange"] = function(currentCmd)
     sendToHost({"memory.readbyterange".."_finished", arrayWithData})
 end
 
+commandTable["taseditor.setplayback"] = function(currentCmd)
+    table.remove(currentCmd, 1)
+    local result = taseditor.setplayback(unpack(currentCmd))
+    sendToHost({"taseditor.setplayback".."_finished", result})
+end
+
 commandsQueue = {}
 function parseCommand()
     while true do
