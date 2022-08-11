@@ -3,9 +3,9 @@ import time
 
 import cv2
 import numpy as np
-import pyautogui
 
 from smb3_eh_manip.settings import config, get_config_region
+from smb3_eh_manip.fceux_lua_server import *
 from smb3_eh_manip.video_player import VideoPlayer
 
 CLEAR_SIGHTING_DURATION_SECONDS = 10
@@ -60,6 +60,8 @@ class OpencvComputer:
         self.end_stage_clear_text_region = get_config_region(
             "app", "end_stage_clear_text_region"
         )
+        if self.enable_fceux_tas_start:
+            waitForFceuxConnection()
 
     def tick(self):
         self.current_time = time.time()
@@ -100,13 +102,8 @@ class OpencvComputer:
             if self.enable_video_player:
                 self.video_player.reset()
             if self.enable_fceux_tas_start:
-                pyautogui.press("pause")
-                # TODO need to pause, rewind, increment forward TAS
-                # time.sleep(0.001)
-                # with pyautogui.hold("shift"):
-                #    pyautogui.press("pageup")
-                # for _i in range(offset):
-                #    pyautogui.press("backslash")
+                emu.pause()
+                # TODO reset: would be nice to set frame in TAS editor
             logging.info(f"Detected reset")
         if not self.playing:
             results = list(
@@ -123,7 +120,7 @@ class OpencvComputer:
                 self.playing = True
                 self.start_time = time.time()
                 if self.enable_fceux_tas_start:
-                    pyautogui.press("pause")
+                    emu.unpause()
                 if self.enable_video_player:
                     self.video_player.play()
                 logging.info(f"Detected start frame")
