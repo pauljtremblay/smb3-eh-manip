@@ -1,6 +1,7 @@
 local socket = require("socket.core")
 local json = require("json")
-local ehhelper = require("ehhelper")
+
+local fceuxlistener = { _version = "0.1" }
 
 function connect(address, port, laddress, lport)
     local sock, err = socket.tcp()
@@ -265,7 +266,7 @@ end
 
 parseCommandCoroutine = coroutine.create(parseCommand)
 
-function listener_update()
+function fceuxlistener.update()
     local message, err, part = sock2:receive("*all")
     if not message then
         message = part
@@ -278,14 +279,4 @@ function listener_update()
     end
 end
 
-function main()
-    while true do
-        listener_update()
-        emu.frameadvance()
-        ehhelper.update_boxes()
-    end
-end
-
-gui.register(listener_update) --undocumented. this function will call even if emulator paused
-
-main()
+return fceuxlistener
