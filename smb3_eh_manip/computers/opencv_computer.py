@@ -4,7 +4,7 @@ import time
 import cv2
 import numpy as np
 
-from smb3_eh_manip.settings import config, get_config_region
+from smb3_eh_manip.settings import config, get_config_region, NES_MS_PER_FRAME
 from smb3_eh_manip.fceux_lua_server import *
 from smb3_eh_manip.video_player import VideoPlayer
 
@@ -104,7 +104,10 @@ class OpencvComputer:
                 self.video_player.reset()
             if self.enable_fceux_tas_start:
                 emu.pause()
-                taseditor.setplayback(self.video_offset_frames)
+                latency_offset = round(
+                    config.getint("app", "latency_ms") / NES_MS_PER_FRAME
+                )
+                taseditor.setplayback(self.video_offset_frames + latency_offset)
             logging.info(f"Detected reset")
         if not self.playing:
             results = list(
@@ -130,7 +133,7 @@ class OpencvComputer:
         cv2.waitKey(1)
 
     def terminate(self):
-        if self.video_player:
+        if self.enable_video_player:
             self.video_player.terminate()
         if self.write_capture_video:
             self.output_video.release()
