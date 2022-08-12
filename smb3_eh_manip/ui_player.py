@@ -25,6 +25,15 @@ class UiPlayer:
 
     def tick(self, current_frame):
         ui = UiPlayer.get_base_frame()
+        ui = cv2.putText(
+            ui,
+            str(current_frame),
+            (0, 32),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            FILL_COLOR,
+            2,
+        )
         if self.trigger_frames:
             next_trigger_distance = (
                 self.trigger_frames[0] - current_frame
