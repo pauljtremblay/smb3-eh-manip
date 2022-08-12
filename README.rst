@@ -37,43 +37,6 @@ In config.ini you'll note several configurable values. These are values
 that work for *my* config, with an avermedia capture card. The images and values
 might be different, especially for different capture cards.
 
-`show_capture_video` This is an optional debugging property to help identify
-your video capture source index. It shows what images are matched, and should
-be disabled after configuration to reduce computational load.
-
-`video_capture_source` This is the index of the video card in your system.
-To configure this, ensure `show_capture_video` is set to true, run the tool,
-and see if the capture window is correct. You should see your nes output.
-Note: this can be the path to a video, if you'd like :shrug:
-
-`write_capture_video` Writes the capture card video to a file, by default,
-capture.avi in the current working directory. This can be used to get trigger
-images directly from the capture card in a complementary way to how the tool
-works.
-
-`enable_video_player` Enabled/disables a TAS EH video playing directly from
-this tool upon seeing the trigger frame.
-
-`enable_fceux_tas_start` Enable/disables sending fceux the 'pause' keystroke
-when the trigger frame has been detected.
-
-`latency_ms` We need to measure the perceived latency of what frame this
-tool thinks we are playing against the monitor the player is perceiving. We
-need to offset the beginning of TAS playback that amount.
-
-Example: it takes ~36ms for the avermedia 4k capture card to show frames on
-screen, 30.66ms for that to get to this tool and render a video frame. That's
-[conveniently ;)] 66.6ms, or 4 nes frames. So we should begin the playback 66
-ms in.
-
-`computer` Select what the tool is comparing against. Initially this should be
-`calibration` until the `latency_ms` is identified. The value `eh` is when
-attempting runs. `twoone` is experimental but should aid in practice.
-
-`track_end_stage_clear_text_time` [beta] after getting the end level card, the text
-"level clear" appears. With this set to true, the tool will write the time
-since the run started (start trigger was seen).
-
 `*_region` a comma separated list of x,y,width,height the tool uses to locate
 the corresponding image within the frame.
 
@@ -85,15 +48,6 @@ however, this is computationally expensive and should be avoided.
 
 By manually setting the region the tool should use to look for the
 trigger, we greatly reduce the cpu load, commonly as much as 95%.
-
-`calibration_start_frame_image_region`, `eh_start_frame_image_region`,
-`reset_image_region` these are a set of x,y,width,height integers representing
-where the images are the tool uses to calibrate, start eh video, and reset
-(if using the optional autoreset function). Some examples which narfman0 uses:
-
-reset_image_region = 120,340,100,100
-calibration_start_frame_image_region = 139,318,30,40
-eh_start_frame_image_region = 100,320,44,74
 
 Calibration
 -----------
