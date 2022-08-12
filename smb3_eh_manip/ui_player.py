@@ -3,11 +3,9 @@ import logging
 import cv2
 import numpy as np
 
-from smb3_eh_manip.settings import config, NES_MS_PER_FRAME
+from smb3_eh_manip.settings import ACTION_FRAMES, FREQUENCY
 
 WINDOW_TITLE = "eh manip ui"
-ACTION_FRAMES = [270, 1659, 18046, 19947, 22669, 23952]
-FREQUENCY = 24
 LINE_COUNT = 6
 WINDOW_SCALAR = 3
 WINDOW_HEIGHT = FREQUENCY * WINDOW_SCALAR

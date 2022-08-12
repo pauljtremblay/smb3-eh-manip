@@ -6,6 +6,9 @@ config.read("config.ini")
 NES_FRAMERATE = 60.0988139
 NES_MS_PER_FRAME = 1000.0 / NES_FRAMERATE
 
+ACTION_FRAMES = [270, 1659, 18046, 19947, 22669, 23952]
+FREQUENCY = 24
+
 
 def get_config_region(domain, name):
     """ Parse a region str from ini """

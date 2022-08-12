@@ -141,7 +141,6 @@ Notes
 TODO
 ----
 
-* Implement UI to show polygons representing jump pattern, matching lua script
 * Update docs to simplify and make more usable
 * Develop practice methodology (starting from 2-1, validate if runner ended on correct frame)
 

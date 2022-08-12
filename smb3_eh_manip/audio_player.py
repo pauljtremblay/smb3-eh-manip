@@ -2,10 +2,7 @@ import logging
 
 import simpleaudio as sa
 
-from smb3_eh_manip.settings import config, NES_MS_PER_FRAME
-
-ACTION_FRAMES = [270, 1659, 18046, 19947, 22669, 23952]
-FREQUENCY = 24
+from smb3_eh_manip.settings import ACTION_FRAMES, FREQUENCY
 
 
 class AudioPlayer:
