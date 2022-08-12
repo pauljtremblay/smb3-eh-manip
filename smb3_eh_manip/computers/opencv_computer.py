@@ -7,6 +7,7 @@ import numpy as np
 from smb3_eh_manip.audio_player import AudioPlayer
 from smb3_eh_manip.settings import config, get_config_region, NES_MS_PER_FRAME
 from smb3_eh_manip.fceux_lua_server import *
+from smb3_eh_manip.ui_player import UiPlayer
 from smb3_eh_manip.video_player import VideoPlayer
 
 CLEAR_SIGHTING_DURATION_SECONDS = 10
@@ -32,6 +33,7 @@ class OpencvComputer:
         self.write_capture_video = config.getboolean("app", "write_capture_video")
         self.enable_video_player = config.getboolean("app", "enable_video_player")
         self.enable_audio_player = config.getboolean("app", "enable_audio_player")
+        self.enable_ui_player = config.getboolean("app", "enable_ui_player")
         self.track_end_stage_clear_text_time = config.getboolean(
             "app", "track_end_stage_clear_text_time"
         )
@@ -68,6 +70,8 @@ class OpencvComputer:
             waitForFceuxConnection()
         if self.enable_audio_player:
             self.audio_player = AudioPlayer()
+        if self.enable_ui_player:
+            self.ui_player = UiPlayer()
 
     def tick(self):
         if self.playing:
@@ -137,11 +141,15 @@ class OpencvComputer:
                     self.video_player.play()
                 if self.enable_audio_player:
                     self.audio_player.reset()
+                if self.enable_ui_player:
+                    self.ui_player.reset()
                 logging.info(f"Detected start frame")
         if self.show_capture_video:
             cv2.imshow("capture", frame)
         if self.enable_audio_player and self.playing:
             self.audio_player.tick(self.current_frame)
+        if self.enable_ui_player and self.playing:
+            self.ui_player.tick(self.current_frame)
         cv2.waitKey(1)
 
     def update_times(self):

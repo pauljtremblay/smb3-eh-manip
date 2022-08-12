@@ -21,6 +21,6 @@ class AudioPlayer:
 
     def tick(self, current_frame):
         if self.trigger_frames and self.trigger_frames[0] <= current_frame:
-            logging.info(f"Beeped at {current_frame}")
+            logging.debug(f"Beeped at {current_frame}")
             self.beep50ms_wave_obj.play()
             self.trigger_frames.pop(0)
