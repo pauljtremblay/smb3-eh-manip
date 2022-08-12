@@ -25,6 +25,7 @@ class OpencvComputer:
         self.start_frame_image_path = start_frame_image_path
         self.start_frame_image_region = start_frame_image_region
         self.video_offset_frames = video_offset_frames
+        self.latency_ms = config.getint("app", "latency_ms")
         self.show_capture_video = config.getboolean("app", "show_capture_video")
         self.autoreset = config.getboolean("app", "autoreset")
         self.enable_fceux_tas_start = config.getboolean("app", "enable_fceux_tas_start")
@@ -35,7 +36,7 @@ class OpencvComputer:
             "app", "track_end_stage_clear_text_time"
         )
         self.playing = False
-        self.current_time = time.time()
+        self.current_time = -1
         self.start_time = -1
 
         if self.track_end_stage_clear_text_time:
@@ -66,10 +67,11 @@ class OpencvComputer:
         if self.enable_fceux_tas_start:
             waitForFceuxConnection()
         if self.enable_audio_player:
-            self.audio_player = AudioPlayer(video_offset_frames)
+            self.audio_player = AudioPlayer()
 
     def tick(self):
-        self.current_time = time.time()
+        if self.playing:
+            self.update_times()
         ret, frame = self.capture.read()
         if not ret:
             logging.warn("Can't receive frame (stream end?). Exiting ...")
@@ -91,7 +93,7 @@ class OpencvComputer:
         ):
             self.last_clear_sighting_time = self.current_time
             logging.info(
-                f"Cleared a level at {self.last_clear_sighting_time-self.start_time}"
+                f"Cleared a level at {self.current_time} on frame {self.current_frame}"
             )
         if (
             self.autoreset
@@ -104,13 +106,13 @@ class OpencvComputer:
         ):
             self.playing = False
             self.start_time = -1
+            self.current_time = -1
+            self.current_frame = -1
             if self.enable_video_player:
                 self.video_player.reset()
             if self.enable_fceux_tas_start:
                 emu.pause()
-                latency_offset = round(
-                    config.getint("app", "latency_ms") / NES_MS_PER_FRAME
-                )
+                latency_offset = round(self.latency_ms / NES_MS_PER_FRAME)
                 taseditor.setplayback(self.video_offset_frames + latency_offset)
             logging.info(f"Detected reset")
         if not self.playing:
@@ -127,18 +129,26 @@ class OpencvComputer:
             if results:
                 self.playing = True
                 self.start_time = time.time()
+                self.current_frame = 0
+                self.current_time = 0
                 if self.enable_fceux_tas_start:
                     emu.unpause()
                 if self.enable_video_player:
                     self.video_player.play()
                 if self.enable_audio_player:
-                    self.audio_player.reset(self.start_time)
+                    self.audio_player.reset()
                 logging.info(f"Detected start frame")
         if self.show_capture_video:
             cv2.imshow("capture", frame)
         if self.enable_audio_player and self.playing:
-            self.audio_player.tick(self.current_time)
+            self.audio_player.tick(self.current_frame)
         cv2.waitKey(1)
+
+    def update_times(self):
+        self.current_time = time.time() - self.start_time
+        self.current_frame = self.video_offset_frames + round(
+            (self.latency_ms + self.current_time * 1000) / NES_MS_PER_FRAME
+        )
 
     def terminate(self):
         if self.enable_video_player:
