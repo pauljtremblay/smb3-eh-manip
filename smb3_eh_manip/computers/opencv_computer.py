@@ -4,6 +4,7 @@ import time
 import cv2
 import numpy as np
 
+from smb3_eh_manip.audio_player import AudioPlayer
 from smb3_eh_manip.settings import config, get_config_region, NES_MS_PER_FRAME
 from smb3_eh_manip.fceux_lua_server import *
 from smb3_eh_manip.video_player import VideoPlayer
@@ -29,6 +30,7 @@ class OpencvComputer:
         self.enable_fceux_tas_start = config.getboolean("app", "enable_fceux_tas_start")
         self.write_capture_video = config.getboolean("app", "write_capture_video")
         self.enable_video_player = config.getboolean("app", "enable_video_player")
+        self.enable_audio_player = config.getboolean("app", "enable_audio_player")
         self.track_end_stage_clear_text_time = config.getboolean(
             "app", "track_end_stage_clear_text_time"
         )
@@ -63,6 +65,8 @@ class OpencvComputer:
         )
         if self.enable_fceux_tas_start:
             waitForFceuxConnection()
+        if self.enable_audio_player:
+            self.audio_player = AudioPlayer(video_offset_frames)
 
     def tick(self):
         self.current_time = time.time()
@@ -127,9 +131,13 @@ class OpencvComputer:
                     emu.unpause()
                 if self.enable_video_player:
                     self.video_player.play()
+                if self.enable_audio_player:
+                    self.audio_player.reset(self.start_time)
                 logging.info(f"Detected start frame")
         if self.show_capture_video:
             cv2.imshow("capture", frame)
+        if self.enable_audio_player and self.playing:
+            self.audio_player.tick(self.current_time)
         cv2.waitKey(1)
 
     def terminate(self):
