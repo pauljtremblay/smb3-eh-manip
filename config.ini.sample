@@ -16,7 +16,7 @@ latency_ms = 86
 enable_ui_player = true
 ; Enabled/disables a TAS EH video playing directly from
 ; this tool upon seeing the trigger frame.
-enable_video_player = false
+enable_video_player = true
 ; play 50ms tones to line up and execute the jumps
 enable_audio_player = true
 ; Enable/disables sending fceux the 'pause' keystroke
@@ -25,18 +25,18 @@ enable_fceux_tas_start = false
 ; This is an optional debugging property to help identify
 ; your video capture source index. It shows what images are matched, and should
 ; be disabled after configuration to reduce computational load.
-show_capture_video = false
+show_capture_video = true
 ; Writes the capture card video to a file, by default,
 ; capture.avi in the current working directory. This can be used to get trigger
 ; images directly from the capture card in a complementary way to how the tool
 ; works.
-write_capture_video = false
+write_capture_video = true
 ; Select what the tool is comparing against. Options:
 ; 'eh' is when attempting runs and runs your configured emu/video/ui
 ; 'twoone' is experimental but should aid in practice.
 ; 'calibration' can make determinind latency_ms faster.
 computer = eh
-autoreset = true
+autoreset = false
 ; [beta] after getting the end level card, the text
 ; "level clear" appears. With this set to true, the tool will write the time
 ; since the run started (start trigger was seen).

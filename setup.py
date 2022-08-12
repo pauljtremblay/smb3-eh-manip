@@ -19,6 +19,6 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=True,
-    install_requires=["opencv-python", "python-vlc"],
+    install_requires=["opencv-python", "python-vlc", "simpleaudio"],
     test_suite="tests",
 )
