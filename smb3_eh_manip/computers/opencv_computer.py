@@ -74,14 +74,14 @@ class OpencvComputer:
             self.ui_player = UiPlayer()
 
     def tick(self):
-        if self.playing:
-            self.update_times()
         ret, frame = self.capture.read()
         if not ret:
             logging.warn("Can't receive frame (stream end?). Exiting ...")
             exit()
         if self.write_capture_video:
             self.output_video.write(frame)
+        if self.playing:
+            self.update_times()
         if (
             self.track_end_stage_clear_text_time
             and self.playing
