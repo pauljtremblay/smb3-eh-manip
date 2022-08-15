@@ -2,14 +2,12 @@ from asyncio.log import logger
 from signal import signal, SIGINT
 import time
 
+from smb3_eh_manip.computers.calibration_computer import CalibrationComputer
+from smb3_eh_manip.computers.eh_computer import EhComputer
+from smb3_eh_manip.computers.eh_vcam_computer import EhVcamComputer
+from smb3_eh_manip.computers.two_one_computer import TwoOneComputer
 from smb3_eh_manip.logging import initialize_logging
 from smb3_eh_manip.settings import config
-from smb3_eh_manip.computers import (
-    EhComputer,
-    EhVcamComputer,
-    CalibrationComputer,
-    TwoOneComputer,
-)
 
 
 def handler(_signum, _frame):

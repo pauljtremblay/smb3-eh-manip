@@ -1,4 +1,5 @@
 import logging
+import sys
 
 import cv2
 
@@ -11,7 +12,7 @@ class EhVcamComputer:
         self.capture = cv2.VideoCapture(config.getint("app", "video_capture_source"))
         if not self.capture.isOpened():
             logging.info("Cannot open camera")
-            exit()
+            sys.exit()
         self.capture_template = cv2.imread("data/eh_vcam/captureTrigger.png")
         self.tas_template = cv2.imread("data/eh_vcam/tasTrigger.png")
 
@@ -19,7 +20,7 @@ class EhVcamComputer:
         ret, frame = self.capture.read()
         if not ret:
             logging.warn("Can't receive frame (stream end?). Exiting ...")
-            exit()
+            sys.exit()
         capture_results = list(
             OpencvComputer.locate_all_opencv(self.capture_template, frame)
         )

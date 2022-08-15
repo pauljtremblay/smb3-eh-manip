@@ -1,4 +1,5 @@
 import logging
+import sys
 import time
 
 import cv2
@@ -51,7 +52,7 @@ class OpencvComputer:
         self.capture = cv2.VideoCapture(config.getint("app", "video_capture_source"))
         if not self.capture.isOpened():
             logging.info("Cannot open camera")
-            exit()
+            sys.exit()
         if self.write_capture_video:
             path = config.get("app", "write_capture_video_path")
             fps = float(self.capture.get(cv2.CAP_PROP_FPS)) or 60
@@ -77,7 +78,7 @@ class OpencvComputer:
         ret, frame = self.capture.read()
         if not ret:
             logging.warn("Can't receive frame (stream end?). Exiting ...")
-            exit()
+            sys.exit()
         if self.write_capture_video:
             self.output_video.write(frame)
         if self.playing:

@@ -1,6 +1,6 @@
 default: test
 
-clean: clean-build clean-pyc
+clean: clean-build clean-pyc clean-installer
 
 clean-build: ## remove build artifacts
 	rm -fr build/
@@ -8,6 +8,10 @@ clean-build: ## remove build artifacts
 	rm -fr *.egg-info
 	rm -f .coverage
 	rm -f *.log
+
+clean-installer:
+	rm -fr output/
+	rm -fr app.spec
 
 clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyc' -exec rm -f {} +
@@ -19,6 +23,9 @@ init:
 
 init-dev:
 	pip install -r requirements_test.txt
+
+pyinstaller: clean
+	pyinstaller --noconfirm --onefile --windowed -n smb3_eh_manip --uac-admin app.py
 
 run-test:
 	pytest --flake8 --black --cov=smb3_eh_manip --cov-report term-missing tests/

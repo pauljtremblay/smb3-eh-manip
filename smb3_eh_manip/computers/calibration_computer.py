@@ -1,4 +1,4 @@
-from smb3_eh_manip.computers import OpencvComputer
+from smb3_eh_manip.computers.opencv_computer import OpencvComputer
 from smb3_eh_manip.settings import config, get_config_region
 
 
