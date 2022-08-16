@@ -26,6 +26,9 @@ init-dev:
 
 pyinstaller: clean
 	pyinstaller --noconfirm --onefile --windowed -n smb3_eh_manip --uac-admin app.py
+	cp -r data/ dist/
+	cp config.ini.sample dist/
+	cp config.ini dist/
 
 run-test:
 	pytest --flake8 --black --cov=smb3_eh_manip --cov-report term-missing tests/

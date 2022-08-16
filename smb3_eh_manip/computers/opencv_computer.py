@@ -156,7 +156,7 @@ class OpencvComputer:
     def update_times(self):
         self.current_time = time.time() - self.start_time
         self.current_frame = self.video_offset_frames + round(
-            (self.latency_ms + self.current_time * 1000) / NES_MS_PER_FRAME
+            (self.latency_ms + self.current_time * 1000) / NES_MS_PER_FRAME, 1
         )
 
     def terminate(self):

@@ -36,7 +36,7 @@ class UiPlayer:
         )
         if self.trigger_frames:
             next_trigger_distance = (
-                self.trigger_frames[0] - current_frame
+                self.trigger_frames[0] - round(current_frame)
             ) * WINDOW_SCALAR
             if next_trigger_distance < WINDOW_WIDTH:
                 left_x = (
