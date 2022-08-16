@@ -25,15 +25,6 @@ class UiPlayer:
 
     def tick(self, current_frame):
         ui = UiPlayer.get_base_frame()
-        ui = cv2.putText(
-            ui,
-            str(current_frame),
-            (0, 32),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            1,
-            FILL_COLOR,
-            2,
-        )
         if self.trigger_frames:
             next_trigger_distance = (
                 self.trigger_frames[0] - round(current_frame)
@@ -52,6 +43,15 @@ class UiPlayer:
                 logging.debug(
                     f"Popped trigger frame {trigger_frame} at {current_frame}"
                 )
+        ui = cv2.putText(
+            ui,
+            str(current_frame),
+            (0, 32),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (176, 176, 176),
+            2,
+        )
         cv2.imshow(WINDOW_TITLE, ui)
 
     @classmethod
