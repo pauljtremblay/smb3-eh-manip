@@ -11,7 +11,7 @@ video_capture_source = 2
 ; screen, 30.66ms for that to get to this tool and render a video frame. That's
 ; [conveniently ;)] 66.6ms, or 4 nes frames. So we should begin the playback 66
 ; ms in.
-latency_ms = 86
+latency_ms = 66
 ; when the trigger frame is detected, should we render a ui crafted to represent visual stimulii
 enable_ui_player = true
 ; Enabled/disables a TAS EH video playing directly from
@@ -48,6 +48,9 @@ video_player_scale = 3
 ; if you get false positives, consider raising it.
 confidence = 0.95
 write_capture_video_path = capture.avi
+
+; Overwrite wherever you'd like your audio cue to be found
+; audio_cue_path = data/audio_cue.wav
 
 ; These regions are a set of x,y,width,height integers representing
 ; where the images are the tool uses to calibrate, start eh video, and reset

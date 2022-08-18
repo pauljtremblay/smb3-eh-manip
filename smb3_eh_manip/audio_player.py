@@ -4,11 +4,15 @@ from multiprocessing import Process, Value
 
 import simpleaudio as sa
 
+from smb3_eh_manip import settings
 from smb3_eh_manip.settings import ACTION_FRAMES, FREQUENCY
+
+DEFAULT_AUDIO_CUE_PATH = "data/audio_cue.wav"
 
 
 def play_beep(play):
-    beep_wave_obj = sa.WaveObject.from_wave_file("data/beep50ms.wav")
+    audio_cue_path = settings.get("audio_cue_path", fallback=DEFAULT_AUDIO_CUE_PATH)
+    beep_wave_obj = sa.WaveObject.from_wave_file(audio_cue_path)
     while True:
         if play.value == 1:
             play.value = 0
