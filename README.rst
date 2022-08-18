@@ -9,11 +9,11 @@ Ingest video data from a capture card to render a smb3 eh TAS
 Installation
 ------------
 
-Note: Ensure python3 is installed
+Navigate to the most recent versioned release here:
 
-Download this package and install dependencies via pip::
+https://github.com/narfman0/smb3-eh-manip/tags
 
-    pip install -r requirements_test.txt
+Download the zip and extract to your favorite directory.
 
 Quick Start
 -----------
@@ -32,10 +32,12 @@ frame(s). First however, we need the tool to know which video
 capture source to use, and set video_capture_source in config.ini.
 
 Double click run.bat to run the tool. Note the video window output:
-if it is anything other than your expected capture card, go to config.ini,
-see the video_capture_source value, and change the number until it works.
-Mine is 2, but 0-10 could all be reasonable, or even higher
-if you have a lot of video capture devices configured.
+if it is anything other than your expected capture card, type ctrl-c
+in the black terminal window a few times to close the application,
+go to config.ini, and change the video_capture_source value until 
+the popup window shows your capture card. Mine is 2, but 0-10 could
+all be reasonable, or even higher if you have a lot of video capture
+devices configured.
 
 If you see your capture card in the tool, you win at life! If not,
 you cannot continue. Now let's overwrite the trigger frame image and
