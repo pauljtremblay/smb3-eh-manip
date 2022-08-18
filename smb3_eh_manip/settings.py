@@ -37,14 +37,14 @@ def get_list(name, domain=DEFAULT_DOMAIN, fallback=None):
 def get_action_frames():
     computer_name = config.get(DEFAULT_DOMAIN, "computer")
     if computer_name == "eh":
-        frames = get_list(DEFAULT_DOMAIN, "eh_action_frames")
+        frames = get_list("eh_action_frames")
         return (
             frames
             if frames
             else [270, 1659, 16000, 16828, 18046, 18654, 19947, 20611, 22670, 23952]
         )
     elif computer_name == "twoone":
-        frames = get_list(DEFAULT_DOMAIN, "twoone_action_frames")
+        frames = get_list("twoone_action_frames")
         return frames if frames else [90, 1194, 1799, 3094]
     else:
         raise Exception(
