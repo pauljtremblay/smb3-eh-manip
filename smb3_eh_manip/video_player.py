@@ -1,17 +1,15 @@
 import vlc
-from smb3_eh_manip.settings import config, NES_MS_PER_FRAME
+from smb3_eh_manip import settings
 
 
 class VideoPlayer:
     def __init__(self, player_video_path, video_offset_frames):
         self.player_video_path = player_video_path
         self.player_seek_to_time = int(
-            video_offset_frames * NES_MS_PER_FRAME
-        ) + config.getint("app", "latency_ms")
+            video_offset_frames * settings.NES_MS_PER_FRAME
+        ) + settings.get_int("latency_ms")
         self.media_player = vlc.MediaPlayer()
-        self.media_player.video_set_scale(
-            float(config.get("app", "video_player_scale"))
-        )
+        self.media_player.video_set_scale(float(settings.get("video_player_scale")))
         self.reset()
 
     def play(self):

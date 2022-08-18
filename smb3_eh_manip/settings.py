@@ -5,17 +5,29 @@ config.read("config.ini")
 
 NES_FRAMERATE = 60.0988139
 NES_MS_PER_FRAME = 1000.0 / NES_FRAMERATE
-
+DEFAULT_DOMAIN = "app"
 FREQUENCY = 24
 
 
-def get_config_region(domain, name):
-    """ Parse a region str from ini """
-    return get_list(domain, name)
+def get(name, domain=DEFAULT_DOMAIN):
+    return config.get(domain, name, fallback=None)
 
 
-def get_list(domain, name):
-    """ Parse a region str from ini """
+def get_boolean(name, domain=DEFAULT_DOMAIN):
+    return config.getboolean(domain, name, fallback=None)
+
+
+def get_int(name, domain=DEFAULT_DOMAIN):
+    return config.getint(domain, name, fallback=None)
+
+
+def get_config_region(name, domain=DEFAULT_DOMAIN):
+    """Parse a region str from ini"""
+    return get_list(name, domain=domain)
+
+
+def get_list(name, domain=DEFAULT_DOMAIN):
+    """Parse a region str from ini"""
     list_str = config.get(domain, name, fallback=None)
     if list_str:
         return list(map(int, list_str.split(",")))
@@ -23,16 +35,16 @@ def get_list(domain, name):
 
 
 def get_action_frames():
-    computer_name = config.get("app", "computer")
+    computer_name = config.get(DEFAULT_DOMAIN, "computer")
     if computer_name == "eh":
-        frames = get_list("app", "eh_action_frames")
+        frames = get_list(DEFAULT_DOMAIN, "eh_action_frames")
         return (
             frames
             if frames
             else [270, 1659, 16000, 16828, 18046, 18654, 19947, 20611, 22670, 23952]
         )
     elif computer_name == "twoone":
-        frames = get_list("app", "twoone_action_frames")
+        frames = get_list(DEFAULT_DOMAIN, "twoone_action_frames")
         return frames if frames else [90, 1194, 1799, 3094]
     else:
         raise Exception(

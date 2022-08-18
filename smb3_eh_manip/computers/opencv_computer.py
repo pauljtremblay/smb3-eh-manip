@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 
 from smb3_eh_manip.audio_player import AudioPlayer
-from smb3_eh_manip.settings import config, get_config_region, NES_MS_PER_FRAME
+from smb3_eh_manip import settings
 from smb3_eh_manip.fceux_lua_server import *
 from smb3_eh_manip.ui_player import UiPlayer
 from smb3_eh_manip.video_player import VideoPlayer
@@ -27,16 +27,16 @@ class OpencvComputer:
         self.start_frame_image_path = start_frame_image_path
         self.start_frame_image_region = start_frame_image_region
         self.video_offset_frames = video_offset_frames
-        self.latency_ms = config.getint("app", "latency_ms")
-        self.show_capture_video = config.getboolean("app", "show_capture_video")
-        self.autoreset = config.getboolean("app", "autoreset")
-        self.enable_fceux_tas_start = config.getboolean("app", "enable_fceux_tas_start")
-        self.write_capture_video = config.getboolean("app", "write_capture_video")
-        self.enable_video_player = config.getboolean("app", "enable_video_player")
-        self.enable_audio_player = config.getboolean("app", "enable_audio_player")
-        self.enable_ui_player = config.getboolean("app", "enable_ui_player")
-        self.track_end_stage_clear_text_time = config.getboolean(
-            "app", "track_end_stage_clear_text_time"
+        self.latency_ms = settings.get_int("latency_ms")
+        self.show_capture_video = settings.get_boolean("show_capture_video")
+        self.autoreset = settings.get_boolean("autoreset")
+        self.enable_fceux_tas_start = settings.get_boolean("enable_fceux_tas_start")
+        self.write_capture_video = settings.get_boolean("write_capture_video")
+        self.enable_video_player = settings.get_boolean("enable_video_player")
+        self.enable_audio_player = settings.get_boolean("enable_audio_player")
+        self.enable_ui_player = settings.get_boolean("enable_ui_player")
+        self.track_end_stage_clear_text_time = settings.get_boolean(
+            "track_end_stage_clear_text_time"
         )
         self.playing = False
         self.current_time = -1
@@ -45,16 +45,16 @@ class OpencvComputer:
         if self.track_end_stage_clear_text_time:
             self.last_clear_sighting_time = -1
             self.end_stage_clear_text_template = cv2.imread(
-                config.get("app", "end_stage_clear_text_path")
+                settings.get("end_stage_clear_text_path")
             )
-        self.reset_template = cv2.imread(config.get("app", "reset_image_path"))
+        self.reset_template = cv2.imread(settings.get("reset_image_path"))
         self.template = cv2.imread(self.start_frame_image_path)
-        self.capture = cv2.VideoCapture(config.getint("app", "video_capture_source"))
+        self.capture = cv2.VideoCapture(settings.get_int("video_capture_source"))
         if not self.capture.isOpened():
             logging.info("Cannot open camera")
             sys.exit()
         if self.write_capture_video:
-            path = config.get("app", "write_capture_video_path")
+            path = settings.get("write_capture_video_path")
             fps = float(self.capture.get(cv2.CAP_PROP_FPS)) or 60
             height = int(self.capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
             width = int(self.capture.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -63,9 +63,9 @@ class OpencvComputer:
             )
         if self.enable_video_player:
             self.video_player = VideoPlayer(player_video_path, video_offset_frames)
-        self.reset_image_region = get_config_region("app", "reset_image_region")
-        self.end_stage_clear_text_region = get_config_region(
-            "app", "end_stage_clear_text_region"
+        self.reset_image_region = settings.get_config_region("reset_image_region")
+        self.end_stage_clear_text_region = settings.get_config_region(
+            "end_stage_clear_text_region"
         )
         if self.enable_fceux_tas_start:
             waitForFceuxConnection()
@@ -117,7 +117,7 @@ class OpencvComputer:
                 self.video_player.reset()
             if self.enable_fceux_tas_start:
                 emu.pause()
-                latency_offset = round(self.latency_ms / NES_MS_PER_FRAME)
+                latency_offset = round(self.latency_ms / settings.NES_MS_PER_FRAME)
                 taseditor.setplayback(self.video_offset_frames + latency_offset)
             logging.info(f"Detected reset")
         if not self.playing:
@@ -156,7 +156,7 @@ class OpencvComputer:
     def update_times(self):
         self.current_time = time.time() - self.start_time
         self.current_frame = self.video_offset_frames + round(
-            (self.latency_ms + self.current_time * 1000) / NES_MS_PER_FRAME, 1
+            (self.latency_ms + self.current_time * 1000) / settings.NES_MS_PER_FRAME, 1
         )
 
     def terminate(self):
@@ -174,7 +174,7 @@ class OpencvComputer:
         haystackImage,
         limit=10000,
         region=None,  # [x, y, width, height]
-        confidence=float(config.get("app", "confidence")),
+        confidence=float(settings.get("confidence")),
     ):
         """
         RGBA images are treated as RBG (ignores alpha channel)

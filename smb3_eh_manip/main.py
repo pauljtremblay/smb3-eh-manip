@@ -7,7 +7,7 @@ from smb3_eh_manip.computers.eh_computer import EhComputer
 from smb3_eh_manip.computers.eh_vcam_computer import EhVcamComputer
 from smb3_eh_manip.computers.two_one_computer import TwoOneComputer
 from smb3_eh_manip.logging import initialize_logging
-from smb3_eh_manip.settings import config
+from smb3_eh_manip import settings
 
 
 def handler(_signum, _frame):
@@ -20,7 +20,7 @@ def handler(_signum, _frame):
 def main():
     global computer
     initialize_logging()
-    computer_name = config.get("app", "computer")
+    computer_name = settings.get("computer")
     if computer_name == "eh":
         computer = EhComputer()
     elif computer_name == "twoone":
