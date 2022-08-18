@@ -19,6 +19,7 @@ def handler(_signum, _frame):
 
 def main():
     global computer
+    signal(SIGINT, handler)
     initialize_logging()
     computer_name = settings.get("computer")
     if computer_name == "eh":
@@ -39,5 +40,4 @@ def main():
 
 
 if __name__ == "__main__":
-    signal(SIGINT, handler)
     main()

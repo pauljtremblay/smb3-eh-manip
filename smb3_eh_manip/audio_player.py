@@ -10,7 +10,7 @@ from smb3_eh_manip.settings import ACTION_FRAMES, FREQUENCY
 DEFAULT_AUDIO_CUE_PATH = "data/audio_cue.wav"
 
 
-def play_beep(play):
+def play_audio_cue(play):
     audio_cue_path = settings.get("audio_cue_path", fallback=DEFAULT_AUDIO_CUE_PATH)
     beep_wave_obj = sa.WaveObject.from_wave_file(audio_cue_path)
     while True:
@@ -24,7 +24,7 @@ def play_beep(play):
 class AudioPlayer:
     def __init__(self):
         self.play = Value("i", 0)
-        self.play_process = Process(target=play_beep, args=(self.play,)).start()
+        self.play_process = Process(target=play_audio_cue, args=(self.play,)).start()
 
     def reset(self):
         self.play.value = 0
@@ -36,5 +36,5 @@ class AudioPlayer:
 
     def tick(self, current_frame):
         if self.trigger_frames and self.trigger_frames[0] <= current_frame:
-            self.play.value = 1
             self.trigger_frames.pop(0)
+            self.play.value = 1
