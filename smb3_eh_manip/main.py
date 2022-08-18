@@ -1,6 +1,6 @@
-from asyncio.log import logger
-from signal import signal, SIGINT
+import logging
 import time
+from signal import signal, SIGINT
 
 from smb3_eh_manip.computers.calibration_computer import CalibrationComputer
 from smb3_eh_manip.computers.eh_computer import EhComputer
@@ -31,12 +31,12 @@ def main():
     elif computer_name == "calibration":
         computer = CalibrationComputer()
     else:
-        logger.warn(f"Failed to find computer {computer_name}")
+        logging.warn(f"Failed to find computer {computer_name}")
     while computer is not None:
         start_time = time.time()
         computer.tick()
         end_time = time.time()
-        logger.debug(f"Took {end_time-start_time}s to tick")
+        logging.debug(f"Took {end_time-start_time}s to tick")
 
 
 if __name__ == "__main__":
