@@ -36,6 +36,8 @@ write_capture_video = true
 ; 'twoone' is experimental but should aid in practice.
 ; 'calibration' can make determinind latency_ms faster.
 computer = eh
+; when the tool sees the data/reset.png in the current frame from the capture
+; card, should it reset to get ready for the next run. true/false
 autoreset = false
 ; [beta] after getting the end level card, the text
 ; "level clear" appears. With this set to true, the tool will write the time
