@@ -83,23 +83,18 @@ class OpencvComputer:
             self.output_video.write(frame)
         if self.playing:
             self.update_times()
-        if (
-            self.track_end_stage_clear_text_time
-            and self.playing
-            and self.current_time - self.last_clear_sighting_time
-            > CLEAR_SIGHTING_DURATION_SECONDS
-            and list(
-                OpencvComputer.locate_all_opencv(
-                    self.end_stage_clear_text_template,
-                    frame,
-                    region=self.end_stage_clear_text_region,
-                )
-            )
-        ):
-            self.last_clear_sighting_time = self.current_time
-            logging.info(
-                f"Cleared a level at {self.current_time} on frame {self.current_frame}"
-            )
+        self.check_and_update_end_stage(frame)
+        self.check_and_update_autoreset(frame)
+        self.check_and_update_begin_playing(frame)
+        if self.show_capture_video:
+            cv2.imshow("capture", frame)
+        if self.enable_audio_player and self.playing:
+            self.audio_player.tick(self.current_frame)
+        if self.enable_ui_player and self.playing:
+            self.ui_player.tick(self.current_frame)
+        cv2.waitKey(1)
+
+    def check_and_update_autoreset(self, frame):
         if (
             self.autoreset
             and self.playing
@@ -120,6 +115,8 @@ class OpencvComputer:
                 latency_offset = round(self.latency_ms / settings.NES_MS_PER_FRAME)
                 taseditor.setplayback(self.video_offset_frames + latency_offset)
             logging.info(f"Detected reset")
+
+    def check_and_update_begin_playing(self, frame):
         if not self.playing:
             results = list(
                 OpencvComputer.locate_all_opencv(
@@ -145,13 +142,25 @@ class OpencvComputer:
                 if self.enable_ui_player:
                     self.ui_player.reset()
                 logging.info(f"Detected start frame")
-        if self.show_capture_video:
-            cv2.imshow("capture", frame)
-        if self.enable_audio_player and self.playing:
-            self.audio_player.tick(self.current_frame)
-        if self.enable_ui_player and self.playing:
-            self.ui_player.tick(self.current_frame)
-        cv2.waitKey(1)
+
+    def check_and_update_end_stage(self, frame):
+        if (
+            self.track_end_stage_clear_text_time
+            and self.playing
+            and self.current_time - self.last_clear_sighting_time
+            > CLEAR_SIGHTING_DURATION_SECONDS
+            and list(
+                OpencvComputer.locate_all_opencv(
+                    self.end_stage_clear_text_template,
+                    frame,
+                    region=self.end_stage_clear_text_region,
+                )
+            )
+        ):
+            self.last_clear_sighting_time = self.current_time
+            logging.info(
+                f"Cleared a level at {self.current_time} on frame {self.current_frame}"
+            )
 
     def update_times(self):
         self.current_time = time.time() - self.start_time
