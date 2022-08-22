@@ -12,6 +12,7 @@ clean-build: ## remove build artifacts
 clean-installer:
 	rm -fr output/
 	rm -fr app.spec
+	rm smb3_eh_manip.spec
 
 clean-pyc: ## remove Python file artifacts
 	find . -name '__pycache__' -exec rm -rf {} +
