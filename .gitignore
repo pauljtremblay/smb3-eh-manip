@@ -93,3 +93,4 @@ ENV/
 *.avi
 config.ini
 output/
+.vscode/
