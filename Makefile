@@ -14,6 +14,7 @@ clean-installer:
 	rm -fr app.spec
 
 clean-pyc: ## remove Python file artifacts
+	find . -name '__pycache__' -exec rm -rf {} +
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
