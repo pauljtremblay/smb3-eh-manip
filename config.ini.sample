@@ -71,3 +71,7 @@ eh_start_frame_image_path = data/eh/trigger.png
 eh_video_path = data/eh/video.avi
 two_one_start_frame_image_path = data/two_one/trigger.png
 two_one_video_path = data/two_one/video.mp4
+
+
+; console_log_level = INFO
+; file_log_level = INFO
