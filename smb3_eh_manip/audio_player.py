@@ -2,21 +2,26 @@ import logging
 import time
 from multiprocessing import Process, Value
 
-import simpleaudio as sa
+import pygame
 
 from smb3_eh_manip import settings
 from smb3_eh_manip.settings import ACTION_FRAMES, FREQUENCY
 
 DEFAULT_AUDIO_CUE_PATH = "data/audio_cue.wav"
+AUDIO_CUE_PATH = settings.get("audio_cue_path", fallback=DEFAULT_AUDIO_CUE_PATH)
 
 
 def play_audio_cue(play):
-    audio_cue_path = settings.get("audio_cue_path", fallback=DEFAULT_AUDIO_CUE_PATH)
-    beep_wave_obj = sa.WaveObject.from_wave_file(audio_cue_path)
+    pygame.mixer.init()
+    pygame.mixer.music.load(AUDIO_CUE_PATH)
     while True:
-        if play.value == 1:
-            play.value = 0
-            beep_wave_obj.play()
+        play_sound = False
+        with play.get_lock():
+            if play.value == 1:
+                play.value = 0
+                play_sound = True
+        if play_sound:
+            pygame.mixer.music.play()
         else:
             time.sleep(0.001)
 
@@ -37,4 +42,5 @@ class AudioPlayer:
     def tick(self, current_frame):
         if self.trigger_frames and self.trigger_frames[0] <= current_frame:
             self.trigger_frames.pop(0)
-            self.play.value = 1
+            with self.play.get_lock():
+                self.play.value = 1
