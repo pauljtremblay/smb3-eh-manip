@@ -35,8 +35,7 @@ def main():
     while computer is not None:
         start_time = time.time()
         computer.tick()
-        end_time = time.time()
-        logging.debug(f"Took {end_time-start_time}s to tick")
+        logging.debug(f"Took {(time.time()-start_time)*1000:.1f}ms to tick")
 
 
 if __name__ == "__main__":

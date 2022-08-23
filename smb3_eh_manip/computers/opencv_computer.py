@@ -75,7 +75,9 @@ class OpencvComputer:
             self.ui_player = UiPlayer()
 
     def tick(self):
+        start_read_frame = time.time()
         ret, frame = self.capture.read()
+        logging.debug(f"Took {(time.time()-start_read_frame)*1000:.1f}ms to read frame")
         if not ret:
             logging.warn("Can't receive frame (stream end?). Exiting ...")
             sys.exit()
