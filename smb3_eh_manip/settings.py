@@ -4,7 +4,7 @@ import logging
 config = ConfigParser()
 result = config.read("config.ini")
 if not result:
-    logging.warn("Failed to read config.ini! Using sample.")
+    logging.warning("Failed to read config.ini! Using sample.")
     config.read("config.ini.sample")
 
 NES_FRAMERATE = 60.0988139

@@ -19,7 +19,7 @@ class EhVcamComputer:
     def tick(self):
         ret, frame = self.capture.read()
         if not ret:
-            logging.warn("Can't receive frame (stream end?). Exiting ...")
+            logging.warning("Can't receive frame (stream end?). Exiting ...")
             sys.exit()
         capture_results = list(
             OpencvComputer.locate_all_opencv(self.capture_template, frame)

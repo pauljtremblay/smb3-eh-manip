@@ -31,7 +31,7 @@ def main():
     elif computer_name == "calibration":
         computer = CalibrationComputer()
     else:
-        logging.warn(f"Failed to find computer {computer_name}")
+        logging.warning(f"Failed to find computer {computer_name}")
     while computer is not None:
         start_time = time.time()
         computer.tick()

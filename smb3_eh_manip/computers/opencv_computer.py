@@ -79,7 +79,7 @@ class OpencvComputer:
         ret, frame = self.capture.read()
         logging.debug(f"Took {(time.time()-start_read_frame)*1000:.1f}ms to read frame")
         if not ret:
-            logging.warn("Can't receive frame (stream end?). Exiting ...")
+            logging.warning("Can't receive frame (stream end?). Exiting ...")
             sys.exit()
         if self.write_capture_video:
             self.output_video.write(frame)
