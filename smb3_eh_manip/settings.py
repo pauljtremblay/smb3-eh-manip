@@ -1,7 +1,11 @@
 from configparser import ConfigParser
+import logging
 
 config = ConfigParser()
-config.read("config.ini")
+result = config.read("config.ini")
+if not result:
+    logging.warn("Failed to read config.ini! Using sample.")
+    config.read("config.ini.sample")
 
 NES_FRAMERATE = 60.0988139
 NES_MS_PER_FRAME = 1000.0 / NES_FRAMERATE
