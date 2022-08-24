@@ -74,10 +74,11 @@ class OpencvComputer:
         if self.enable_ui_player:
             self.ui_player = UiPlayer()
 
-    def tick(self):
+    def tick(self, last_tick_duration):
         start_read_frame = time.time()
         ret, frame = self.capture.read()
-        logging.debug(f"Took {(time.time()-start_read_frame)*1000:.1f}ms to read frame")
+        read_frame_duration = time.time() - start_read_frame
+        logging.debug(f"Took {read_frame_duration}s to read frame")
         if not ret:
             logging.warning("Can't receive frame (stream end?). Exiting ...")
             sys.exit()
@@ -93,7 +94,9 @@ class OpencvComputer:
         if self.enable_audio_player and self.playing:
             self.audio_player.tick(self.current_frame)
         if self.enable_ui_player and self.playing:
-            self.ui_player.tick(self.current_frame)
+            self.ui_player.tick(
+                self.current_frame, read_frame_duration, last_tick_duration
+            )
         cv2.waitKey(1)
 
     def check_and_update_autoreset(self, frame):

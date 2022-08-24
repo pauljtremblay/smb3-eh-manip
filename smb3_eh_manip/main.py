@@ -32,10 +32,12 @@ def main():
         computer = CalibrationComputer()
     else:
         logging.warning(f"Failed to find computer {computer_name}")
+    last_tick_duration = -1
     while computer is not None:
         start_time = time.time()
-        computer.tick()
-        logging.debug(f"Took {(time.time()-start_time)*1000:.1f}ms to tick")
+        computer.tick(last_tick_duration)
+        last_tick_duration = time.time() - start_time
+        logging.debug(f"Took {last_tick_duration}s to tick")
 
 
 if __name__ == "__main__":
