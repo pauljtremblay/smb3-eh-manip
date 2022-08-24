@@ -41,6 +41,8 @@ class OpencvComputer:
         self.playing = False
         self.current_time = -1
         self.start_time = -1
+        self.ewma_tick = 0
+        self.ewma_read_frame = 0
 
         if self.track_end_stage_clear_text_time:
             self.last_clear_sighting_time = -1
@@ -79,6 +81,8 @@ class OpencvComputer:
         ret, frame = self.capture.read()
         read_frame_duration = time.time() - start_read_frame
         logging.debug(f"Took {read_frame_duration}s to read frame")
+        self.ewma_tick = self.ewma_tick * 0.95 + last_tick_duration * 0.05
+        self.ewma_read_frame = self.ewma_read_frame * 0.95 + read_frame_duration * 0.05
         if not ret:
             logging.warning("Can't receive frame (stream end?). Exiting ...")
             sys.exit()
@@ -95,7 +99,7 @@ class OpencvComputer:
             self.audio_player.tick(self.current_frame)
         if self.enable_ui_player and self.playing:
             self.ui_player.tick(
-                self.current_frame, read_frame_duration, last_tick_duration
+                self.current_frame, self.ewma_tick, self.ewma_read_frame
             )
         cv2.waitKey(1)
 
