@@ -1,6 +1,7 @@
 default: test
 
 clean: clean-build clean-pyc clean-installer
+c: clean
 
 clean-build: ## remove build artifacts
 	rm -fr build/
@@ -13,11 +14,10 @@ clean-installer:
 	rm -fr output/
 	rm -fr app.spec
 	rm -f smb3_eh_manip.spec
+	rm -f smb3_eh_manip.zip
 
 clean-pyc: ## remove Python file artifacts
 	find . -name '__pycache__' -exec rm -rf {} +
-	find . -name '*.pyc' -exec rm -f {} +
-	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 
 init:
