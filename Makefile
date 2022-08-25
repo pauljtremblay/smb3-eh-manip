@@ -32,6 +32,7 @@ pyinstaller: clean
 		app.py
 	cp -r data/ dist/
 	cp config.ini.sample dist/
+	cp README.* dist/
 
 run-test:
 	pytest --cov=smb3_eh_manip --cov-report term-missing tests/

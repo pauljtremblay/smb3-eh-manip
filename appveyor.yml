@@ -13,14 +13,11 @@ test_script:
   - pytest --cov=smb3_eh_manip --cov-report term-missing tests/
 
 after_test:
-  - pyinstaller --noconfirm --onefile --console -n smb3_eh_manip --uac-admin app.py
-  - mkdir dist/smb3_eh_manip
-  - mv dist/smb3_eh_manip.exe dist/smb3_eh_manip
-  - cp -r data/ dist/smb3_eh_manip
-  - cp config.ini.sample dist/smb3_eh_manip
-  - cp README.* dist/smb3_eh_manip
+  - make pyinstaller
+
+after_build:
+  - 7z a smb3_eh_manip.zip dist/* 
 
 artifacts:
-  - path: dist\*
+  - path: smb3_eh_manip.zip
     name: smb3_eh_manip
-    type: zip
