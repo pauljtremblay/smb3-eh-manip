@@ -34,7 +34,7 @@ pyinstaller: clean
 	cp config.ini.sample dist/
 
 run-test:
-	pytest --flake8 --black --cov=smb3_eh_manip --cov-report term-missing tests/
+	pytest --cov=smb3_eh_manip --cov-report term-missing tests/
 
 run-main:
 	python -m smb3_eh_manip.main

@@ -10,7 +10,7 @@ install:
 build: off
 
 test_script:
-  - py -m pytest --flake8 --black --cov=smb3_eh_manip --cov-report term-missing tests/
+  - py -m pytest --cov=smb3_eh_manip --cov-report term-missing tests/
 
 after_test:
   - py -m pyinstaller --noconfirm --onefile --console -n smb3_eh_manip --uac-admin app.py
