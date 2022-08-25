@@ -17,9 +17,7 @@ after_test:
   - cp -r data/ dist/
   - cp config.ini.sample dist/
   - cp README.* dist/
-
-after_build:
-  - 7z a smb3_eh_manip.zip dist/* 
+  - 7z a smb3_eh_manip.zip dist/*
 
 artifacts:
   - path: smb3_eh_manip.zip
