@@ -14,6 +14,13 @@ test_script:
 
 after_test:
   - pyinstaller --noconfirm --onefile --console -n smb3_eh_manip --uac-admin app.py
+  - mkdir dist/smb3_eh_manip
+  - mv dist/smb3_eh_mani.exe dist/smb3_eh_manip
+  - cp -r data/ dist/smb3_eh_manip
+	- cp config.ini.sample dist/smb3_eh_manip
+	- cp README.* dist/smb3_eh_manip
 
 artifacts:
   - path: dist\*
+    name: smb3_eh_manip
+    type: zip
