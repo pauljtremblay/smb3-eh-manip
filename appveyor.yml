@@ -22,3 +22,14 @@ after_test:
 artifacts:
   - path: smb3_eh_manip.zip
     name: smb3_eh_manip
+
+deploy:
+  - provider: GitHub
+    tag: $(APPVEYOR_REPO_TAG_NAME)
+    release: $(APPVEYOR_REPO_TAG_NAME)
+    auth_token:
+      secure: 32wi9EYebbPOK8c8u2acHuSm2Gs/Mhm9nhnUOKmkuh10ftCGcdGu3yTo2PRiuuN/
+    artifact: smb3_eh_manip.zip
+    prerelease: true
+    on:
+      APPVEYOR_REPO_TAG: true
