@@ -9,7 +9,9 @@ class VideoPlayer:
             video_offset_frames * settings.NES_MS_PER_FRAME
         ) + settings.get_int("latency_ms")
         self.media_player = vlc.MediaPlayer()
-        self.media_player.video_set_scale(float(settings.get("video_player_scale")))
+        self.media_player.video_set_scale(
+            float(settings.get("video_player_scale", fallback=1))
+        )
         self.reset()
 
     def play(self):

@@ -30,13 +30,17 @@ class OpencvComputer:
         self.latency_ms = settings.get_int("latency_ms")
         self.show_capture_video = settings.get_boolean("show_capture_video")
         self.autoreset = settings.get_boolean("autoreset")
-        self.enable_fceux_tas_start = settings.get_boolean("enable_fceux_tas_start")
-        self.write_capture_video = settings.get_boolean("write_capture_video")
+        self.enable_fceux_tas_start = settings.get_boolean(
+            "enable_fceux_tas_start", fallback=False
+        )
+        self.write_capture_video = settings.get_boolean(
+            "write_capture_video", fallback=False
+        )
         self.enable_video_player = settings.get_boolean("enable_video_player")
         self.enable_audio_player = settings.get_boolean("enable_audio_player")
         self.enable_ui_player = settings.get_boolean("enable_ui_player")
         self.track_end_stage_clear_text_time = settings.get_boolean(
-            "track_end_stage_clear_text_time"
+            "track_end_stage_clear_text_time", fallback=False
         )
         self.playing = False
         self.current_time = -1
@@ -47,16 +51,20 @@ class OpencvComputer:
         if self.track_end_stage_clear_text_time:
             self.last_clear_sighting_time = -1
             self.end_stage_clear_text_template = cv2.imread(
-                settings.get("end_stage_clear_text_path")
+                settings.get(
+                    "end_stage_clear_text_path", fallback="data/endStageClearText.png"
+                )
             )
-        self.reset_template = cv2.imread(settings.get("reset_image_path"))
+        self.reset_template = cv2.imread(
+            settings.get("reset_image_path", fallback="data/reset.png")
+        )
         self.template = cv2.imread(self.start_frame_image_path)
         self.capture = cv2.VideoCapture(settings.get_int("video_capture_source"))
         if not self.capture.isOpened():
             logging.info("Cannot open camera")
             sys.exit()
         if self.write_capture_video:
-            path = settings.get("write_capture_video_path")
+            path = settings.get("write_capture_video_path", fallback="capture.avi")
             fps = float(self.capture.get(cv2.CAP_PROP_FPS)) or 60
             height = int(self.capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
             width = int(self.capture.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -194,7 +202,7 @@ class OpencvComputer:
         haystackImage,
         limit=10000,
         region=None,  # [x, y, width, height]
-        confidence=float(settings.get("confidence")),
+        confidence=float(settings.get("confidence", fallback=0.95)),
     ):
         """
         RGBA images are treated as RBG (ignores alpha channel)
