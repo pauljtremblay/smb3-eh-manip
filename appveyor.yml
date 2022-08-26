@@ -26,8 +26,8 @@ artifacts:
 
 deploy:
   - provider: GitHub
-    tag: main
-    release: main
+    tag: dev
+    release: dev
     auth_token:
       secure: 32wi9EYebbPOK8c8u2acHuSm2Gs/Mhm9nhnUOKmkuh10ftCGcdGu3yTo2PRiuuN/
     artifact: smb3_eh_manip.zip
