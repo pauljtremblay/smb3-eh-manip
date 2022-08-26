@@ -184,7 +184,9 @@ class OpencvComputer:
 
     def update_times(self):
         self.current_time = time.time() - self.start_time
-        ewma_read_frame_net = self.ewma_read_frame if self.offset_ewma_read_frame else 0
+        ewma_read_frame_net = (
+            -self.ewma_read_frame if self.offset_ewma_read_frame else 0
+        )
         self.current_frame = self.video_offset_frames + round(
             (ewma_read_frame_net + self.latency_ms + self.current_time * 1000)
             / settings.NES_MS_PER_FRAME,
