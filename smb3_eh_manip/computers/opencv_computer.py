@@ -42,6 +42,9 @@ class OpencvComputer:
         self.track_end_stage_clear_text_time = settings.get_boolean(
             "track_end_stage_clear_text_time", fallback=False
         )
+        self.offset_ewma_read_frame = settings.get_boolean(
+            "offset_ewma_read_frame", fallback=False
+        )
         self.playing = False
         self.current_time = -1
         self.start_time = -1
@@ -181,8 +184,9 @@ class OpencvComputer:
 
     def update_times(self):
         self.current_time = time.time() - self.start_time
+        ewma_read_frame_net = self.ewma_read_frame if self.offset_ewma_read_frame else 0
         self.current_frame = self.video_offset_frames + round(
-            (self.ewma_read_frame + self.latency_ms + self.current_time * 1000)
+            (ewma_read_frame_net + self.latency_ms + self.current_time * 1000)
             / settings.NES_MS_PER_FRAME,
             1,
         )
