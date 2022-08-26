@@ -33,6 +33,8 @@ pyinstaller: clean
 	cp -r data/ dist/
 	cp config.ini.sample dist/
 	cp README.* dist/
+	7z a smb3_eh_manip.zip dist/*
+	7z rn smb3_eh_manip.zip dist smb3_eh_manip
 
 run-test:
 	pytest --cov=smb3_eh_manip --cov-report term-missing tests/
