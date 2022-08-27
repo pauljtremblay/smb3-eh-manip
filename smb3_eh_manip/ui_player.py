@@ -60,7 +60,7 @@ class UiPlayer:
         cv2.putText(
             ui,
             f"Frame: {round(ewma_read_frame*1000)}ms",
-            (WINDOW_WIDTH // 3, VISUAL_CUE_HEIGHT + 48),
+            (WINDOW_WIDTH // 2, VISUAL_CUE_HEIGHT + 32),
             cv2.FONT_HERSHEY_PLAIN,
             1,
             (176, 176, 176),
@@ -69,7 +69,7 @@ class UiPlayer:
         cv2.putText(
             ui,
             f"Tick: {round(ewma_tick*1000)}ms",
-            ((3 * WINDOW_WIDTH) // 4, VISUAL_CUE_HEIGHT + 48),
+            (WINDOW_WIDTH // 2, VISUAL_CUE_HEIGHT + 56),
             cv2.FONT_HERSHEY_PLAIN,
             1,
             (176, 176, 176),
