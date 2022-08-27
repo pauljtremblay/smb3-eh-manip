@@ -17,21 +17,25 @@ def handler(_signum, _frame):
     computer = None
 
 
+def create_computer():
+    computer_name = settings.get("computer")
+    if computer_name == "eh":
+        return EhComputer()
+    elif computer_name == "twoone":
+        return TwoOneComputer()
+    elif computer_name == "eh_vcam":
+        return EhVcamComputer()
+    elif computer_name == "calibration":
+        return CalibrationComputer()
+    else:
+        logging.error(f"Failed to find computer {computer_name}")
+
+
 def main():
     global computer
     signal(SIGINT, handler)
     initialize_logging()
-    computer_name = settings.get("computer")
-    if computer_name == "eh":
-        computer = EhComputer()
-    elif computer_name == "twoone":
-        computer = TwoOneComputer()
-    elif computer_name == "eh_vcam":
-        computer = EhVcamComputer()
-    elif computer_name == "calibration":
-        computer = CalibrationComputer()
-    else:
-        logging.warning(f"Failed to find computer {computer_name}")
+    computer = create_computer()
     last_tick_duration = -1
     while computer is not None:
         start_time = time.time()
