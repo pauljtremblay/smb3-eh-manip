@@ -114,7 +114,9 @@ Notes
 TODO
 ----
 
+* Configuration utility
 * Develop practice methodology (starting from 2-1, validate if runner ended on correct frame)
+* Manual lag frame mitigation (e.g. if you exit 2-2 with the wrong score, autochange)
 
 Development
 -----------
