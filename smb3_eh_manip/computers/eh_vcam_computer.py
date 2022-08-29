@@ -9,7 +9,7 @@ from smb3_eh_manip.computers.opencv_computer import OpencvComputer
 
 class EhVcamComputer:
     def __init__(self):
-        self.capture = cv2.VideoCapture(settings.get_int("video_capture_source"))
+        self.capture = cv2.VideoCapture(settings.get("video_capture_source"))
         if not self.capture.isOpened():
             logging.info("Cannot open camera")
             sys.exit()

@@ -35,14 +35,17 @@ def main():
     global computer
     signal(SIGINT, handler)
     initialize_logging()
-    computer = create_computer()
-    last_tick_duration = -1
-    while computer is not None:
-        start_time = time.time()
-        computer.tick(last_tick_duration)
-        last_tick_duration = time.time() - start_time
-        logging.debug(f"Took {last_tick_duration}s to tick")
-
+    try:
+        computer = create_computer()
+        last_tick_duration = -1
+        while computer is not None:
+            start_time = time.time()
+            computer.tick(last_tick_duration)
+            last_tick_duration = time.time() - start_time
+            logging.debug(f"Took {last_tick_duration}s to tick")
+    except Exception as e:
+        logging.error(f"Received fatal error: {e}")
+        raise e
 
 if __name__ == "__main__":
     main()

@@ -19,6 +19,6 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=True,
-    install_requires=["opencv-python==4.5.4.60", "python-vlc", "pygame"],
+    install_requires=["opencv-python", "python-vlc", "pygame"],
     test_suite="tests",
 )

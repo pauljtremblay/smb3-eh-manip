@@ -1,5 +1,5 @@
 .
-pyinstaller
+pyinstaller>=5.3
 pytest
 pytest-cov
 twine
