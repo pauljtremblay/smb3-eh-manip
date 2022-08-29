@@ -62,7 +62,7 @@ class OpencvComputer:
             settings.get("reset_image_path", fallback="data/reset.png")
         )
         self.template = cv2.imread(self.start_frame_image_path)
-        self.capture = cv2.VideoCapture(settings.get("video_capture_source"))
+        self.capture = cv2.VideoCapture(settings.get_int("video_capture_source"))
         if not self.capture.isOpened():
             logging.info("Cannot open camera")
             sys.exit()
