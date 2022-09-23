@@ -4,6 +4,9 @@ smb3-eh-manip
 .. image:: https://badge.fury.io/py/smb3-eh-manip.png
     :target: https://badge.fury.io/py/smb3-eh-manip
 
+.. image:: https://ci.appveyor.com/api/projects/status/github/narfman0/smb3-eh-manip?branch=main
+    :target: https://ci.appveyor.com/project/narfman0/smb3-eh-manip
+
 Ingest video data from a capture card to render a smb3 eh TAS
 
 Installation
