@@ -3,7 +3,7 @@ import logging
 import cv2
 import numpy as np
 
-from smb3_eh_manip.settings import ACTION_FRAMES, FREQUENCY
+from smb3_eh_manip.settings import get_int, ACTION_FRAMES, FREQUENCY
 
 WINDOW_TITLE = "eh manip ui"
 LINE_COUNT = 6
@@ -19,12 +19,27 @@ THICKNESS = 2
 
 class UiPlayer:
     def __init__(self):
+        self.auto_close_ui_frame = get_int("auto_close_ui_frame", fallback=0)
+        self.window_open = True
         cv2.imshow(WINDOW_TITLE, UiPlayer.get_base_frame())
 
     def reset(self):
+        self.window_open = True
         self.trigger_frames = list(ACTION_FRAMES)
 
     def tick(self, current_frame, ewma_tick, ewma_read_frame):
+        if self.window_open:
+            self.draw(current_frame, ewma_tick, ewma_read_frame)
+
+            if (
+                self.auto_close_ui_frame > 0
+                and current_frame > self.auto_close_ui_frame
+            ):
+                cv2.destroyWindow(WINDOW_TITLE)
+                logging.debug(f"Auto closing ui window at {current_frame}")
+                self.window_open = False
+
+    def draw(self, current_frame, ewma_tick, ewma_read_frame):
         ui = UiPlayer.get_base_frame()
         if self.trigger_frames:
             next_trigger_distance = (
