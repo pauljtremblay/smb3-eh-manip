@@ -30,6 +30,16 @@ def get_config_region(name, domain=DEFAULT_DOMAIN, fallback=None):
     return get_list(name, domain=domain, fallback=fallback)
 
 
+def get_frame_windows(name, domain=DEFAULT_DOMAIN, fallback=None):
+    """Parse a frame windows str from ini"""
+    frame_windows = config.get(domain, name, fallback=fallback)
+    if frame_windows:
+        return list(
+            map(lambda str: list(map(int, str.split("-"))), frame_windows.split(","))
+        )
+    return None
+
+
 def get_list(name, domain=DEFAULT_DOMAIN, fallback=None):
     """Parse a region str from ini"""
     list_str = config.get(domain, name, fallback=fallback)

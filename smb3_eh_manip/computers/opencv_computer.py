@@ -30,6 +30,10 @@ class OpencvComputer:
         self.latency_ms = settings.get_int("latency_ms")
         self.show_capture_video = settings.get_boolean("show_capture_video")
         self.autoreset = settings.get_boolean("autoreset")
+        self.auto_detect_lag_frames = settings.get_boolean("auto_detect_lag_frames")
+        self.enable_auto_detect_lag_frame_ui = settings.get_boolean(
+            "enable_auto_detect_lag_frame_ui"
+        )
         self.enable_fceux_tas_start = settings.get_boolean(
             "enable_fceux_tas_start", fallback=False
         )
@@ -50,6 +54,13 @@ class OpencvComputer:
         self.start_time = -1
         self.ewma_tick = 0
         self.ewma_read_frame = 0
+        self.lag_frames = 0
+
+        if self.auto_detect_lag_frames:
+            self.auto_detect_lag_frame_windows = settings.get_frame_windows(
+                "auto_detect_lag_frame_windows", fallback="2500-2725"
+            )
+            self.last_frame_sliced = None
 
         if self.track_end_stage_clear_text_time:
             self.last_clear_sighting_time = -1
@@ -104,6 +115,7 @@ class OpencvComputer:
         self.check_and_update_end_stage(frame)
         self.check_and_update_autoreset(frame)
         self.check_and_update_begin_playing(frame)
+        self.check_and_update_lag_frames(frame)
         if self.show_capture_video:
             cv2.imshow("capture", frame)
         if self.enable_audio_player and self.playing:
@@ -128,6 +140,7 @@ class OpencvComputer:
             self.start_time = -1
             self.current_time = -1
             self.current_frame = -1
+            self.lag_frames = 0
             if self.enable_video_player:
                 self.video_player.reset()
             if self.enable_fceux_tas_start:
@@ -162,6 +175,28 @@ class OpencvComputer:
                 if self.enable_ui_player:
                     self.ui_player.reset()
                 logging.info(f"Detected start frame")
+
+    def check_and_update_lag_frames(self, frame):
+        if not self.auto_detect_lag_frames:
+            return
+        if self.playing:
+            for frame_window in self.auto_detect_lag_frame_windows:
+                if (
+                    self.current_frame >= frame_window[0]
+                    and self.current_frame <= frame_window[1]
+                ):
+                    # i dont want to compare the entire frame, since even for lag
+                    # frames they can change. let's remove a 100px border.
+                    current_frame_sliced = frame[100:-100, 100:-100]
+                    if (self.last_frame_sliced == current_frame_sliced).all():
+                        self.lag_frames += 1
+                        logging.info(f"Detected lag frame, total {self.lag_frames}")
+                        if self.enable_auto_detect_lag_frame_ui:
+                            cv2.imshow("last lag frame", current_frame_sliced)
+                    self.last_frame_sliced = current_frame_sliced
+
+                    if self.enable_auto_detect_lag_frame_ui:
+                        cv2.imshow("lag frame ui", current_frame_sliced)
 
     def check_and_update_end_stage(self, frame):
         if (
