@@ -55,6 +55,7 @@ class OpencvComputer:
         self.ewma_tick = 0
         self.ewma_read_frame = 0
         self.lag_frames = 0
+        self.lag_frames_default = 0
 
         if self.auto_detect_lag_frames:
             self.auto_detect_lag_frame_windows = settings.get_frame_windows(
@@ -119,12 +120,23 @@ class OpencvComputer:
         if self.show_capture_video:
             cv2.imshow("capture", frame)
         if self.enable_audio_player and self.playing:
-            self.audio_player.tick(self.current_frame)
+            self.audio_player.tick(self.current_frame - self.lag_frames)
         if self.enable_ui_player and self.playing:
             self.ui_player.tick(
-                self.current_frame, self.ewma_tick, self.ewma_read_frame
+                self.current_frame - self.lag_frames,
+                self.ewma_tick,
+                self.ewma_read_frame,
+                self.lag_frames,
             )
-        cv2.waitKey(1)
+        key = cv2.waitKey(1)
+        if key == ord("l"):
+            self.lag_frames += 1
+            self.lag_frames_default += 1
+            logging.info(f"Lag frame default incremented to {self.lag_frames_default}")
+        elif key == ord("k"):
+            self.lag_frames -= 1
+            self.lag_frames_default -= 1
+            logging.info(f"Lag frame default decremented to {self.lag_frames_default}")
 
     def check_and_update_autoreset(self, frame):
         if (
@@ -140,7 +152,7 @@ class OpencvComputer:
             self.start_time = -1
             self.current_time = -1
             self.current_frame = -1
-            self.lag_frames = 0
+            self.lag_frames = self.lag_frames_default
             if self.enable_video_player:
                 self.video_player.reset()
             if self.enable_fceux_tas_start:

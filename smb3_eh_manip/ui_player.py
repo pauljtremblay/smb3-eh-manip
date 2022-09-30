@@ -27,9 +27,9 @@ class UiPlayer:
         self.window_open = True
         self.trigger_frames = list(ACTION_FRAMES)
 
-    def tick(self, current_frame, ewma_tick, ewma_read_frame):
+    def tick(self, current_frame, ewma_tick, ewma_read_frame, lag_frames):
         if self.window_open:
-            self.draw(current_frame, ewma_tick, ewma_read_frame)
+            self.draw(current_frame, ewma_tick, ewma_read_frame, lag_frames)
 
             if (
                 self.auto_close_ui_frame > 0
@@ -39,7 +39,7 @@ class UiPlayer:
                 logging.debug(f"Auto closing ui window at {current_frame}")
                 self.window_open = False
 
-    def draw(self, current_frame, ewma_tick, ewma_read_frame):
+    def draw(self, current_frame, ewma_tick, ewma_read_frame, lag_frames):
         ui = UiPlayer.get_base_frame()
         if self.trigger_frames:
             next_trigger_distance = (
@@ -59,10 +59,10 @@ class UiPlayer:
                 logging.debug(
                     f"Popped trigger frame {trigger_frame} at {current_frame}"
                 )
-        self.show_text(ui, current_frame, ewma_tick, ewma_read_frame)
+        self.show_text(ui, current_frame, ewma_tick, ewma_read_frame, lag_frames)
         cv2.imshow(WINDOW_TITLE, ui)
 
-    def show_text(self, ui, current_frame, ewma_tick, ewma_read_frame):
+    def show_text(self, ui, current_frame, ewma_tick, ewma_read_frame, lag_frames):
         cv2.putText(
             ui,
             str(current_frame),
@@ -75,7 +75,7 @@ class UiPlayer:
         cv2.putText(
             ui,
             f"Frame: {round(ewma_read_frame*1000)}ms",
-            (WINDOW_WIDTH // 2, VISUAL_CUE_HEIGHT + 32),
+            (WINDOW_WIDTH // 2, VISUAL_CUE_HEIGHT + 24),
             cv2.FONT_HERSHEY_PLAIN,
             1,
             (176, 176, 176),
@@ -84,7 +84,16 @@ class UiPlayer:
         cv2.putText(
             ui,
             f"Tick: {round(ewma_tick*1000)}ms",
-            (WINDOW_WIDTH // 2, VISUAL_CUE_HEIGHT + 56),
+            (WINDOW_WIDTH // 2, VISUAL_CUE_HEIGHT + 44),
+            cv2.FONT_HERSHEY_PLAIN,
+            1,
+            (176, 176, 176),
+            2,
+        )
+        cv2.putText(
+            ui,
+            f"Lag frames: {lag_frames}",
+            (WINDOW_WIDTH // 2, VISUAL_CUE_HEIGHT + 64),
             cv2.FONT_HERSHEY_PLAIN,
             1,
             (176, 176, 176),
