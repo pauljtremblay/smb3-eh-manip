@@ -8,6 +8,7 @@ import numpy as np
 from smb3_eh_manip.audio_player import AudioPlayer
 from smb3_eh_manip import settings
 from smb3_eh_manip.fceux_lua_server import *
+from smb3_eh_manip.retrospy_server import RetroSpyServer
 from smb3_eh_manip.ui_player import UiPlayer
 from smb3_eh_manip.video_player import VideoPlayer
 
@@ -30,7 +31,12 @@ class OpencvComputer:
         self.latency_ms = settings.get_int("latency_ms")
         self.show_capture_video = settings.get_boolean("show_capture_video")
         self.autoreset = settings.get_boolean("autoreset")
-        self.auto_detect_lag_frames = settings.get_boolean("auto_detect_lag_frames")
+        self.auto_detect_lag_frames_video = settings.get_boolean(
+            "auto_detect_lag_frames_video"
+        )
+        self.auto_detect_lag_frames_retrospy = settings.get_boolean(
+            "auto_detect_lag_frames_retrospy"
+        )
         self.enable_auto_detect_lag_frame_ui = settings.get_boolean(
             "enable_auto_detect_lag_frame_ui"
         )
@@ -57,11 +63,14 @@ class OpencvComputer:
         self.lag_frames = 0
         self.lag_frames_default = 0
 
-        if self.auto_detect_lag_frames:
+        if self.auto_detect_lag_frames_video:
             self.auto_detect_lag_frame_windows = settings.get_frame_windows(
                 "auto_detect_lag_frame_windows", fallback="2500-2725"
             )
             self.last_frame_sliced = None
+
+        if self.auto_detect_lag_frames_retrospy:
+            self.retrospy_server = RetroSpyServer()
 
         if self.track_end_stage_clear_text_time:
             self.last_clear_sighting_time = -1
@@ -189,9 +198,10 @@ class OpencvComputer:
                 logging.info(f"Detected start frame")
 
     def check_and_update_lag_frames(self, frame):
-        if not self.auto_detect_lag_frames:
-            return
-        if self.playing:
+        if self.auto_detect_lag_frames_retrospy and self.playing:
+            self.retrospy_server.tick()
+            self.lag_frames = self.retrospy_server.lag_frames_observed
+        if self.auto_detect_lag_frames_video and self.playing:
             for frame_window in self.auto_detect_lag_frame_windows:
                 if (
                     self.current_frame >= frame_window[0]
