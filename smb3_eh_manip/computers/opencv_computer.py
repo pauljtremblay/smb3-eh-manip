@@ -168,6 +168,8 @@ class OpencvComputer:
                 emu.pause()
                 latency_offset = round(self.latency_ms / settings.NES_MS_PER_FRAME)
                 taseditor.setplayback(self.video_offset_frames + latency_offset)
+            if self.auto_detect_lag_frames_retrospy:
+                self.retrospy_server.reset()
             logging.info(f"Detected reset")
 
     def check_and_update_begin_playing(self, frame):
@@ -198,9 +200,13 @@ class OpencvComputer:
                 logging.info(f"Detected start frame")
 
     def check_and_update_lag_frames(self, frame):
-        if self.auto_detect_lag_frames_retrospy and self.playing:
+        if self.auto_detect_lag_frames_retrospy:
+            lag_frame_detect_start = time.time()
             self.retrospy_server.tick()
             self.lag_frames = self.retrospy_server.lag_frames_observed
+            detect_duration = time.time() - lag_frame_detect_start
+            if self.playing and detect_duration > 0.002:
+                logging.info(f"Took {detect_duration}s detecting lag frames")
         if self.auto_detect_lag_frames_video and self.playing:
             for frame_window in self.auto_detect_lag_frame_windows:
                 if (

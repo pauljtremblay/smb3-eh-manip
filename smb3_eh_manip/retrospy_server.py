@@ -50,7 +50,6 @@ class RetroSpyServer:
             else:
                 logging.info(f"Observed {packet_lag_frames} lag frames")
                 self.lag_frames_observed += packet_lag_frames
-        input_str = self.input_str_from_packet(data)
 
     def reset(self):
         self.lag_frames_observed = 0
