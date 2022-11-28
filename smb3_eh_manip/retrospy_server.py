@@ -1,14 +1,15 @@
 import logging
+import select
 import socket
 from signal import signal, SIGINT
+from multiprocessing import Process, Value
 
 from smb3_eh_manip.logging import initialize_logging
 from smb3_eh_manip.settings import NES_MS_PER_FRAME
 
-TAS_FILENAME = "taspart.fm2"
-TAS_FILE_WRITE = False
 PORT = 47569
 LAG_FRAME_THRESHOLD_PER_TICK = 3
+SOCKET_TIMEOUT = 10
 
 
 def handler(_signum, _frame):
@@ -20,15 +21,19 @@ def handler(_signum, _frame):
 class RetroSpyServer:
     def __init__(self):
         self.lag_frames_observed = 0
-        if TAS_FILE_WRITE:
-            self.f = open(TAS_FILENAME, "wt")
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind(("127.0.0.1", PORT))
+        self.ready = select.select([self.sock], [], [], SOCKET_TIMEOUT)
 
     def tick(self):
+        if not self.ready[0]:
+            return
         data, _addr = self.sock.recvfrom(1024)
         if len(data) < 26:
             logging.info(f"Data frame not large enough {len(data)}")
+            return
+        if len(data) > 28:
+            logging.info(f"Data frame too large {len(data)}")
             return
         timestamp_diff = (data[-1] << 8) + data[-2]
         packet_lag_frames = int((timestamp_diff + 2) / NES_MS_PER_FRAME) - 1
@@ -46,17 +51,11 @@ class RetroSpyServer:
                 logging.info(f"Observed {packet_lag_frames} lag frames")
                 self.lag_frames_observed += packet_lag_frames
         input_str = self.input_str_from_packet(data)
-        if TAS_FILE_WRITE:
-            self.f.write(
-                "|0|" + input_str + "||| timestamp_diff=" + str(timestamp_diff) + "\n"
-            )
 
     def reset(self):
         self.lag_frames_observed = 0
 
     def close(self):
-        if TAS_FILE_WRITE:
-            self.f.close()
         self.sock.close()
 
     @classmethod
