@@ -1,8 +1,8 @@
 import logging
 import select
 import socket
+import time
 from signal import signal, SIGINT
-from multiprocessing import Process, Value
 
 from smb3_eh_manip.logging import initialize_logging
 from smb3_eh_manip.settings import NES_MS_PER_FRAME
@@ -28,7 +28,7 @@ class RetroSpyServer:
     def tick(self):
         if not self.ready[0]:
             return
-        data, _addr = self.sock.recvfrom(1024)
+        data = self.sock.recv(1024)
         if len(data) < 26:
             logging.info(f"Data frame not large enough {len(data)}")
             return
@@ -79,5 +79,10 @@ if __name__ == "__main__":
     initialize_logging()
     server = RetroSpyServer()
     while running:
+
+        lag_frame_detect_start = time.time()
         server.tick()
+        detect_duration = time.time() - lag_frame_detect_start
+        if detect_duration > 0.002:
+            logging.info(f"Took {detect_duration}s detecting lag frames")
     server.close()
