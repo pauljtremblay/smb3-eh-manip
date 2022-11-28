@@ -2,6 +2,7 @@ import logging
 import select
 import socket
 import time
+from multiprocessing import Process, Value
 from signal import signal, SIGINT
 
 from smb3_eh_manip.logging import initialize_logging
@@ -18,23 +19,18 @@ def handler(_signum, _frame):
     running = False
 
 
-class RetroSpyServer:
-    def __init__(self):
-        self.lag_frames_observed = 0
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.bind(("127.0.0.1", PORT))
-        self.ready = select.select([self.sock], [], [], SOCKET_TIMEOUT)
-
-    def tick(self):
-        if not self.ready[0]:
-            return
-        data = self.sock.recv(1024)
+def retrospy_server_process(lag_frames_observed):
+    initialize_logging()
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.bind(("127.0.0.1", PORT))
+    while True:
+        data = sock.recv(1024)
         if len(data) < 26:
             logging.info(f"Data frame not large enough {len(data)}")
-            return
+            continue
         if len(data) > 28:
             logging.info(f"Data frame too large {len(data)}")
-            return
+            continue
         timestamp_diff = (data[-1] << 8) + data[-2]
         packet_lag_frames = int((timestamp_diff + 2) / NES_MS_PER_FRAME) - 1
         if packet_lag_frames < 0:
@@ -49,13 +45,27 @@ class RetroSpyServer:
                 )
             else:
                 logging.info(f"Observed {packet_lag_frames} lag frames")
-                self.lag_frames_observed += packet_lag_frames
+                total = lag_frames_observed.value + packet_lag_frames
+                with lag_frames_observed.get_lock():
+                    lag_frames_observed.value = total
+        time.sleep(0.001)
+
+
+class RetroSpyServer:
+    def __init__(self):
+        self.lag_frames_observed_value = Value("i", 0)
+        self.lag_frames_observed = 0
+        self.retrospy_server_process = Process(
+            target=retrospy_server_process, args=(self.lag_frames_observed_value,)
+        ).start()
+
+    def tick(self):
+        self.lag_frames_observed = self.lag_frames_observed_value.value
 
     def reset(self):
         self.lag_frames_observed = 0
-
-    def close(self):
-        self.sock.close()
+        with self.lag_frames_observed_value.get_lock():
+            self.lag_frames_observed_value.value = 0
 
     @classmethod
     def input_str_from_packet(kls, packet):
@@ -85,4 +95,3 @@ if __name__ == "__main__":
         detect_duration = time.time() - lag_frame_detect_start
         if detect_duration > 0.002:
             logging.info(f"Took {detect_duration}s detecting lag frames")
-    server.close()
