@@ -1,5 +1,4 @@
 import logging
-import select
 import socket
 import time
 from multiprocessing import Process, Value
