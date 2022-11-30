@@ -45,9 +45,6 @@ run-main:
 run-retrospy-server:
 	python -m smb3_eh_manip.retrospy_server
 
-run-rng:
-	python -m smb3_eh_manip.rng
-
 release-test: clean
 	python setup.py sdist bdist_wheel
 	twine upload --repository pypitest dist/*
@@ -58,7 +55,6 @@ release-prod: clean
 
 release: run-test release-test release-prod clean
 
-rng: run-rng
 rss: run-retrospy-server
 m: run-main
 main: init m

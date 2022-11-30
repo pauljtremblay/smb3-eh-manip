@@ -1,6 +1,6 @@
 import logging
 
-from smb3_eh_manip.logging import initialize_logging
+from smb3_eh_manip.util.logging import initialize_logging
 
 
 class LSFR:
@@ -14,16 +14,4 @@ class LSFR:
             b = rng_byte & 1
             self.data[i] = (carry << 7) | (rng_byte >> 1)
             carry = b
-
-
-def main():
-    initialize_logging()
-    lsfr = LSFR()
-    logging.info(f"Initial rng: {lsfr.data}")
-    for i in range(10):
-        lsfr.next()
-        logging.info(f"RNG after {i}: {lsfr.data}")
-
-
-if __name__ == "__main__":
-    main()
+        return self.data

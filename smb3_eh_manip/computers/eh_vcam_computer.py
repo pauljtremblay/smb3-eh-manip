@@ -3,7 +3,7 @@ import sys
 
 import cv2
 
-from smb3_eh_manip import settings
+from smb3_eh_manip.util import settings
 from smb3_eh_manip.computers.opencv_computer import OpencvComputer
 
 

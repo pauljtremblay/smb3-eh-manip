@@ -1,5 +1,5 @@
 import unittest
-from smb3_eh_manip import logging
+from smb3_eh_manip.util import logging
 
 
 class TestLogging(unittest.TestCase):

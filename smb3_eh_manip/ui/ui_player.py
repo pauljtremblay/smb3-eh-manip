@@ -3,7 +3,7 @@ import logging
 import cv2
 import numpy as np
 
-from smb3_eh_manip.settings import get_int, ACTION_FRAMES, FREQUENCY
+from smb3_eh_manip.util.settings import get_int, ACTION_FRAMES, FREQUENCY
 
 WINDOW_TITLE = "eh manip ui"
 LINE_COUNT = 6

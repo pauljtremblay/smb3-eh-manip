@@ -4,8 +4,8 @@ from multiprocessing import Process, Value
 
 import pygame
 
-from smb3_eh_manip import settings
-from smb3_eh_manip.settings import ACTION_FRAMES, FREQUENCY
+from smb3_eh_manip.util import settings
+from smb3_eh_manip.util.settings import ACTION_FRAMES, FREQUENCY
 
 DEFAULT_AUDIO_CUE_PATH = "data/audio_cue.wav"
 AUDIO_CUE_PATH = settings.get("audio_cue_path", fallback=DEFAULT_AUDIO_CUE_PATH)

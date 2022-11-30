@@ -4,8 +4,8 @@ import time
 from multiprocessing import Process, Value
 from signal import signal, SIGINT
 
-from smb3_eh_manip.logging import initialize_logging
-from smb3_eh_manip.settings import NES_MS_PER_FRAME
+from smb3_eh_manip.util.logging import initialize_logging
+from smb3_eh_manip.util.settings import NES_MS_PER_FRAME
 
 PORT = 47569
 LAG_FRAME_THRESHOLD_PER_TICK = 3

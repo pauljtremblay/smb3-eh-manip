@@ -5,9 +5,9 @@ import time
 import cv2
 import numpy as np
 
-from smb3_eh_manip import settings
-from smb3_eh_manip.fceux_lua_server import *
-from smb3_eh_manip.retrospy_server import RetroSpyServer
+from smb3_eh_manip.util import settings
+from smb3_eh_manip.util.fceux_lua_server import *
+from smb3_eh_manip.util.retrospy_server import RetroSpyServer
 from smb3_eh_manip.ui.audio_player import AudioPlayer
 from smb3_eh_manip.ui.ui_player import UiPlayer
 from smb3_eh_manip.ui.video_player import VideoPlayer

@@ -1,6 +1,6 @@
 import logging
 
-from smb3_eh_manip import settings
+from smb3_eh_manip.util import settings
 
 
 def initialize_logging():

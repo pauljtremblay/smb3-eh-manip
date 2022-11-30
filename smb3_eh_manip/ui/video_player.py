@@ -1,5 +1,5 @@
 import vlc
-from smb3_eh_manip import settings
+from smb3_eh_manip.util import settings
 
 
 class VideoPlayer:
