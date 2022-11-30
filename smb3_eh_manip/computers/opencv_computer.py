@@ -5,12 +5,12 @@ import time
 import cv2
 import numpy as np
 
-from smb3_eh_manip.audio_player import AudioPlayer
 from smb3_eh_manip import settings
 from smb3_eh_manip.fceux_lua_server import *
 from smb3_eh_manip.retrospy_server import RetroSpyServer
-from smb3_eh_manip.ui_player import UiPlayer
-from smb3_eh_manip.video_player import VideoPlayer
+from smb3_eh_manip.ui.audio_player import AudioPlayer
+from smb3_eh_manip.ui.ui_player import UiPlayer
+from smb3_eh_manip.ui.video_player import VideoPlayer
 
 CLEAR_SIGHTING_DURATION_SECONDS = 10
 
