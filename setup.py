@@ -19,6 +19,12 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=True,
-    install_requires=["opencv-python==4.6.0.66", "python-vlc", "pygame", "pygrabber"],
+    install_requires=[
+        "dataclass_wizard",
+        "opencv-python==4.6.0.66",
+        "pygame",
+        "pygrabber",
+        "python-vlc",
+    ],
     test_suite="tests",
 )
