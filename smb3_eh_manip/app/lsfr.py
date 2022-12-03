@@ -1,8 +1,3 @@
-import logging
-
-from smb3_eh_manip.util.logging import initialize_logging
-
-
 class LSFR:
     def __init__(self):
         self.data = [0x88, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]

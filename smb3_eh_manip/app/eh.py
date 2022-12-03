@@ -4,7 +4,7 @@ this class has specific insight into world 2. Whatever we need to model that
 is world 2 specific (direction hints, constraints, frame offsets) should live
 here.
 """
-from smb3_eh_manip.models.world import World
+from smb3_eh_manip.app.models import World
 
 
 # we want to simulate the bros. after simulating we can figure out optimization.

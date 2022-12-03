@@ -1,10 +1,10 @@
 import unittest
 import tempfile
 
-from smb3_eh_manip.models import world as models
+from smb3_eh_manip.app import models
 
 
-class TestWorld(unittest.TestCase):
+class TestModels(unittest.TestCase):
     def test_serialize(self):
         world = models.World(
             number=2,

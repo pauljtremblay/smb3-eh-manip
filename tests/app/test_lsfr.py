@@ -1,6 +1,6 @@
 import unittest
 
-from smb3_eh_manip.models.lsfr import LSFR
+from smb3_eh_manip.app.lsfr import LSFR
 
 
 class TestLSFR(unittest.TestCase):
