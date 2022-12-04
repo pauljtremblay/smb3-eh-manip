@@ -58,8 +58,13 @@ class RetroSpyServer:
             target=retrospy_server_process, args=(self.lag_frames_observed_value,)
         ).start()
 
-    def tick(self):
-        self.lag_frames_observed = self.lag_frames_observed_value.value
+    def tick(self, game_state_manager):
+        new_lag_frames_observed = (
+            self.lag_frames_observed_value.value - self.lag_frames_observed
+        )
+        if new_lag_frames_observed:
+            self.lag_frames_observed += new_lag_frames_observed
+            game_state_manager.handle_lag_frames_observed(new_lag_frames_observed)
 
     def reset(self):
         self.lag_frames_observed = 0

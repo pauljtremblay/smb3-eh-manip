@@ -5,12 +5,13 @@ import time
 import cv2
 import numpy as np
 
-from smb3_eh_manip.util import settings
+from smb3_eh_manip.app.game_state_manager import GameStateManager
 from smb3_eh_manip.app.servers.fceux_lua_server import *
 from smb3_eh_manip.app.servers.retrospy_server import RetroSpyServer
 from smb3_eh_manip.ui.audio_player import AudioPlayer
 from smb3_eh_manip.ui.ui_player import UiPlayer
 from smb3_eh_manip.ui.video_player import VideoPlayer
+from smb3_eh_manip.util import settings
 
 CLEAR_SIGHTING_DURATION_SECONDS = 10
 
@@ -63,6 +64,7 @@ class OpencvComputer:
         self.lag_frames = 0
         self.lag_frames_default = 0
 
+        self.game_state_manager = GameStateManager()
         if self.auto_detect_lag_frames_video:
             self.auto_detect_lag_frame_windows = settings.get_frame_windows(
                 "auto_detect_lag_frame_windows", fallback="2500-2725"
@@ -162,6 +164,7 @@ class OpencvComputer:
             self.current_time = -1
             self.current_frame = -1
             self.lag_frames = self.lag_frames_default
+            self.game_state_manager.reset()
             if self.enable_video_player:
                 self.video_player.reset()
             if self.enable_fceux_tas_start:
@@ -202,7 +205,7 @@ class OpencvComputer:
     def check_and_update_lag_frames(self, frame):
         if self.auto_detect_lag_frames_retrospy:
             lag_frame_detect_start = time.time()
-            self.retrospy_server.tick()
+            self.retrospy_server.tick(self.game_state_manager)
             self.lag_frames = self.retrospy_server.lag_frames_observed
             detect_duration = time.time() - lag_frame_detect_start
             if self.playing and detect_duration > 0.002:

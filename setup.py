@@ -22,6 +22,7 @@ setup(
     install_requires=[
         "dataclass_wizard",
         "opencv-python==4.6.0.66",
+        "pydispatcher",
         "pygame",
         "pygrabber",
         "python-vlc",

@@ -43,7 +43,7 @@ run-main:
 	python -m smb3_eh_manip.main
 
 run-retrospy-server:
-	python -m smb3_eh_manip.retrospy_server
+	python -m smb3_eh_manip.app.servers.retrospy_server
 
 release-test: clean
 	python setup.py sdist bdist_wheel
