@@ -72,6 +72,12 @@ enable_auto_detect_lag_frame_ui = false
 ; when the trigger frame has been detected.
 ; enable_fceux_tas_start = false
 
+; The tool tries to figure out where the runner is, to add other
+; cues. For example, if we keep track of going into the pipe before
+; hands, we can try to add a cue to time a nohands manip.
+; Which category should we track progress against?
+; category = nww
+
 ; scale playback video
 ; video_player_scale = 1
 

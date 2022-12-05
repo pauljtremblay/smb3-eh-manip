@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 
 from smb3_eh_manip.app.game_state_manager import GameStateManager
+from smb3_eh_manip.app.nohands import NoHands
 from smb3_eh_manip.app.servers.fceux_lua_server import *
 from smb3_eh_manip.app.servers.retrospy_server import RetroSpyServer
 from smb3_eh_manip.ui.audio_player import AudioPlayer
@@ -43,6 +44,9 @@ class OpencvComputer:
         )
         self.enable_fceux_tas_start = settings.get_boolean(
             "enable_fceux_tas_start", fallback=False
+        )
+        self.enable_nohands_manip = settings.get_boolean(
+            "enable_nohands_manip", fallback=False
         )
         self.write_capture_video = settings.get_boolean(
             "write_capture_video", fallback=False
@@ -97,6 +101,8 @@ class OpencvComputer:
             self.output_video = cv2.VideoWriter(
                 path, cv2.VideoWriter_fourcc(*"MPEG"), fps, (width, height)
             )
+        if self.enable_nohands_manip:
+            self.nohands = NoHands()
         if self.enable_video_player:
             self.video_player = VideoPlayer(player_video_path, video_offset_frames)
         self.reset_image_region = settings.get_config_region("reset_image_region")
@@ -139,6 +145,8 @@ class OpencvComputer:
                 self.ewma_read_frame,
                 self.lag_frames,
             )
+        if self.enable_nohands_manip:
+            self.nohands.tick(self.lag_frames)
         key = cv2.waitKey(1)
         if key == ord("l"):
             self.lag_frames += 1

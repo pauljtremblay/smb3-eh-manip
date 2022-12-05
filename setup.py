@@ -26,6 +26,7 @@ setup(
         "pygame",
         "pygrabber",
         "python-vlc",
+        "pyyaml",
     ],
     test_suite="tests",
 )

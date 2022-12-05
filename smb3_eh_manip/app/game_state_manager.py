@@ -32,4 +32,3 @@ class GameStateManager:
     def reset(self):
         self.current_state = GameState.INITIALIZING
         self.current_level = 0
-        self.current_world = 1
