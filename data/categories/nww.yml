@@ -1,51 +1,76 @@
 sections:
-  - "w1 enter"
+  -
+    name: "w1 enter"
     lag_frames: 12
-  - "1-1 enter"
+  -
+    name: "1-1 enter"
     lag_frames: 63
-  - "1-1 exit"
+  - 
+    name: "1-1 exit"
     lag_frames: 12
-  - "1-2 enter"
+  - 
+    name: "1-2 enter"
     lag_frames: 65
-  - "1-2-exit"
+  - 
+    name: "1-2-exit"
     lag_frames: 12
-  - "1-3-enter"
+  - 
+    name: "1-3-enter"
     lag_frames: 63
-  - "1-3-transition"
+  - 
+    name: "1-3-transition"
     lag_frames: 10
-  - "1-3-exit"
+  - 
+    name: "1-3-exit"
     lag_frames: 12
-  - "1-F-enter"
+  - 
+    name: "1-F-enter"
     lag_frames: 12
-  - "1-F-transition"
+  - 
+    name: "1-F-transition"
     lag_frames: 14
-  - "1-F-exit"
+  - 
+    name: "1-F-exit"
     lag_frames: 69
-  - "1-5-enter"
+  - 
+    name: "1-5-enter"
     lag_frames: 14
-  - "1-5-pipe"
+  - 
+    name: "1-5-pipe"
     lag_frames: 12
-  - "1-5-exit"
+  - 
+    name: "1-5-exit"
     lag_frames: 70
-  - "first-whistle"
+  - 
+    name: "first-whistle"
     lag_frames: 11
-  - "second-whistle"
+  - 
+    name: "second-whistle"
     lag_frames: 11
-  - "W8-enter"
+  - 
+    name: "W8-enter"
     lag_frames: 62
-  - "8-army-enter"
+  - 
+    name: "8-army-enter"
     lag_frames: 61
-  - "8-army-pipe"
+  - 
+    name: "8-army-pipe"
     lag_frames: 10
-  - "8-army-exit"
+  - 
+    name: "8-army-exit"
     lag_frames: 13
-  - "8-navy-enter"
+  - 
+    name: "8-navy-enter"
     lag_frames: 61
-  - "8-navy-pipe"
+  - 
+    name: "8-navy-pipe"
     lag_frames: 10 # 9 in practice rom, 10 in a "run"
-  - "8-navy-exit"
+  - 
+    name: "8-navy-exit"
     lag_frames: 13
-  - "8-first-pipe-enter"
+  - 
+    name: "8-first-pipe-enter"
     lag_frames: 61
-  - "8-first-pipe-exit"
+  - 
+    name: "8-first-pipe-exit"
     lag_frames: 13

@@ -8,4 +8,4 @@ class TestNoHands(unittest.TestCase):
         nohands = NoHands()
         nohands.tick(12)
         nohands.tick(63)
-        self.assertEqual(2, nohands.current_section)
+        self.assertEqual("1-1 exit", nohands.active_section()["name"])

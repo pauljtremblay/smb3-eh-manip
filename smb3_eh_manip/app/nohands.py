@@ -41,10 +41,9 @@ class NoHands:
         recent_lag_frames = lag_frames - self.last_lag_frame_count
         if not recent_lag_frames:
             return
-        breakpoint()
-        if self.active_section() == recent_lag_frames:
-            section = self.category.sections.pop()
-            logging.info(f"Completed {section}")
+        if self.active_section()["lag_frames"] == recent_lag_frames:
+            section = self.category["sections"].pop(0)
+            logging.info(f"Completed {section['name']}")
 
     def active_section(self):
-        return list(self.category["sections"])[0]
+        return self.category["sections"][0]
