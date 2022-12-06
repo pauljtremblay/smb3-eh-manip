@@ -15,3 +15,18 @@ class TestLSFR(unittest.TestCase):
         lsfr_clone = lsfr.clone()
         lsfr_clone.next()
         self.assertNotEqual(lsfr.get(0), lsfr_clone.get(0))
+
+    def test_hand_check(self):
+        lsfr = LSFR([156, 167, 158, 209, 236, 79, 151, 8, 38])
+        self.assertFalse(lsfr.hand_check())
+        lsfr = LSFR([201, 142, 29, 1, 59, 57, 79, 61, 163])
+        self.assertTrue(lsfr.hand_check())
+
+        lsfr = LSFR([103, 41, 231, 180, 123, 19, 229, 194, 9])
+        self.assertFalse(lsfr.hand_check())
+        lsfr = LSFR([242, 99, 135, 64, 78, 206, 83, 207, 104])
+        self.assertFalse(lsfr.hand_check())
+        lsfr = LSFR([221, 72, 242, 99, 135, 64, 78, 206, 83])
+        # TODO this is broken. why.
+        breakpoint()
+        self.assertFalse(lsfr.hand_check())

@@ -4,7 +4,6 @@ Specifics like lag frames, bro indices, etc should be in their respective
 modules with a specific exploit in mind (e.g. w2 is in 'eh')
 """
 from dataclasses import dataclass
-import json
 from typing import Optional
 
 from dataclass_wizard import YAMLWizard

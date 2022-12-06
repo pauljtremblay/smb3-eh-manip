@@ -4,6 +4,7 @@ import logging
 from dataclass_wizard import YAMLWizard
 
 from smb3_eh_manip.app.lsfr import LSFR
+from smb3_eh_manip.app.nohands import NoHands
 from smb3_eh_manip.util import settings
 
 
@@ -38,6 +39,7 @@ class State:
         ):
             section = self.category.sections.pop(0)
             logging.info(f"Completed {section.name}")
+            self.nohands.section_completed(section, self.lsfr.clone())
 
     def tick(self, current_frame):
         # we need to see how much time has gone by and increment RNG that amount
@@ -56,6 +58,7 @@ class State:
         self.lsfr_frame = 12
         self.category = Category.load()
         self.lsfr = LSFR()
+        self.nohands = NoHands()
 
     def active_section(self):
         return self.category.sections[0]
