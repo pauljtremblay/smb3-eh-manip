@@ -5,8 +5,7 @@ import time
 import cv2
 import numpy as np
 
-from smb3_eh_manip.app.game_state_manager import GameStateManager
-from smb3_eh_manip.app.nohands import NoHands
+from smb3_eh_manip.app.state import State
 from smb3_eh_manip.app.servers.fceux_lua_server import *
 from smb3_eh_manip.app.servers.retrospy_server import RetroSpyServer
 from smb3_eh_manip.ui.audio_player import AudioPlayer
@@ -45,9 +44,6 @@ class OpencvComputer:
         self.enable_fceux_tas_start = settings.get_boolean(
             "enable_fceux_tas_start", fallback=False
         )
-        self.enable_nohands_manip = settings.get_boolean(
-            "enable_nohands_manip", fallback=False
-        )
         self.write_capture_video = settings.get_boolean(
             "write_capture_video", fallback=False
         )
@@ -68,7 +64,7 @@ class OpencvComputer:
         self.lag_frames = 0
         self.lag_frames_default = 0
 
-        self.game_state_manager = GameStateManager()
+        self.state = State()
         if self.auto_detect_lag_frames_video:
             self.auto_detect_lag_frame_windows = settings.get_frame_windows(
                 "auto_detect_lag_frame_windows", fallback="2500-2725"
@@ -101,8 +97,6 @@ class OpencvComputer:
             self.output_video = cv2.VideoWriter(
                 path, cv2.VideoWriter_fourcc(*"MPEG"), fps, (width, height)
             )
-        if self.enable_nohands_manip:
-            self.nohands = NoHands()
         if self.enable_video_player:
             self.video_player = VideoPlayer(player_video_path, video_offset_frames)
         self.reset_image_region = settings.get_config_region("reset_image_region")
@@ -145,8 +139,6 @@ class OpencvComputer:
                 self.ewma_read_frame,
                 self.lag_frames,
             )
-        if self.enable_nohands_manip:
-            self.nohands.tick(self.lag_frames)
         key = cv2.waitKey(1)
         if key == ord("l"):
             self.lag_frames += 1
@@ -172,7 +164,7 @@ class OpencvComputer:
             self.current_time = -1
             self.current_frame = -1
             self.lag_frames = self.lag_frames_default
-            self.game_state_manager.reset()
+            self.state.reset()
             if self.enable_video_player:
                 self.video_player.reset()
             if self.enable_fceux_tas_start:
@@ -213,7 +205,7 @@ class OpencvComputer:
     def check_and_update_lag_frames(self, frame):
         if self.auto_detect_lag_frames_retrospy:
             lag_frame_detect_start = time.time()
-            self.retrospy_server.tick(self.game_state_manager)
+            self.retrospy_server.tick(self.state)
             self.lag_frames = self.retrospy_server.lag_frames_observed
             detect_duration = time.time() - lag_frame_detect_start
             if self.playing and detect_duration > 0.002:

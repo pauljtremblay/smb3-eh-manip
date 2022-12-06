@@ -8,7 +8,7 @@ from smb3_eh_manip.util.logging import initialize_logging
 from smb3_eh_manip.util.settings import NES_MS_PER_FRAME
 
 PORT = 47569
-LAG_FRAME_THRESHOLD_PER_TICK = 3
+LOAD_FRAME_THRESHOLD = 3  # anything higher than this number is considered a load frame instead of lag frame
 SOCKET_TIMEOUT = 10
 
 
@@ -18,7 +18,7 @@ def handler(_signum, _frame):
     running = False
 
 
-def retrospy_server_process(lag_frames_observed):
+def retrospy_server_process(lag_frames_observed, load_frames_observed):
     initialize_logging()
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(("127.0.0.1", PORT))
@@ -38,10 +38,11 @@ def retrospy_server_process(lag_frames_observed):
             )
             packet_lag_frames = 0
         if packet_lag_frames:
-            if packet_lag_frames > LAG_FRAME_THRESHOLD_PER_TICK:
-                logging.info(
-                    f"Observed {packet_lag_frames} lag frames, which is greater than the threshold {LAG_FRAME_THRESHOLD_PER_TICK}. Disregarding."
-                )
+            if packet_lag_frames > LOAD_FRAME_THRESHOLD:
+                logging.info(f"Observed {packet_lag_frames} load frames")
+                total = load_frames_observed.value + packet_lag_frames
+                with load_frames_observed.get_lock():
+                    load_frames_observed.value = total
             else:
                 logging.info(f"Observed {packet_lag_frames} lag frames")
                 total = lag_frames_observed.value + packet_lag_frames
@@ -54,22 +55,37 @@ class RetroSpyServer:
     def __init__(self):
         self.lag_frames_observed_value = Value("i", 0)
         self.lag_frames_observed = 0
+        self.load_frames_observed_value = Value("i", 0)
+        self.load_frames_observed = 0
         self.retrospy_server_process = Process(
-            target=retrospy_server_process, args=(self.lag_frames_observed_value,)
+            target=retrospy_server_process,
+            args=(
+                self.lag_frames_observed_value,
+                self.load_frames_observed_value,
+            ),
         ).start()
 
-    def tick(self, game_state_manager):
+    def tick(self, lag_frame_observer):
         new_lag_frames_observed = (
             self.lag_frames_observed_value.value - self.lag_frames_observed
         )
-        if new_lag_frames_observed:
-            self.lag_frames_observed += new_lag_frames_observed
-            game_state_manager.handle_lag_frames_observed(new_lag_frames_observed)
+        new_load_frames_observed = (
+            self.load_frames_observed_value.value - self.load_frames_observed
+        )
+        self.lag_frames_observed += new_lag_frames_observed
+        self.load_frames_observed += new_load_frames_observed
+        if new_lag_frames_observed or new_load_frames_observed:
+            lag_frame_observer.handle_lag_frames_observed(
+                new_lag_frames_observed, new_load_frames_observed
+            )
 
     def reset(self):
         self.lag_frames_observed = 0
         with self.lag_frames_observed_value.get_lock():
             self.lag_frames_observed_value.value = 0
+        self.load_frames_observed = 0
+        with self.load_frames_observed_value.get_lock():
+            self.load_frames_observed_value.value = 0
 
     @classmethod
     def input_str_from_packet(kls, packet):
