@@ -49,11 +49,12 @@ class NoHands:
     def section_completed(self, section, seed_lsfr):
         if section.name is not TRIGGER_SECTION_NAME:
             return
-        candidate_frame_offsets = []
         lsfr = seed_lsfr.clone()
         lsfr.next_n(SECTION_TRIGGER_TO_OVERWORLD_CONTROL)
         current_window = 0
         passed_hands = [0, 0, 0]
+        earliest_one_frame_window = None
+        earliest_two_frame_window = None
         for frame_offset in range(MAXIMUM_FRAMES_TO_LOOK_FORWARD):
             lsfr_experiment = lsfr.clone()
             lsfr_experiment.next_n(frame_offset)
@@ -73,7 +74,17 @@ class NoHands:
                 continue
             passed_hands[2] += 1
             current_window += 1
-            candidate_frame_offsets.append(
-                [SECTION_TRIGGER_TO_OVERWORLD_CONTROL + frame_offset, current_window]
+            candidate_frame_offset = (
+                SECTION_TRIGGER_TO_OVERWORLD_CONTROL + frame_offset,
+                current_window,
             )
-        return candidate_frame_offsets
+            if current_window == 3:
+                # if we have a 3 frame window we definitely use this immediately
+                return [candidate_frame_offset]
+            elif current_window == 2:
+                earliest_two_frame_window = candidate_frame_offset
+            elif earliest_one_frame_window is None:
+                earliest_one_frame_window = candidate_frame_offset
+        if earliest_two_frame_window:
+            return earliest_two_frame_window
+        return earliest_one_frame_window

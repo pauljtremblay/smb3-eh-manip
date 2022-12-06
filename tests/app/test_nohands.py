@@ -11,5 +11,6 @@ class TestNoHands(unittest.TestCase):
         section = Section(nohands_module.TRIGGER_SECTION_NAME, 60)
         lsfr = LSFR([81, 237, 78, 148, 9, 33, 51, 113, 23])
         nohands = nohands_module.NoHands()
-        candidate_frame_offsets = nohands.section_completed(section, lsfr)
-        self.assertEqual(13, len(candidate_frame_offsets))
+        optimal_frame_offset = nohands.section_completed(section, lsfr)
+        self.assertEqual(366, optimal_frame_offset[0])
+        self.assertEqual(2, optimal_frame_offset[1])
