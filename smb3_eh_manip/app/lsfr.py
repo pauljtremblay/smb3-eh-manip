@@ -1,6 +1,11 @@
 class LSFR:
-    def __init__(self):
-        self.data = [0x88, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
+    def __init__(self, data=None):
+        self.data = (
+            [0x88, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00] if not data else data
+        )
+
+    def clone(self):
+        return LSFR(list(self.data))
 
     def get(self, byte):
         return self.data[byte]
