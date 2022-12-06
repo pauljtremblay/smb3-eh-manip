@@ -15,7 +15,13 @@ class State:
         recent_load_frames = load_frames_observed - self.last_lag_frame_count
         if not recent_load_frames:
             return
-        if self.active_section()["lag_frames"] == recent_load_frames:
+        if not self.category["sections"]:
+            return
+        expected_lag = self.active_section()["lag_frames"]
+        if (
+            expected_lag >= recent_load_frames - 1
+            and expected_lag <= recent_load_frames + 1
+        ):
             section = self.category["sections"].pop(0)
             logging.info(f"Completed {section['name']}")
 
