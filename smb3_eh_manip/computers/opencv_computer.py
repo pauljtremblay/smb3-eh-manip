@@ -139,6 +139,7 @@ class OpencvComputer:
                 self.ewma_read_frame,
                 self.lag_frames,
             )
+        self.state.tick(self.current_frame)
         key = cv2.waitKey(1)
         if key == ord("l"):
             self.lag_frames += 1
