@@ -1,0 +1,49 @@
+number: 2
+positions:
+- hammer-bro: null
+  is-mushroom: false
+  level:
+    name: 2-3
+  x: 5
+  y: 3
+- hammer-bro:
+    index: 2
+    item: box
+  is-mushroom: false
+  level: null
+  x: 6
+  y: 3
+- hammer-bro: null
+  is-mushroom: false
+  level:
+    name: 2-quicksand
+  x: 7
+  y: 3
+- hammer-bro: null
+  is-mushroom: false
+  level: null
+  x: 7
+  y: 4
+- hammer-bro: null
+  is-mushroom: false
+  level:
+    name: 2-4
+  x: 8
+  y: 4
+- hammer-bro: null
+  is-mushroom: false
+  level: null
+  x: 9
+  y: 4
+- hammer-bro: null
+  is-mushroom: false
+  level: null
+  x: 9
+  y: 3
+- hammer-bro:
+    index: 3
+    item: hammer
+  is-mushroom: false
+  level: null
+  x: 9
+  y: 2

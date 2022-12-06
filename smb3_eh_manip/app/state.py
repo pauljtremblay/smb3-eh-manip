@@ -18,9 +18,7 @@ class Category(YAMLWizard):
 
     @classmethod
     def load(cls, category_name=settings.get("category", fallback="nww")):
-        path = f"data/categories/{category_name}.yml"
-        with open(path, "r", encoding="utf8") as yaml_file:
-            return Category.from_yaml(yaml_file)
+        return Category.from_yaml_file(f"data/categories/{category_name}.yml")
 
 
 class State:

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import json
 from typing import Optional
 
-from dataclass_wizard import JSONWizard
+from dataclass_wizard import YAMLWizard
 
 BRO_MOVEMENT_FRAMES = 32  # it takes 32 frames for a HB to make 1 movement
 LEVEL_FACE_TO_MOVE_FRAMES = 39
@@ -35,17 +35,13 @@ class Position:
 
 
 @dataclass
-class World(JSONWizard):
+class World(YAMLWizard):
     number: int
     positions: list[Position]
 
     def dump(self, path_prefix="data/worlds"):
-        world_path = f"{path_prefix}/world_{self.number}.json"
-        with open(world_path, "w", encoding="utf8") as json_file:
-            json.dump(self.to_dict(), json_file)
+        self.to_yaml_file(f"{path_prefix}/world_{self.number}.yml")
 
     @classmethod
     def load(cls, number, path_prefix="data/worlds"):
-        world_path = f"{path_prefix}/world_{number}.json"
-        with open(world_path, "r", encoding="utf8") as json_file:
-            return World.from_dict(json.load(json_file))
+        return World.from_yaml_file(f"{path_prefix}/world_{number}.yml")
