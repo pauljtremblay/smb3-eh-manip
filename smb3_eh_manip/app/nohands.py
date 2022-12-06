@@ -23,9 +23,9 @@ SECTION_TRIGGER_TO_OVERWORLD_CONTROL = (
     INTRA_PIPE_DURATION + POST_PIPE_TO_CONTROL_DURATION
 )
 # when holding left exiting the pipe, the frame# from origin to specific hand
-TO_HAND1_CHECK_FRAME_DURATION = 18
-TO_HAND2_CHECK_FRAME_DURATION = 40
-TO_HAND3_CHECK_FRAME_DURATION = 17
+TO_HAND1_CHECK_FRAME_DURATION = 17
+TO_HAND2_CHECK_FRAME_DURATION = 39
+TO_HAND3_CHECK_FRAME_DURATION = 16
 
 # How many frames does the window have to be before pressing left?
 # 3 is ideal if it happens within a second, otherwise 2 frames likely
@@ -47,26 +47,33 @@ TRIGGER_SECTION_NAME = settings.get(
 
 class NoHands:
     def section_completed(self, section, seed_lsfr):
-        if section.name is TRIGGER_SECTION_NAME:
-            candidate_frame_offsets = []
-            lsfr = seed_lsfr.clone()
-            lsfr.next_n(SECTION_TRIGGER_TO_OVERWORLD_CONTROL)
-            current_window = 0
-            for frame_offset in range(MAXIMUM_FRAMES_TO_LOOK_FORWARD):
-                lsfr_experiment = lsfr.clone()
-                lsfr_experiment.next_n(TO_HAND1_CHECK_FRAME_DURATION)
-                breakpoint()
-                if lsfr_experiment.hand_check():
-                    current_window = 0
-                    continue
-                lsfr_experiment.next_n(TO_HAND2_CHECK_FRAME_DURATION)
-                if lsfr_experiment.hand_check():
-                    current_window = 0
-                    continue
-                lsfr_experiment.next_n(TO_HAND3_CHECK_FRAME_DURATION)
-                if lsfr_experiment.hand_check():
-                    current_window = 0
-                    continue
-                current_window += 1
-                candidate_frame_offsets.append([frame_offset, current_window])
-            return candidate_frame_offsets
+        if section.name is not TRIGGER_SECTION_NAME:
+            return
+        candidate_frame_offsets = []
+        lsfr = seed_lsfr.clone()
+        lsfr.next_n(SECTION_TRIGGER_TO_OVERWORLD_CONTROL)
+        current_window = 0
+        passed_hands = [0, 0, 0]
+        for frame_offset in range(MAXIMUM_FRAMES_TO_LOOK_FORWARD):
+            lsfr_experiment = lsfr.clone()
+            lsfr_experiment.next_n(frame_offset)
+            lsfr_experiment.next_n(TO_HAND1_CHECK_FRAME_DURATION)
+            if lsfr_experiment.hand_check():
+                current_window = 0
+                continue
+            passed_hands[0] += 1
+            lsfr_experiment.next_n(TO_HAND2_CHECK_FRAME_DURATION)
+            if lsfr_experiment.hand_check():
+                current_window = 0
+                continue
+            passed_hands[1] += 1
+            lsfr_experiment.next_n(TO_HAND3_CHECK_FRAME_DURATION)
+            if lsfr_experiment.hand_check():
+                current_window = 0
+                continue
+            passed_hands[2] += 1
+            current_window += 1
+            candidate_frame_offsets.append(
+                [SECTION_TRIGGER_TO_OVERWORLD_CONTROL + frame_offset, current_window]
+            )
+        return candidate_frame_offsets

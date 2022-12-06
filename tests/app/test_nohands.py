@@ -12,5 +12,4 @@ class TestNoHands(unittest.TestCase):
         lsfr = LSFR([81, 237, 78, 148, 9, 33, 51, 113, 23])
         nohands = nohands_module.NoHands()
         candidate_frame_offsets = nohands.section_completed(section, lsfr)
-        # TODO this is a probabalistic guess. need ot fix hand check first
-        self.assertEqual(7, len(candidate_frame_offsets))
+        self.assertEqual(13, len(candidate_frame_offsets))

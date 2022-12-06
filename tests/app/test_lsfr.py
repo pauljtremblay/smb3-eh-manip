@@ -27,6 +27,4 @@ class TestLSFR(unittest.TestCase):
         lsfr = LSFR([242, 99, 135, 64, 78, 206, 83, 207, 104])
         self.assertFalse(lsfr.hand_check())
         lsfr = LSFR([221, 72, 242, 99, 135, 64, 78, 206, 83])
-        # TODO this is broken. why.
-        breakpoint()
-        self.assertFalse(lsfr.hand_check())
+        self.assertTrue(lsfr.hand_check())
