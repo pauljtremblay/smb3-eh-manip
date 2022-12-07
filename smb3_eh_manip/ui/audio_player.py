@@ -30,7 +30,7 @@ class AudioPlayer:
     def __init__(self):
         self.play = Value("i", 0)
         self.play_process = Process(target=play_audio_cue, args=(self.play,)).start()
-        events.listen(events.EventType.ADD_ACTION_FRAME, self.handle_add_action_frame)
+        events.listen(events.AddActionFrame, self.handle_add_action_frame)
 
     def reset(self):
         self.play.value = 0
@@ -49,6 +49,6 @@ class AudioPlayer:
             with self.play.get_lock():
                 self.play.value = 1
 
-    def handle_add_action_frame(self, event=None):
-        self.add_action_frame(event["action_frame"])
+    def handle_add_action_frame(self, event: events.AddActionFrame):
+        self.add_action_frame(event.action_frame)
         self.trigger_frames.sort()

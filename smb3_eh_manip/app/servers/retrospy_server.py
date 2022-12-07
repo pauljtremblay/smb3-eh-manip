@@ -4,6 +4,7 @@ import time
 from multiprocessing import Process, Value
 from signal import signal, SIGINT
 
+from smb3_eh_manip.util import events
 from smb3_eh_manip.util.logging import initialize_logging
 from smb3_eh_manip.util.settings import NES_MS_PER_FRAME
 
@@ -65,7 +66,7 @@ class RetroSpyServer:
             ),
         ).start()
 
-    def tick(self, current_frame, lag_frame_observer):
+    def tick(self, current_frame):
         new_lag_frames_observed = (
             self.lag_frames_observed_value.value - self.lag_frames_observed
         )
@@ -75,8 +76,12 @@ class RetroSpyServer:
         self.lag_frames_observed += new_lag_frames_observed
         self.load_frames_observed += new_load_frames_observed
         if new_lag_frames_observed or new_load_frames_observed:
-            lag_frame_observer.handle_lag_frames_observed(
-                current_frame, new_lag_frames_observed, new_load_frames_observed
+            events.emit(
+                events.LagFramesObserved,
+                self,
+                event=events.LagFramesObserved(
+                    current_frame, new_lag_frames_observed, new_load_frames_observed
+                ),
             )
 
     def reset(self):

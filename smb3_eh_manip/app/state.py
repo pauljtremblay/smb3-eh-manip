@@ -27,18 +27,17 @@ class State:
     def __init__(self):
         self.nohands = NoHands()
         self.reset()
+        events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
 
-    def handle_lag_frames_observed(
-        self, current_frame, observed_lag_frames, observed_load_frames
-    ):
-        self.total_observed_lag_frames += observed_lag_frames
-        self.total_observed_load_frames += observed_load_frames
+    def handle_lag_frames_observed(self, event: events.LagFramesObserved):
+        self.total_observed_lag_frames += event.observed_lag_frames
+        self.total_observed_load_frames += event.observed_load_frames
         if not self.category.sections:
             return
         expected_lag = self.active_section().lag_frames
         if (
-            expected_lag >= observed_load_frames - 1
-            and expected_lag <= observed_load_frames + 1
+            expected_lag >= event.observed_load_frames - 1
+            and expected_lag <= event.observed_load_frames + 1
         ):
             section = self.category.sections.pop(0)
             logging.info(f"Completed {section.name}")
@@ -46,11 +45,13 @@ class State:
                 section, self.lsfr.clone()
             )
             if optimal_action_frame_offset:
-                action_frame = round(current_frame + optimal_action_frame_offset[0])
+                action_frame = round(
+                    event.current_frame + optimal_action_frame_offset[0]
+                )
                 events.emit(
-                    events.EventType.ADD_ACTION_FRAME,
+                    events.AddActionFrame,
                     self,
-                    {"action_frame": action_frame},
+                    event=events.AddActionFrame(action_frame),
                 )
 
     def tick(self, current_frame):

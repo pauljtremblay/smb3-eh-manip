@@ -23,7 +23,7 @@ class UiPlayer:
         self.auto_close_ui_frame = get_int("auto_close_ui_frame", fallback=0)
         self.window_open = True
         cv2.imshow(WINDOW_TITLE, UiPlayer.get_base_frame())
-        events.listen(events.EventType.ADD_ACTION_FRAME, self.handle_add_action_frame)
+        events.listen(events.AddActionFrame, self.handle_add_action_frame)
 
     def reset(self):
         self.window_open = True
@@ -102,8 +102,8 @@ class UiPlayer:
             2,
         )
 
-    def handle_add_action_frame(self, event=None):
-        self.trigger_frames.append(event["action_frame"])
+    def handle_add_action_frame(self, event: events.AddActionFrame):
+        self.trigger_frames.append(event.action_frame)
         self.trigger_frames.sort()
 
     @classmethod
