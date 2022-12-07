@@ -41,18 +41,19 @@ class State:
         ):
             section = self.category.sections.pop(0)
             logging.info(f"Completed {section.name}")
-            optimal_action_frame_offset = self.nohands.section_completed(
-                section, self.lsfr.clone()
-            )
-            if optimal_action_frame_offset:
-                action_frame = round(
-                    event.current_frame + optimal_action_frame_offset[0]
+            if settings.get_boolean("nohands", fallback=False):
+                optimal_action_frame_offset = self.nohands.section_completed(
+                    section, self.lsfr.clone()
                 )
-                events.emit(
-                    events.AddActionFrame,
-                    self,
-                    event=events.AddActionFrame(action_frame),
-                )
+                if optimal_action_frame_offset:
+                    action_frame = round(
+                        event.current_frame + optimal_action_frame_offset[0]
+                    )
+                    events.emit(
+                        events.AddActionFrame,
+                        self,
+                        event=events.AddActionFrame(action_frame),
+                    )
 
     def tick(self, current_frame):
         # we need to see how much time has gone by and increment RNG that amount

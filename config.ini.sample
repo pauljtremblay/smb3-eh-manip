@@ -78,6 +78,14 @@ enable_auto_detect_lag_frame_ui = false
 ; Which category should we track progress against?
 ; category = nww
 
+; Given our progress in a given category, should we try for nohands
+; manip? The tool will monitor when you enter the pipe before hands,
+; and pick an optimal window and add an audio+visual cue.
+; The player holds left on the audio frame. If the window is 2-3 frames,
+; currently, the action frame is the last of the window, so if anything
+; press early.
+; nohands = false
+
 ; scale playback video
 ; video_player_scale = 1
 

@@ -26,26 +26,26 @@ def retrospy_server_process(lag_frames_observed, load_frames_observed):
     while True:
         data = sock.recv(1024)
         if len(data) < 26:
-            logging.info(f"Data frame not large enough {len(data)}")
+            logging.debug(f"Data frame not large enough {len(data)}")
             continue
         if len(data) > 28:
-            logging.info(f"Data frame too large {len(data)}")
+            logging.debug(f"Data frame too large {len(data)}")
             continue
         timestamp_diff = (data[-1] << 8) + data[-2]
         packet_lag_frames = int((timestamp_diff + 2) / NES_MS_PER_FRAME) - 1
         if packet_lag_frames < 0:
-            logging.info(
+            logging.debug(
                 f"We think we got {packet_lag_frames} frames, correcting to 0. timestamp_diff: {timestamp_diff}"
             )
             packet_lag_frames = 0
         if packet_lag_frames:
             if packet_lag_frames > LOAD_FRAME_THRESHOLD:
-                logging.info(f"Observed {packet_lag_frames} load frames")
+                logging.debug(f"Observed {packet_lag_frames} load frames")
                 total = load_frames_observed.value + packet_lag_frames
                 with load_frames_observed.get_lock():
                     load_frames_observed.value = total
             else:
-                logging.info(f"Observed {packet_lag_frames} lag frames")
+                logging.debug(f"Observed {packet_lag_frames} lag frames")
                 total = lag_frames_observed.value + packet_lag_frames
                 with lag_frames_observed.get_lock():
                     lag_frames_observed.value = total
