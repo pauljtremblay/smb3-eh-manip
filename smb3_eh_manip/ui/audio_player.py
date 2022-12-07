@@ -4,7 +4,7 @@ from multiprocessing import Process, Value
 
 import pygame
 
-from smb3_eh_manip.util import settings
+from smb3_eh_manip.util import events, settings
 from smb3_eh_manip.util.settings import ACTION_FRAMES, FREQUENCY
 
 DEFAULT_AUDIO_CUE_PATH = "data/audio_cue.wav"
@@ -30,17 +30,24 @@ class AudioPlayer:
     def __init__(self):
         self.play = Value("i", 0)
         self.play_process = Process(target=play_audio_cue, args=(self.play,)).start()
+        events.listen(events.EventType.ADD_ACTION_FRAME, self.handle_add_action_frame)
 
     def reset(self):
         self.play.value = 0
         self.trigger_frames = []
         for action_frame in ACTION_FRAMES:
-            for increment in range(4, -1, -1):
-                self.trigger_frames.append(action_frame - increment * FREQUENCY)
+            self.add_action_frame(action_frame)
         logging.info(f"Audio trigger frames set to {self.trigger_frames}")
+
+    def add_action_frame(self, action_frame):
+        for increment in range(4, -1, -1):
+            self.trigger_frames.append(action_frame - increment * FREQUENCY)
 
     def tick(self, current_frame):
         if self.trigger_frames and self.trigger_frames[0] <= current_frame:
             self.trigger_frames.pop(0)
             with self.play.get_lock():
                 self.play.value = 1
+
+    def handle_add_action_frame(self, event=None):
+        self.add_action_frame(event["action_frame"])

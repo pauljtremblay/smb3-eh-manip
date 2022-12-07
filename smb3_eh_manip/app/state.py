@@ -5,7 +5,7 @@ from dataclass_wizard import YAMLWizard
 
 from smb3_eh_manip.app.lsfr import LSFR
 from smb3_eh_manip.app.nohands import NoHands
-from smb3_eh_manip.util import settings
+from smb3_eh_manip.util import events, settings
 
 
 @dataclass
@@ -25,9 +25,12 @@ class Category(YAMLWizard):
 
 class State:
     def __init__(self):
+        self.nohands = NoHands()
         self.reset()
 
-    def handle_lag_frames_observed(self, observed_lag_frames, observed_load_frames):
+    def handle_lag_frames_observed(
+        self, current_frame, observed_lag_frames, observed_load_frames
+    ):
         self.total_observed_lag_frames += observed_lag_frames
         self.total_observed_load_frames += observed_load_frames
         if not self.category.sections:
@@ -39,7 +42,15 @@ class State:
         ):
             section = self.category.sections.pop(0)
             logging.info(f"Completed {section.name}")
-            self.nohands.section_completed(section, self.lsfr.clone())
+            optimal_action_frame_offset = self.nohands.section_completed(
+                section, self.lsfr.clone()
+            )
+            if optimal_action_frame_offset:
+                events.emit(
+                    events.EventType.ADD_ACTION_FRAME,
+                    self,
+                    {"action_frame": current_frame + optimal_action_frame_offset[0]},
+                )
 
     def tick(self, current_frame):
         # we need to see how much time has gone by and increment RNG that amount
@@ -58,7 +69,6 @@ class State:
         self.lsfr_frame = 12
         self.category = Category.load()
         self.lsfr = LSFR()
-        self.nohands = NoHands()
 
     def active_section(self):
         return self.category.sections[0]

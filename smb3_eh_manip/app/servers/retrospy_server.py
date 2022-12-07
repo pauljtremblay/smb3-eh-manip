@@ -65,7 +65,7 @@ class RetroSpyServer:
             ),
         ).start()
 
-    def tick(self, lag_frame_observer):
+    def tick(self, current_frame, lag_frame_observer):
         new_lag_frames_observed = (
             self.lag_frames_observed_value.value - self.lag_frames_observed
         )
@@ -76,7 +76,7 @@ class RetroSpyServer:
         self.load_frames_observed += new_load_frames_observed
         if new_lag_frames_observed or new_load_frames_observed:
             lag_frame_observer.handle_lag_frames_observed(
-                new_lag_frames_observed, new_load_frames_observed
+                current_frame, new_lag_frames_observed, new_load_frames_observed
             )
 
     def reset(self):

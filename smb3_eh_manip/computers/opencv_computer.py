@@ -58,6 +58,7 @@ class OpencvComputer:
         )
         self.playing = False
         self.current_time = -1
+        self.current_frame = -1
         self.start_time = -1
         self.ewma_tick = 0
         self.ewma_read_frame = 0
@@ -207,7 +208,7 @@ class OpencvComputer:
     def check_and_update_lag_frames(self, frame):
         if self.auto_detect_lag_frames_retrospy:
             lag_frame_detect_start = time.time()
-            self.retrospy_server.tick(self.state)
+            self.retrospy_server.tick(self.current_frame, self.state)
             self.lag_frames = self.retrospy_server.lag_frames_observed
             detect_duration = time.time() - lag_frame_detect_start
             if self.playing and detect_duration > 0.002:

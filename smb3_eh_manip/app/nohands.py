@@ -9,9 +9,7 @@ coming out of the pipe and holding left is ideally <30 frames.
 This class watches for level changes and times when the hands should occur.
 A higher level class should be keeping track of what levels we have beaten.
 """
-import logging
-
-from smb3_eh_manip.util import settings
+from smb3_eh_manip.util import events, settings
 
 INTRA_PIPE_DURATION = 197
 POST_PIPE_TO_CONTROL_DURATION = 56
@@ -47,7 +45,7 @@ TRIGGER_SECTION_NAME = settings.get(
 
 class NoHands:
     def section_completed(self, section, seed_lsfr):
-        if section.name is not TRIGGER_SECTION_NAME:
+        if section.name != TRIGGER_SECTION_NAME:
             return
         lsfr = seed_lsfr.clone()
         lsfr.next_n(SECTION_TRIGGER_TO_OVERWORLD_CONTROL)
@@ -55,6 +53,7 @@ class NoHands:
         passed_hands = [0, 0, 0]
         earliest_one_frame_window = None
         earliest_two_frame_window = None
+        optimal_frame_offset = None
         for frame_offset in range(MAXIMUM_FRAMES_TO_LOOK_FORWARD):
             lsfr_experiment = lsfr.clone()
             lsfr_experiment.next_n(frame_offset)
@@ -80,11 +79,20 @@ class NoHands:
             )
             if current_window == 3:
                 # if we have a 3 frame window we definitely use this immediately
-                return [candidate_frame_offset]
-            elif current_window == 2:
+                optimal_frame_offset = candidate_frame_offset
+                break
+            elif earliest_two_frame_window is None and current_window == 2:
                 earliest_two_frame_window = candidate_frame_offset
             elif earliest_one_frame_window is None:
                 earliest_one_frame_window = candidate_frame_offset
-        if earliest_two_frame_window:
-            return earliest_two_frame_window
-        return earliest_one_frame_window
+        if not optimal_frame_offset:
+            if earliest_two_frame_window:
+                optimal_frame_offset = earliest_two_frame_window
+            else:
+                optimal_frame_offset = earliest_one_frame_window
+        events.emit(
+            events.EventType.ADD_ACTION_FRAME,
+            self,
+            {"action_frame": optimal_frame_offset},
+        )
+        return optimal_frame_offset
