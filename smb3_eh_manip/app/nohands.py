@@ -13,11 +13,12 @@ from smb3_eh_manip.util import settings
 
 INTRA_PIPE_DURATION = 197
 POST_PIPE_TO_CONTROL_DURATION = 56
+PIPE_EXIT_LAG_FRAMES = 13
 # When we go in the pipe before hands, we want to start calculating which
 # is a good frame to hold left. This is the minimum time between entering
 # the pipe and having control of mario on the overworld, minus pipe
 # transition lag frames.
-SECTION_TRIGGER_TO_OVERWORLD_CONTROL = (
+SECTION_TRIGGER_TO_OVERWORLD_CONTROL_RNG_FRAMES = (
     INTRA_PIPE_DURATION + POST_PIPE_TO_CONTROL_DURATION
 )
 # when holding left exiting the pipe, the frame# from origin to specific hand
@@ -48,7 +49,7 @@ class NoHands:
         if section.name != TRIGGER_SECTION_NAME:
             return
         lsfr = seed_lsfr.clone()
-        lsfr.next_n(SECTION_TRIGGER_TO_OVERWORLD_CONTROL)
+        lsfr.next_n(SECTION_TRIGGER_TO_OVERWORLD_CONTROL_RNG_FRAMES)
         current_window = 0
         passed_hands = [0, 0, 0]
         earliest_one_frame_window = None
@@ -74,7 +75,9 @@ class NoHands:
             passed_hands[2] += 1
             current_window += 1
             candidate_frame_offset = (
-                SECTION_TRIGGER_TO_OVERWORLD_CONTROL + frame_offset,
+                PIPE_EXIT_LAG_FRAMES
+                + SECTION_TRIGGER_TO_OVERWORLD_CONTROL_RNG_FRAMES
+                + frame_offset,
                 current_window,
             )
             if current_window == 3:
