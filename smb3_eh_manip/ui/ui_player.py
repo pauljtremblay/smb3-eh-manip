@@ -3,6 +3,7 @@ import logging
 import cv2
 import numpy as np
 
+from smb3_eh_manip.util import events
 from smb3_eh_manip.util.settings import get_int, ACTION_FRAMES, FREQUENCY
 
 WINDOW_TITLE = "eh manip ui"
@@ -22,6 +23,7 @@ class UiPlayer:
         self.auto_close_ui_frame = get_int("auto_close_ui_frame", fallback=0)
         self.window_open = True
         cv2.imshow(WINDOW_TITLE, UiPlayer.get_base_frame())
+        events.listen(events.EventType.ADD_ACTION_FRAME, self.handle_add_action_frame)
 
     def reset(self):
         self.window_open = True
@@ -99,6 +101,10 @@ class UiPlayer:
             (176, 176, 176),
             2,
         )
+
+    def handle_add_action_frame(self, event=None):
+        self.trigger_frames.append(event["action_frame"])
+        self.trigger_frames.sort()
 
     @classmethod
     def get_base_frame(self):

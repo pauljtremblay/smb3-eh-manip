@@ -46,10 +46,11 @@ class State:
                 section, self.lsfr.clone()
             )
             if optimal_action_frame_offset:
+                action_frame = round(current_frame + optimal_action_frame_offset[0])
                 events.emit(
                     events.EventType.ADD_ACTION_FRAME,
                     self,
-                    {"action_frame": current_frame + optimal_action_frame_offset[0]},
+                    {"action_frame": action_frame},
                 )
 
     def tick(self, current_frame):

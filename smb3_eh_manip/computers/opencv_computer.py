@@ -197,6 +197,10 @@ class OpencvComputer:
                 self.current_time = 0
                 if self.enable_fceux_tas_start:
                     emu.unpause()
+                if self.auto_detect_lag_frames_retrospy:
+                    # lag frames can errantly be between reset and start,
+                    # especially on first run. lets just clear these values out.
+                    self.retrospy_server.reset()
                 if self.enable_video_player:
                     self.video_player.play()
                 if self.enable_audio_player:

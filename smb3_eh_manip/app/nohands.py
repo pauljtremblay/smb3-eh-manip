@@ -9,7 +9,7 @@ coming out of the pipe and holding left is ideally <30 frames.
 This class watches for level changes and times when the hands should occur.
 A higher level class should be keeping track of what levels we have beaten.
 """
-from smb3_eh_manip.util import events, settings
+from smb3_eh_manip.util import settings
 
 INTRA_PIPE_DURATION = 197
 POST_PIPE_TO_CONTROL_DURATION = 56
@@ -31,7 +31,7 @@ LEFT_PRESS_WINDOW = settings.get_int("nohands_left_press_window", fallback=1)
 # We cant look 10s in the future, so let's default this as a reasonable
 # couple seconds or so.
 MAXIMUM_FRAMES_TO_LOOK_FORWARD = settings.get_int(
-    "nohands_max_frames_to_look_forward", fallback=120
+    "nohands_max_frames_to_look_forward", fallback=60
 )
 
 # *: upon using the start/end pipe, identify frame windows in the
@@ -90,9 +90,4 @@ class NoHands:
                 optimal_frame_offset = earliest_two_frame_window
             else:
                 optimal_frame_offset = earliest_one_frame_window
-        events.emit(
-            events.EventType.ADD_ACTION_FRAME,
-            self,
-            {"action_frame": optimal_frame_offset},
-        )
         return optimal_frame_offset

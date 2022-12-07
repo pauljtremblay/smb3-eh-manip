@@ -51,3 +51,4 @@ class AudioPlayer:
 
     def handle_add_action_frame(self, event=None):
         self.add_action_frame(event["action_frame"])
+        self.trigger_frames.sort()
