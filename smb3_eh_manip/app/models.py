@@ -6,7 +6,8 @@ modules with a specific exploit in mind (e.g. w2 is in 'eh')
 from dataclasses import dataclass
 from typing import Optional
 
-from dataclass_wizard import YAMLWizard
+
+from smb3_eh_manip.util.wizard_mixins import YAMLWizard
 
 BRO_MOVEMENT_FRAMES = 32  # it takes 32 frames for a HB to make 1 movement
 LEVEL_FACE_TO_MOVE_FRAMES = 39

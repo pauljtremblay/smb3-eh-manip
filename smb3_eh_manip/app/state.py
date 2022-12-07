@@ -1,11 +1,9 @@
 from dataclasses import dataclass
 import logging
 
-from dataclass_wizard import YAMLWizard
-
 from smb3_eh_manip.app.lsfr import LSFR
 from smb3_eh_manip.app.nohands import NoHands
-from smb3_eh_manip.util import events, settings
+from smb3_eh_manip.util import events, settings, wizard_mixins
 
 
 @dataclass
@@ -15,7 +13,7 @@ class Section:
 
 
 @dataclass
-class Category(YAMLWizard):
+class Category(wizard_mixins.YAMLWizard):
     sections: list[Section]
 
     @classmethod
