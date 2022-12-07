@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="smb3-eh-manip",
-    version="0.20.0",
+    version="1.0.0",
     description=("Ingest video data to render smb3 eh manip stimuli"),
     classifiers=[
         "Development Status :: 4 - Beta",
