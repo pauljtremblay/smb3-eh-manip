@@ -20,16 +20,13 @@ def handler(_signum, _frame):
 
 
 def retrospy_server_process(lag_frames_observed, load_frames_observed):
-    initialize_logging()
+    initialize_logging(console_log_level="DEBUG", filename="restrospy_server.log")
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(("127.0.0.1", PORT))
     while True:
         data = sock.recv(1024)
-        if len(data) < 26:
-            logging.debug(f"Data frame not large enough {len(data)}")
-            continue
-        if len(data) > 28:
-            logging.debug(f"Data frame too large {len(data)}")
+        if len(data) != 10:
+            logging.debug(f"Data frame not sized properly {len(data)}")
             continue
         timestamp_diff = (data[-1] << 8) + data[-2]
         packet_lag_frames = int((timestamp_diff + 2) / NES_MS_PER_FRAME) - 1
@@ -66,7 +63,7 @@ class RetroSpyServer:
             ),
         ).start()
 
-    def tick(self, current_frame):
+    def tick(self, current_frame=0):
         new_lag_frames_observed = (
             self.lag_frames_observed_value.value - self.lag_frames_observed
         )
@@ -110,10 +107,9 @@ if __name__ == "__main__":
     global running
     running = True
     signal(SIGINT, handler)
-    initialize_logging()
+    initialize_logging(filename="restrospy_server.log")
     server = RetroSpyServer()
     while running:
-
         lag_frame_detect_start = time.time()
         server.tick()
         detect_duration = time.time() - lag_frame_detect_start
