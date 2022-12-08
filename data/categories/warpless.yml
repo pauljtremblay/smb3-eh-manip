@@ -1,0 +1,7 @@
+---
+sections:
+  - name: midnavy
+    complete_frame: 160000
+  - name: 8 first pipe enter
+    lag_frames: 61
+    trigger: nohands

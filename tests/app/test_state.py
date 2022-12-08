@@ -5,11 +5,21 @@ from smb3_eh_manip.util import events
 
 
 class TestState(unittest.TestCase):
-    def test_pop_first_level(self):
+    def test_load_frames_condition(self):
         state = State()
         state.handle_lag_frames_observed(events.LagFramesObserved(1, 0, 12))
-        state.handle_lag_frames_observed(events.LagFramesObserved(1, 0, 63))
+        state.handle_lag_frames_observed(events.LagFramesObserved(2, 0, 63))
+        state.handle_lag_frames_observed(events.LagFramesObserved(3, 1, 0))
         self.assertEqual("1-1 exit", state.active_section().name)
+
+    def test_frame_completed_condition(self):
+        state = State(category_name="warpless")
+        state.tick(1)
+        self.assertEqual("midnavy", state.active_section().name)
+        state.tick(2)
+        self.assertEqual("midnavy", state.active_section().name)
+        state.tick(200000)
+        self.assertEqual("8 first pipe enter", state.active_section().name)
 
     def test_lsfr(self):
         state = State()
