@@ -15,5 +15,5 @@ class Receiver:
 class TestEvents(unittest.TestCase):
     def test_event(self):
         receiver = Receiver()
-        events.emit(events.AddActionFrame, self, events.AddActionFrame(1))
-        self.assertEqual(1, receiver.event.action_frame)
+        events.emit(self, events.AddActionFrame(10, 1))
+        self.assertEqual(10, receiver.event.action_frame)

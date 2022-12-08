@@ -84,7 +84,7 @@ enable_auto_detect_lag_frame_ui = false
 ; The player holds left on the audio frame. If the window is 2-3 frames,
 ; currently, the action frame is the last of the window, so if anything
 ; press early.
-; nohands = false
+; enable_nohands = false
 
 ; scale playback video
 ; video_player_scale = 1

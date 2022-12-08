@@ -9,6 +9,9 @@ coming out of the pipe and holding left is ideally <30 frames.
 This class watches for level changes and times when the hands should occur.
 A higher level class should be keeping track of what levels we have beaten.
 """
+
+from dataclasses import dataclass
+
 from smb3_eh_manip.util import settings
 
 INTRA_PIPE_DURATION = 197
@@ -44,8 +47,14 @@ TRIGGER_SECTION_NAME = settings.get(
 )
 
 
+@dataclass
+class Window:
+    action_frame: int
+    window: int
+
+
 class NoHands:
-    def section_completed(self, section, seed_lsfr):
+    def calculate_optimal_window(self, section, seed_lsfr):
         if section.name != TRIGGER_SECTION_NAME:
             return
         lsfr = seed_lsfr.clone()
@@ -74,7 +83,7 @@ class NoHands:
                 continue
             passed_hands[2] += 1
             current_window += 1
-            candidate_frame_offset = (
+            candidate_frame_offset = Window(
                 PIPE_EXIT_LAG_FRAMES
                 + SECTION_TRIGGER_TO_OVERWORLD_CONTROL_RNG_FRAMES
                 + frame_offset,

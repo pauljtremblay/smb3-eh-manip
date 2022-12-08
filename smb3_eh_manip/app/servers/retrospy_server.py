@@ -77,9 +77,8 @@ class RetroSpyServer:
         self.load_frames_observed += new_load_frames_observed
         if new_lag_frames_observed or new_load_frames_observed:
             events.emit(
-                events.LagFramesObserved,
                 self,
-                event=events.LagFramesObserved(
+                events.LagFramesObserved(
                     current_frame, new_lag_frames_observed, new_load_frames_observed
                 ),
             )

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import logging
+from typing import Optional
 
 from smb3_eh_manip.app.lsfr import LSFR
 from smb3_eh_manip.app.nohands import NoHands
@@ -10,6 +11,7 @@ from smb3_eh_manip.util import events, settings, wizard_mixins
 class Section:
     name: str
     lag_frames: int
+    trigger: Optional[str] = None
 
 
 @dataclass
@@ -23,7 +25,8 @@ class Category(wizard_mixins.YAMLWizard):
 
 class State:
     def __init__(self):
-        self.nohands = NoHands()
+        self.enable_nohands = settings.get_boolean("enable_nohands", fallback=False)
+        self.nohands = NoHands() if self.enable_nohands else None
         self.reset()
         events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
 
@@ -39,19 +42,18 @@ class State:
         ):
             section = self.category.sections.pop(0)
             logging.info(f"Completed {section.name}")
-            if settings.get_boolean("nohands", fallback=False):
-                optimal_action_frame_offset = self.nohands.section_completed(
-                    section, self.lsfr.clone()
-                )
-                if optimal_action_frame_offset:
-                    action_frame = round(
-                        event.current_frame + optimal_action_frame_offset[0]
-                    )
-                    events.emit(
-                        events.AddActionFrame,
-                        self,
-                        event=events.AddActionFrame(action_frame),
-                    )
+            self.check_and_update_nohands(event.current_frame, section)
+
+    def check_and_update_nohands(self, current_frame, section):
+        if not self.enable_nohands or section.trigger != "nohands":
+            return
+        nohands_window = self.nohands.calculate_optimal_window(
+            section, self.lsfr.clone()
+        )
+        if not nohands_window:
+            return
+        action_frame = round(current_frame + nohands_window.action_frame)
+        events.emit(self, events.AddActionFrame(action_frame, nohands_window.window))
 
     def tick(self, current_frame):
         # we need to see how much time has gone by and increment RNG that amount

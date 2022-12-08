@@ -17,6 +17,7 @@ class LagFramesObserved:
 @dataclass
 class AddActionFrame:
     action_frame: int
+    window: int
 
 
 def listen(event_type, callback, **kwargs):
@@ -24,7 +25,7 @@ def listen(event_type, callback, **kwargs):
     dispatcher.connect(callback, signal=event_type, **kwargs)
 
 
-def emit(event_type, sender, event, **kwargs):
+def emit(sender, event, **kwargs):
     # Emit an event with the given event_type
-    logging.info(f"Emitting {event_type.__name__} event: {asdict(event)}")
-    dispatcher.send(event_type, sender, event=event, **kwargs)
+    logging.info(f"Emitting {type(event).__name__} event: {asdict(event)}")
+    dispatcher.send(type(event), sender, event=event, **kwargs)
