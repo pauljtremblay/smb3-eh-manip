@@ -164,21 +164,22 @@ class OpencvComputer:
                 )
             )
         ):
-            self.playing = False
-            self.start_time = -1
-            self.current_time = -1
-            self.current_frame = -1
-            self.lag_frames = self.lag_frames_default
-            self.state.reset()
-            if self.enable_video_player:
-                self.video_player.reset()
-            if self.enable_fceux_tas_start:
-                emu.pause()
-                latency_offset = round(self.latency_ms / settings.NES_MS_PER_FRAME)
-                taseditor.setplayback(self.video_offset_frames + latency_offset)
-            if self.auto_detect_lag_frames_retrospy:
-                self.retrospy_server.reset()
+            self.reset()
             logging.info(f"Detected reset")
+
+    def reset(self):
+        self.playing = False
+        self.current_frame = -1
+        self.lag_frames = self.lag_frames_default
+        self.state.reset()
+        if self.enable_video_player:
+            self.video_player.reset()
+        if self.enable_fceux_tas_start:
+            emu.pause()
+            latency_offset = round(self.latency_ms / settings.NES_MS_PER_FRAME)
+            taseditor.setplayback(self.video_offset_frames + latency_offset)
+        if self.auto_detect_lag_frames_retrospy:
+            self.retrospy_server.reset()
 
     def check_and_update_begin_playing(self, frame):
         if not self.playing:
@@ -193,23 +194,26 @@ class OpencvComputer:
                     bottom_right = (x + needleWidth, y + needleHeight)
                     cv2.rectangle(frame, top_left, bottom_right, (0, 0, 255), 5)
             if results:
-                self.playing = True
-                self.start_time = time.time()
-                self.current_frame = 0
-                self.current_time = 0
-                if self.enable_fceux_tas_start:
-                    emu.unpause()
-                if self.auto_detect_lag_frames_retrospy:
-                    # lag frames can errantly be between reset and start,
-                    # especially on first run. lets just clear these values out.
-                    self.retrospy_server.reset()
-                if self.enable_video_player:
-                    self.video_player.play()
-                if self.enable_audio_player:
-                    self.audio_player.reset()
-                if self.enable_ui_player:
-                    self.ui_player.reset()
+                self.start_playing()
                 logging.info(f"Detected start frame")
+
+    def start_playing(self):
+        self.playing = True
+        self.start_time = time.time()
+        self.current_frame = 0
+        self.current_time = 0
+        if self.enable_fceux_tas_start:
+            emu.unpause()
+        if self.auto_detect_lag_frames_retrospy:
+            # lag frames can errantly be between reset and start,
+            # especially on first run. lets just clear these values out.
+            self.retrospy_server.reset()
+        if self.enable_video_player:
+            self.video_player.play()
+        if self.enable_audio_player:
+            self.audio_player.reset()
+        if self.enable_ui_player:
+            self.ui_player.reset()
 
     def check_and_update_lag_frames(self, frame):
         if self.auto_detect_lag_frames_retrospy:
