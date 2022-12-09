@@ -35,18 +35,22 @@ class State:
     def handle_lag_frames_observed(self, event: events.LagFramesObserved):
         self.total_observed_lag_frames += event.observed_lag_frames
         self.total_observed_load_frames += event.observed_load_frames
-        if not self.category.sections:
-            return
         if self.check_expected_lag_condition(event):
             section = self.category.sections.pop(0)
             logging.info(f"Completed {section.name}")
             self.check_and_update_nohands(event.current_frame, section)
 
     def check_complete_frame_condition(self, current_frame):
-        complete_frame = self.active_section().complete_frame
+        active_section = self.active_section()
+        if not active_section:
+            return False
+        complete_frame = active_section.complete_frame
         return complete_frame and complete_frame <= current_frame
 
     def check_expected_lag_condition(self, event: events.LagFramesObserved):
+        active_section = self.active_section()
+        if not active_section:
+            return False
         expected_section_lag = self.active_section().lag_frames
         return (
             expected_section_lag
@@ -89,4 +93,6 @@ class State:
         self.lsfr = LSFR()
 
     def active_section(self):
+        if not self.category.sections:
+            return None
         return self.category.sections[0]
