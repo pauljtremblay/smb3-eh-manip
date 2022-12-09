@@ -35,7 +35,7 @@ LEFT_PRESS_WINDOW = settings.get_int("nohands_left_press_window", fallback=1)
 # We cant look 10s in the future, so let's default this as a reasonable
 # couple seconds or so.
 MAXIMUM_FRAMES_TO_LOOK_FORWARD = settings.get_int(
-    "nohands_max_frames_to_look_forward", fallback=90
+    "nohands_max_frames_to_look_forward", fallback=120
 )
 
 # *: upon using the start/end pipe, identify frame windows in the
@@ -64,18 +64,27 @@ class NoHands:
         earliest_one_frame_window = None
         earliest_two_frame_window = None
         optimal_frame_offset = None
+
+        # memoize hand check results we need, reducing repetition and
+        # computational cycles
+        frame_to_hand_check_memo = {}
+        for frame in range(
+            MAXIMUM_FRAMES_TO_LOOK_FORWARD
+            + TO_HAND2_CHECK_FRAME_DURATION
+            + TO_HAND3_CHECK_FRAME_DURATION
+        ):
+            frame_to_hand_check_memo[frame] = lsfr.hand_check()
+            lsfr.next()
+
         for frame_offset in range(MAXIMUM_FRAMES_TO_LOOK_FORWARD):
-            lsfr_experiment = lsfr.clone()
-            lsfr_experiment.next_n(frame_offset)
-            if lsfr_experiment.hand_check():
-                current_window = 0
-                continue
-            lsfr_experiment.next_n(TO_HAND2_CHECK_FRAME_DURATION)
-            if lsfr_experiment.hand_check():
-                current_window = 0
-                continue
-            lsfr_experiment.next_n(TO_HAND3_CHECK_FRAME_DURATION)
-            if lsfr_experiment.hand_check():
+            first_hand_check = frame_offset
+            second_hand_check = first_hand_check + TO_HAND2_CHECK_FRAME_DURATION
+            third_hand_check = second_hand_check + TO_HAND3_CHECK_FRAME_DURATION
+            if (
+                frame_to_hand_check_memo[first_hand_check]
+                or frame_to_hand_check_memo[second_hand_check]
+                or frame_to_hand_check_memo[third_hand_check]
+            ):
                 current_window = 0
                 continue
             current_window += 1
