@@ -15,6 +15,8 @@ WINDOW_WIDTH = FREQUENCY * WINDOW_SCALAR * LINE_COUNT
 LINE_COLOR = (255, 255, 255)
 FILL_COLOR = (128, 128, 128)
 PURPLE_COLOR = (211, 0, 148)
+FONT_COLOR = (176, 176, 176)
+TYPEFACE = cv2.FONT_HERSHEY_PLAIN
 THICKNESS = 2
 
 
@@ -29,9 +31,11 @@ class UiPlayer:
         self.window_open = True
         self.trigger_frames = list(ACTION_FRAMES)
 
-    def tick(self, current_frame, ewma_tick, ewma_read_frame, lag_frames):
+    def tick(self, current_frame, ewma_tick, ewma_read_frame, lag_frames, load_frames):
         if self.window_open:
-            self.draw(current_frame, ewma_tick, ewma_read_frame, lag_frames)
+            self.draw(
+                current_frame, ewma_tick, ewma_read_frame, lag_frames, load_frames
+            )
 
             if (
                 self.auto_close_ui_frame > 0
@@ -41,7 +45,7 @@ class UiPlayer:
                 logging.debug(f"Auto closing ui window at {current_frame}")
                 self.window_open = False
 
-    def draw(self, current_frame, ewma_tick, ewma_read_frame, lag_frames):
+    def draw(self, current_frame, ewma_tick, ewma_read_frame, lag_frames, load_frames):
         ui = UiPlayer.get_base_frame()
         if self.trigger_frames:
             next_trigger_distance = (
@@ -61,46 +65,28 @@ class UiPlayer:
                 logging.debug(
                     f"Popped trigger frame {trigger_frame} at {current_frame}"
                 )
-        self.show_text(ui, current_frame, ewma_tick, ewma_read_frame, lag_frames)
+        self.show_text(
+            ui, current_frame, ewma_tick, ewma_read_frame, lag_frames, load_frames
+        )
         cv2.imshow(WINDOW_TITLE, ui)
 
-    def show_text(self, ui, current_frame, ewma_tick, ewma_read_frame, lag_frames):
-        cv2.putText(
-            ui,
-            str(current_frame),
-            (0, VISUAL_CUE_HEIGHT + 48),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            1,
-            (176, 176, 176),
-            2,
-        )
-        cv2.putText(
-            ui,
-            f"Frame: {round(ewma_read_frame*1000)}ms",
-            (WINDOW_WIDTH // 2, VISUAL_CUE_HEIGHT + 24),
-            cv2.FONT_HERSHEY_PLAIN,
-            1,
-            (176, 176, 176),
-            2,
-        )
-        cv2.putText(
-            ui,
-            f"Tick: {round(ewma_tick*1000)}ms",
-            (WINDOW_WIDTH // 2, VISUAL_CUE_HEIGHT + 44),
-            cv2.FONT_HERSHEY_PLAIN,
-            1,
-            (176, 176, 176),
-            2,
-        )
-        cv2.putText(
-            ui,
-            f"Lag frames: {lag_frames}",
-            (WINDOW_WIDTH // 2, VISUAL_CUE_HEIGHT + 64),
-            cv2.FONT_HERSHEY_PLAIN,
-            1,
-            (176, 176, 176),
-            2,
-        )
+    def show_text(
+        self, ui, current_frame, ewma_tick, ewma_read_frame, lag_frames, load_frames
+    ):
+        x0 = 0
+        x1 = WINDOW_WIDTH // 2
+        y = VISUAL_CUE_HEIGHT + 24
+        cv2.putText(ui, str(current_frame), (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
+        frame_str = f"Frame: {round(ewma_read_frame*1000)}ms"
+        cv2.putText(ui, frame_str, (x1, y), TYPEFACE, 1, FONT_COLOR, 2)
+        y += 20
+        lag_frames_str = f"Lag frames: {lag_frames}"
+        cv2.putText(ui, lag_frames_str, (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
+        tick_str = f"Tick: {round(ewma_tick*1000)}ms"
+        cv2.putText(ui, tick_str, (x1, y), TYPEFACE, 1, FONT_COLOR, 2)
+        y += 20
+        load_frames_str = f"Load frames: {load_frames}"
+        cv2.putText(ui, load_frames_str, (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
 
     def handle_add_action_frame(self, event: events.AddActionFrame):
         self.trigger_frames.append(event.action_frame)

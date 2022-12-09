@@ -63,6 +63,7 @@ class OpencvComputer:
         self.ewma_tick = 0
         self.ewma_read_frame = 0
         self.lag_frames = 0
+        self.load_frames = 0
         self.lag_frames_default = 0
 
         self.state = State()
@@ -139,6 +140,7 @@ class OpencvComputer:
                 self.ewma_tick,
                 self.ewma_read_frame,
                 self.lag_frames,
+                self.load_frames,
             )
         if self.playing:
             self.state.tick(self.current_frame)
@@ -214,6 +216,7 @@ class OpencvComputer:
             lag_frame_detect_start = time.time()
             self.retrospy_server.tick(self.current_frame)
             self.lag_frames = self.retrospy_server.lag_frames_observed
+            self.load_frames = self.retrospy_server.load_frames_observed
             detect_duration = time.time() - lag_frame_detect_start
             if self.playing and detect_duration > 0.002:
                 logging.info(f"Took {detect_duration}s detecting lag frames")
