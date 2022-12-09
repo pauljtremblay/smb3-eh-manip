@@ -25,7 +25,7 @@ def retrospy_server_process(lag_frames_observed, load_frames_observed):
     sock.bind(("127.0.0.1", PORT))
     while True:
         data = sock.recv(1024)
-        if len(data) != 10:
+        if len(data) != 2:
             logging.debug(f"Data frame not sized properly {len(data)}")
             continue
         timestamp_diff = (data[-1] << 8) + data[-2]
