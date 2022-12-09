@@ -27,5 +27,5 @@ def listen(event_type, callback, **kwargs):
 
 def emit(sender, event, **kwargs):
     # Emit an event with the given event_type
-    logging.info(f"Emitting {type(event).__name__} event: {asdict(event)}")
+    logging.debug(f"Emitting {type(event).__name__} event: {asdict(event)}")
     dispatcher.send(type(event), sender, event=event, **kwargs)

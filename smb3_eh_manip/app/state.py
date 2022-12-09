@@ -68,6 +68,9 @@ class State:
             return
         action_frame = round(current_frame + nohands_window.action_frame)
         events.emit(self, events.AddActionFrame(action_frame, nohands_window.window))
+        logging.info(
+            f"NoHands at frame: {action_frame} with window: {nohands_window.window}"
+        )
 
     def tick(self, current_frame):
         # we need to see how much time has gone by and increment RNG that amount
@@ -82,7 +85,7 @@ class State:
 
         if self.check_complete_frame_condition(current_frame):
             section = self.category.sections.pop(0)
-            logging.info(f"Completed {section.name}")
+            logging.debug(f"Completed {section.name}")
             self.check_and_update_nohands(current_frame, section)
 
     def reset(self):
