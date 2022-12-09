@@ -61,7 +61,9 @@ class RetroSpyServer:
                 self.lag_frames_observed_value,
                 self.load_frames_observed_value,
             ),
-        ).start()
+        )
+        self.retrospy_server_process.daemon = True
+        self.retrospy_server_process.start()
 
     def tick(self, current_frame=0):
         new_lag_frames_observed = (
