@@ -5,7 +5,6 @@ import time
 import cv2
 import numpy as np
 
-from smb3_eh_manip.app.state import State
 from smb3_eh_manip.app.servers.fceux_lua_server import *
 from smb3_eh_manip.app.servers.retrospy_server import RetroSpyServer
 from smb3_eh_manip.ui.audio_player import AudioPlayer
@@ -66,7 +65,6 @@ class OpencvComputer:
         self.load_frames = 0
         self.lag_frames_default = 0
 
-        self.state = State()
         if self.auto_detect_lag_frames_video:
             self.auto_detect_lag_frame_windows = settings.get_frame_windows(
                 "auto_detect_lag_frame_windows", fallback="2500-2725"
@@ -126,8 +124,8 @@ class OpencvComputer:
             self.output_video.write(frame)
         if self.playing:
             self.update_times()
+        self.frame = frame
         self.check_and_update_end_stage(frame)
-        self.check_and_update_autoreset(frame)
         self.check_and_update_begin_playing(frame)
         self.check_and_update_lag_frames(frame)
         if self.show_capture_video:
@@ -142,8 +140,6 @@ class OpencvComputer:
                 self.lag_frames,
                 self.load_frames,
             )
-        if self.playing:
-            self.state.tick(self.current_frame)
         key = cv2.waitKey(1)
         if key == ord("l"):
             self.lag_frames += 1
@@ -154,24 +150,21 @@ class OpencvComputer:
             self.lag_frames_default -= 1
             logging.info(f"Lag frame default decremented to {self.lag_frames_default}")
 
-    def check_and_update_autoreset(self, frame):
-        if (
+    def should_autoreset(self):
+        return (
             self.autoreset
             and self.playing
             and list(
                 OpencvComputer.locate_all_opencv(
-                    self.reset_template, frame, region=self.reset_image_region
+                    self.reset_template, self.frame, region=self.reset_image_region
                 )
             )
-        ):
-            self.reset()
-            logging.info(f"Detected reset")
+        )
 
     def reset(self):
         self.playing = False
         self.current_frame = -1
         self.lag_frames = self.lag_frames_default
-        self.state.reset()
         if self.enable_video_player:
             self.video_player.reset()
         if self.enable_fceux_tas_start:
