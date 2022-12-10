@@ -15,7 +15,6 @@ class TestModels(unittest.TestCase):
                 models.Position(
                     x=6,
                     y=3,
-                    hammer_bro=models.HammerBro(index=2, item="box"),
                 ),
                 models.Position(x=7, y=3, level=models.Level(name="2-quicksand")),
                 models.Position(x=7, y=4),
@@ -25,8 +24,11 @@ class TestModels(unittest.TestCase):
                 models.Position(
                     x=9,
                     y=2,
-                    hammer_bro=models.HammerBro(index=3, item="hammer"),
                 ),
+            ],
+            hbs=[
+                models.HammerBro(index=2, item="box", x=6, y=3),
+                models.HammerBro(index=3, item="hammer", x=9, y=2),
             ],
         )
         world.dump(path_prefix=tempfile.tempdir)

@@ -1,0 +1,20 @@
+number: 2
+positions:
+- is-mushroom: false
+  level: null
+  x: 3
+  y: 1
+- is-mushroom: false
+  level: null
+  x: 4
+  y: 1
+- is-mushroom: false
+  level:
+    name: 1-airship
+  x: 5
+  y: 1
+hbs:
+- index: 2
+  item: star
+  x: 4
+  y: 1

@@ -15,6 +15,11 @@ from smb3_eh_manip.app.models import World
 # step5: depth first search solutions and generate frame windows
 
 
+BRO_MOVEMENT_FRAMES = 32  # it takes 32 frames for a HB to make 1 movement
+LEVEL_FACE_TO_MOVE_FRAMES = 39
+FORT_FACE_TO_MOVE_FRAMES = 102
+
+
 class EH:
     def __init__(self):
         self.world = World.load(number=2)

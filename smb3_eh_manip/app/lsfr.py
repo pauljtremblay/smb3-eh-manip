@@ -24,10 +24,12 @@ class LSFR:
             carry = b
         return self.data
 
-    def random_n(self):
+    def random_n(self, offset=0):
         # RandomN is the value most of the code uses or indexes off of.
         # It is the second byte in the array.
-        return self.data[1]
+        # HB directions use an offset for which index they are, e.g.
+        # w1 bro is index 2 so wed look in data[1+2], or the 4th byte
+        return self.data[1 + offset]
 
     def hand_check(self):
         # returns True if a hand grabs the player, False otherwise
