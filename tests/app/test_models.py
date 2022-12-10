@@ -9,7 +9,9 @@ class TestModels(unittest.TestCase):
         world = models.World(
             number=2,
             positions=[
+                models.Position(x=5, y=2),
                 models.Position(x=5, y=3, level=models.Level(name="2-3")),
+                models.Position(x=5, y=4),
                 models.Position(
                     x=6,
                     y=3,

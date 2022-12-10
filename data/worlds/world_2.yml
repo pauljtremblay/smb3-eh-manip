@@ -2,10 +2,20 @@ number: 2
 positions:
 - hammer-bro: null
   is-mushroom: false
+  level: null
+  x: 5
+  y: 2
+- hammer-bro: null
+  is-mushroom: false
   level:
     name: 2-3
   x: 5
   y: 3
+- hammer-bro: null
+  is-mushroom: false
+  level: null
+  x: 5
+  y: 4
 - hammer-bro:
     index: 2
     item: box
