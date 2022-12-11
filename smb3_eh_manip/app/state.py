@@ -35,6 +35,7 @@ class State:
     def handle_lag_frames_observed(self, event: events.LagFramesObserved):
         self.total_observed_lag_frames += event.observed_lag_frames
         self.total_observed_load_frames += event.observed_load_frames
+        # TODO 1-1 seems to actually increment RNG twice in load. consider offset here?
         if self.check_expected_lag_condition(event.observed_load_frames):
             section = self.category.sections.pop(0)
             logging.info(f"Completed {section.name}")
