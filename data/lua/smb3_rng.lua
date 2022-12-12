@@ -421,7 +421,7 @@ function display_information()
     --hopefully shouldn't need to comment on these, rather self explanitory
     local y_counter = 9
     if toggle_display_rng then
-        for i=0, 8, 1 do
+        for i=0, 4, 1 do
             gui.drawtext(200, y_counter, string.format("RNG %d: %03d", i, memory.readbyte(ram_rng+i)), text_color, text_back_color)
             y_counter = y_counter + 8
         end
