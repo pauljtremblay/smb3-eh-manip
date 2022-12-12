@@ -14,6 +14,9 @@ from smb3_eh_manip.app.models import Direction, Window, World
 # lots of frames, maybe its best to maintain pspeed? the y velocity is at least
 # 4px different with pspeed vs without, so gotta pick either full speed or no
 # speed IMO. This is safe.
+THREE_ONE_SECOND_SECTION_BEFORE_JUMP_MIN_DURATION = 209
+THREE_ONE_SECOND_SECTION_AFTER_JUMP_MIN_DURATION = 389
+
 THREE_ONE_SECOND_SECTION_MIN_DURATION = 594
 LEVEL_TO_FACE_FRAMES = 17
 
@@ -23,7 +26,7 @@ class W3BroDown:
         self.world = World.load(number=3)
         self.hb = self.world.hbs[1]
 
-    def calculate_3_1_window(self, seed_lsfr: LSFR):
+    def calculate_3_1_window(self, seed_lsfr: LSFR, target_window=2):
         lsfr = seed_lsfr.clone()
         lsfr.next_n(THREE_ONE_SECOND_SECTION_MIN_DURATION + LEVEL_TO_FACE_FRAMES)
         offset = 0
@@ -34,7 +37,7 @@ class W3BroDown:
             ).direction
             if direction == Direction.DOWN:
                 current_window += 1
-                if current_window == 2:
+                if current_window == target_window:
                     return Window(offset - 1, current_window)
             else:
                 current_window = 0

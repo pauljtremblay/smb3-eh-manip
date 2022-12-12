@@ -4,13 +4,13 @@ import time
 from multiprocessing import Process, Value
 from signal import signal, SIGINT
 
-from smb3_eh_manip.util import events
+from smb3_eh_manip.util import events, settings
 from smb3_eh_manip.util.logging import initialize_logging
-from smb3_eh_manip.util.settings import NES_MS_PER_FRAME
 
 PORT = 47569
 LOAD_FRAME_THRESHOLD = 3  # anything higher than this number is considered a load frame instead of lag frame
 SOCKET_TIMEOUT = 10
+LATENCY_FRAMES_RETROSPY = settings.get_int("latency_frames_retrospy", fallback=0)
 
 
 def handler(_signum, _frame):
@@ -29,7 +29,7 @@ def retrospy_server_process(lag_frames_observed, load_frames_observed):
             logging.debug(f"Data frame not sized properly {len(data)}")
             continue
         timestamp_diff = (data[-1] << 8) + data[-2]
-        packet_lag_frames = int((timestamp_diff + 2) / NES_MS_PER_FRAME) - 1
+        packet_lag_frames = int((timestamp_diff + 2) / settings.NES_MS_PER_FRAME) - 1
         if packet_lag_frames < 0:
             logging.debug(
                 f"We think we got {packet_lag_frames} frames, correcting to 0. timestamp_diff: {timestamp_diff}"
@@ -78,7 +78,9 @@ class RetroSpyServer:
             events.emit(
                 self,
                 events.LagFramesObserved(
-                    current_frame, new_lag_frames_observed, new_load_frames_observed
+                    current_frame - LATENCY_FRAMES_RETROSPY,
+                    new_lag_frames_observed,
+                    new_load_frames_observed,
                 ),
             )
 

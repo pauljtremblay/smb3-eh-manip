@@ -86,6 +86,9 @@ enable_auto_detect_lag_frame_ui = false
 ; press early.
 ; enable_nohands = false
 
+; what is the latency, in frames, observed from retrospy?
+; latency_frames_retrospy = 0
+
 ; scale playback video
 ; video_player_scale = 1
 
