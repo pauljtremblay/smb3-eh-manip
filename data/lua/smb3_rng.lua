@@ -33,8 +33,8 @@ local toggle_display_sprites_in_level               = true
 local toggle_display_level_toggleable               = false --able to toggle level with key in get_input
 local toggle_display_map_objs                       = true
 local toggle_display_level_on_overworld             = false
-local toggle_display_rng_lag_increments             = true
-local toggle_display_rng_increment_skips            = true
+local toggle_display_rng_lag_increments             = false
+local toggle_display_rng_increment_skips            = false
 --to change the button to toggle the level, see get_input
 
 --variables
