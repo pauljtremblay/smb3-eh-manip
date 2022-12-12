@@ -10,8 +10,7 @@ This class watches for level changes and times when the hands should occur.
 A higher level class should be keeping track of what levels we have beaten.
 """
 
-from dataclasses import dataclass
-
+from smb3_eh_manip.app.models import Window
 from smb3_eh_manip.util import settings
 
 INTRA_PIPE_DURATION = 197
@@ -45,12 +44,6 @@ MAXIMUM_FRAMES_TO_LOOK_FORWARD = settings.get_int(
 TRIGGER_SECTION_NAME = settings.get(
     "nohands_trigger_section_name", fallback="8 first pipe enter"
 )
-
-
-@dataclass
-class Window:
-    action_frame: int
-    window: int
 
 
 class NoHands:

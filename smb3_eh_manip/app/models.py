@@ -47,6 +47,12 @@ class Position:
 
 
 @dataclass
+class Window:
+    action_frame: int
+    window: int
+
+
+@dataclass
 class World(YAMLWizard):
     number: int
     positions: list[Position]

@@ -8,7 +8,7 @@ the level to move the HB bro down.
 """
 from smb3_eh_manip.app import hb
 from smb3_eh_manip.app.lsfr import LSFR
-from smb3_eh_manip.app.models import World
+from smb3_eh_manip.app.models import Direction, Window, World
 
 # This includes stopping under the card and waiting for safety. If there are
 # lots of frames, maybe its best to maintain pspeed? the y velocity is at least
@@ -26,6 +26,17 @@ class W3BroDown:
     def calculate_3_1_window(self, seed_lsfr: LSFR):
         lsfr = seed_lsfr.clone()
         lsfr.next_n(THREE_ONE_SECOND_SECTION_MIN_DURATION + LEVEL_TO_FACE_FRAMES)
-        return hb.calculate_facing_direction(
-            lsfr, self.world, self.hb, hb.LEVEL_FACE_TO_MOVE_FRAMES
-        )
+        offset = 0
+        current_window = 0
+        while True:
+            direction = hb.calculate_facing_direction(
+                lsfr, self.world, self.hb, hb.LEVEL_FACE_TO_MOVE_FRAMES
+            ).direction
+            if direction == Direction.DOWN:
+                current_window += 1
+                if current_window == 2:
+                    return Window(offset - 1, current_window)
+            else:
+                current_window = 0
+            offset += 1
+            lsfr.next()
