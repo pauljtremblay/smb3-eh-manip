@@ -42,7 +42,7 @@ class HammerBro:
 class Position:
     x: int
     y: int
-    is_mushroom: bool = False
+    is_passable: Optional[bool] = True
     level: Optional[Level] = None
 
 
