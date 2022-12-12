@@ -33,7 +33,8 @@ local toggle_display_sprites_in_level               = true
 local toggle_display_level_toggleable               = false --able to toggle level with key in get_input
 local toggle_display_map_objs                       = true
 local toggle_display_level_on_overworld             = false
-local toggle_display_rng_increment_on_lag_frame     = true
+local toggle_display_rng_lag_increments             = true
+local toggle_display_rng_increment_skips            = true
 --to change the button to toggle the level, see get_input
 
 --variables
@@ -114,7 +115,9 @@ local level_vertical_width    = screen_width --width of the level if level is ve
 local x_prev = 0       --used for checking pixel boost (corner/ceiling boost)
 local x_speed_prev = 0 --same as x_prev
 local ram_rng_prev = 0 --same as ram_rng
-local total_rng_lag_increments = 0
+local ram_rng_prev_1 = 0 --same as ram_rng, second byte
+local total_rng_lag_increments = 0 -- how many times has rng incremented on lag frames
+local total_rng_increment_skips = 0 -- how many times have rng not been incremented in non lag frames
 
 local pixel_boost_total = 0          --total unexpected pixel change forward
 local pixel_boost_negative_total = 0 --total unexpected pixel change backward
@@ -493,15 +496,25 @@ function display_information()
         y_counter = y_counter + 8
     end
 
-    if toggle_display_rng_increment_on_lag_frame then
-        local ram_rng_current = memory.readbyte(ram_rng)
+    local ram_rng_current = memory.readbyte(ram_rng)
+    if toggle_display_rng_lag_increments then
         if emu.lagged() and (ram_rng_current ~= ram_rng_prev) then
             total_rng_lag_increments = total_rng_lag_increments + 1
         end
-        gui.drawtext(1, y_counter, string.format("RNG lag increments: %d (%d,%d)", total_rng_lag_increments, ram_rng_prev, ram_rng_current), text_color, text_back_color)
-        ram_rng_prev = ram_rng_current
+        gui.drawtext(1, y_counter, string.format("RNG lag increments: %d", total_rng_lag_increments), text_color, text_back_color)
         y_counter = y_counter + 8
     end
+
+    if toggle_display_rng_increment_skips then
+        local ram_rng_1_current = memory.readbyte(ram_rng + 0x1)
+        if not emu.lagged() and (ram_rng_current == ram_rng_prev) and (ram_rng_1_current == ram_rng_prev_1) then
+            total_rng_increment_skips = total_rng_increment_skips + 1
+        end
+        gui.drawtext(1, y_counter, string.format("RNG increment skips: %d", total_rng_increment_skips), text_color, text_back_color)
+        ram_rng_prev_1 = ram_rng_1_current
+        y_counter = y_counter + 8
+    end
+    ram_rng_prev = ram_rng_current
     
     y_counter = 169
     
