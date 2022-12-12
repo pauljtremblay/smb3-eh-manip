@@ -1,7 +1,34 @@
 ---
 sections:
-  - name: midnavy
+  - name: w1 enter
+    lag_frames: 12
+  - name: 1-1 enter
+    lag_frames: 63
+    trigger: offset2framerngincrement
+  - name: w2 airship mid
+    complete_frame: 28000
+  - name: 3-3 enter
+    lag_frames: 63
+    trigger: offset2framerngincrement
+  - name: 4-6 enter
+    complete_frame: 65000
+    trigger: offset2framerngincrement
+  - name: 5-1 enter
+    complete_frame: 78000
+    trigger: offset2framerngincrement
+  - name: 5-5 pipe
+    complete_frame: 88000
+    trigger: offset2framerngincrement
+  - name: 7-8 enter
+    complete_frame: 135000
+    trigger: offset2framerngincrement
+    notes: this is wrong if the runner goes to 7-7, which does not have the offset issue. tracking from w6 airship should be feasible
+  - name: 8-navy mid
     complete_frame: 160000
+  - name: 8-navy pipe
+    lag_frames: 10
+  - name: 8-navy exit
+    lag_frames: 13
   - name: 8 first pipe enter
     lag_frames: 61
     trigger: nohands

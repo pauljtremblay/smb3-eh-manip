@@ -4,6 +4,7 @@ sections:
     lag_frames: 12
   - name: 1-1 enter
     lag_frames: 63
+    trigger: offset2framerngincrement
   - name: 1-1 exit
     lag_frames: 12
   - name: 1-2 enter

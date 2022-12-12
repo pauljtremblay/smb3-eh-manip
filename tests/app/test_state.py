@@ -5,6 +5,15 @@ from smb3_eh_manip.util import events
 
 
 class TestState(unittest.TestCase):
+    def test_trigger_offset2framerngincrement(self):
+        state = State()
+        state.handle_lag_frames_observed(events.LagFramesObserved(1, 0, 12))
+        self.assertEqual("1-1 enter", state.active_section().name)
+        state.handle_lag_frames_observed(events.LagFramesObserved(2, 0, 63))
+        # would be 75, but two frames of rng increment during 1-1 enter, so we
+        # trigger offset2framerngincrement and end up with 73
+        self.assertEqual(73, state.total_observed_load_frames)
+
     def test_load_frames_condition(self):
         state = State()
         state.handle_lag_frames_observed(events.LagFramesObserved(1, 0, 12))
@@ -15,11 +24,21 @@ class TestState(unittest.TestCase):
     def test_frame_completed_condition(self):
         state = State(category_name="warpless")
         state.tick(1)
-        self.assertEqual("midnavy", state.active_section().name)
-        state.tick(2)
-        self.assertEqual("midnavy", state.active_section().name)
-        state.tick(200000)
-        self.assertEqual("8 first pipe enter", state.active_section().name)
+        self.assertEqual("w1 enter", state.active_section().name)
+        state.handle_lag_frames_observed(events.LagFramesObserved(1, 1, 12))
+        state.tick(100)
+        self.assertEqual("1-1 enter", state.active_section().name)
+        state.handle_lag_frames_observed(events.LagFramesObserved(100, 1, 63))
+        self.assertEqual("w2 airship mid", state.active_section().name)
+        state.tick(200)
+        self.assertEqual("w2 airship mid", state.active_section().name)
+        state.tick(75000)
+        self.assertEqual("3-3 enter", state.active_section().name)
+        state.handle_lag_frames_observed(events.LagFramesObserved(100, 1, 63))
+        state.tick(75001)
+        self.assertEqual("5-1 enter", state.active_section().name)
+        state.tick(75002)
+        self.assertEqual("5-1 enter", state.active_section().name)
 
     def test_lsfr(self):
         state = State()

@@ -35,11 +35,8 @@ class State:
     def handle_lag_frames_observed(self, event: events.LagFramesObserved):
         self.total_observed_lag_frames += event.observed_lag_frames
         self.total_observed_load_frames += event.observed_load_frames
-        # TODO 1-1 seems to actually increment RNG twice in load. consider offset here?
         if self.check_expected_lag_condition(event.observed_load_frames):
-            section = self.category.sections.pop(0)
-            logging.info(f"Completed {section.name}")
-            self.check_and_update_nohands(event.current_frame, section)
+            self.completed_section(event.current_frame, self.category.sections.pop(0))
 
     def check_complete_frame_condition(self, current_frame):
         active_section = self.active_section()
@@ -73,6 +70,12 @@ class State:
             f"NoHands at frame: {action_frame} with window: {nohands_window.window}"
         )
 
+    def check_and_update_rng_frames_incremented_during_load(self, section):
+        if section.trigger != "offset2framerngincrement":
+            return
+        self.total_observed_load_frames -= 2
+        logging.debug(f"RNG frames incremented during load, offsetting by 2")
+
     def tick(self, current_frame):
         # we need to see how much time has gone by and increment RNG that amount
         lsfr_increments = (
@@ -84,10 +87,13 @@ class State:
         self.lsfr.next_n(lsfr_increments)
         self.lsfr_frame += lsfr_increments
 
-        if self.check_complete_frame_condition(current_frame):
-            section = self.category.sections.pop(0)
-            logging.debug(f"Completed {section.name}")
-            self.check_and_update_nohands(current_frame, section)
+        while self.check_complete_frame_condition(current_frame):
+            self.completed_section(current_frame, self.category.sections.pop(0))
+
+    def completed_section(self, current_frame, section):
+        logging.debug(f"Completed {section.name}")
+        self.check_and_update_rng_frames_incremented_during_load(section)
+        self.check_and_update_nohands(current_frame, section)
 
     def reset(self):
         self.total_observed_lag_frames = 0
