@@ -19,6 +19,12 @@ class Direction(Enum):
 
 
 @dataclass
+class FacingDirection:
+    facing: Direction
+    direction: Direction
+
+
+@dataclass
 class Level:
     name: str
 

@@ -2,8 +2,10 @@
 This is a test class for manipulating HBs. It manips the world 1 HB to move
 left after 1-1 depending on when the player enters the level.
 """
+from dataclasses import dataclass
+
 from smb3_eh_manip.app.lsfr import LSFR
-from smb3_eh_manip.app.models import Direction, World
+from smb3_eh_manip.app.models import Direction, FacingDirection, World
 
 # from the entering the level, we want to set up some windows in which the HB will move left.
 
@@ -11,8 +13,9 @@ BRO_MOVEMENT_FRAMES = 32  # it takes 32 frames for a HB to make 1 movement
 LEVEL_FACE_TO_MOVE_FRAMES = 39
 FORT_FACE_TO_MOVE_FRAMES = 102
 
-ONE_ONE_DURATION_FRAMES = 1447  # stop and jump under the end card
-ONE_ONE_END_LOAD_FRAMES = 12
+ONE_ONE_DURATION_FRAMES = 1449  # stop and jump under the end card
+# there is one non lag frame in which rng is not incremented
+ONE_ONE_END_LOAD_FRAMES = 12 + 1
 ONE_ONE_LEVEL_TO_FACE_FRAMES = 17
 
 
@@ -23,9 +26,7 @@ class OneOneHBTest:
 
     def calculate_next_left_window(self, seed_lsfr: LSFR):
         lsfr = seed_lsfr.clone()
-        lsfr.next_n(ONE_ONE_DURATION_FRAMES)
-        # breakpoint()
-        lsfr.next_n(ONE_ONE_LEVEL_TO_FACE_FRAMES)
+        lsfr.next_n(ONE_ONE_DURATION_FRAMES + ONE_ONE_LEVEL_TO_FACE_FRAMES)
         facing = lsfr.random_n(self.hb.index) & 0x3
         lsfr.next_n(LEVEL_FACE_TO_MOVE_FRAMES)
         tries = 4
@@ -43,7 +44,7 @@ class OneOneHBTest:
                 continue
             break
         self.hb.facing_direction = Direction(direction)
-        return self.hb.facing_direction
+        return FacingDirection(Direction(facing), self.hb.facing_direction)
 
     def validate_direction(self, direction):
         target_x = 0
