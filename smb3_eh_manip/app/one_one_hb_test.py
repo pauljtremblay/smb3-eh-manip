@@ -14,8 +14,6 @@ LEVEL_FACE_TO_MOVE_FRAMES = 39
 FORT_FACE_TO_MOVE_FRAMES = 102
 
 ONE_ONE_DURATION_FRAMES = 1449  # stop and jump under the end card
-# there is one non lag frame in which rng is not incremented
-ONE_ONE_END_LOAD_FRAMES = 12 + 1
 ONE_ONE_LEVEL_TO_FACE_FRAMES = 17
 
 
