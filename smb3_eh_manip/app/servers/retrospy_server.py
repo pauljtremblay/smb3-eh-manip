@@ -109,7 +109,11 @@ if __name__ == "__main__":
     global running
     running = True
     signal(SIGINT, handler)
-    initialize_logging(filename="restrospy_server.log")
+    initialize_logging(
+        filename="restrospy_server.log",
+        file_log_level="DEBUG",
+        console_log_level="DEBUG",
+    )
     server = RetroSpyServer()
     while running:
         lag_frame_detect_start = time.time()
