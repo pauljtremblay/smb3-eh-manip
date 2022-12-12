@@ -2,8 +2,6 @@
 This is a test class for manipulating HBs. It manips the world 1 HB to move
 left after 1-1 depending on when the player enters the level.
 """
-from dataclasses import dataclass
-
 from smb3_eh_manip.app.lsfr import LSFR
 from smb3_eh_manip.app.models import Direction, FacingDirection, World
 
@@ -22,7 +20,7 @@ class OneOneHBTest:
         self.world = World.load(number=1)
         self.hb = self.world.hbs[0]
 
-    def calculate_next_left_window(self, seed_lsfr: LSFR):
+    def calculate_facing(self, seed_lsfr: LSFR):
         lsfr = seed_lsfr.clone()
         lsfr.next_n(ONE_ONE_DURATION_FRAMES + ONE_ONE_LEVEL_TO_FACE_FRAMES)
         facing = lsfr.random_n(self.hb.index) & 0x3

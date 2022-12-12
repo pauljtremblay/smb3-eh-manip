@@ -11,5 +11,5 @@ class TestOneOneHBTest(unittest.TestCase):
         lsfr = LSFR([232, 229, 52, 254, 151, 106, 68, 144, 25])
         self.assertEqual(
             FacingDirection(Direction.RIGHT, Direction.RIGHT),
-            subject.calculate_next_left_window(lsfr),
+            subject.calculate_facing(lsfr),
         )
