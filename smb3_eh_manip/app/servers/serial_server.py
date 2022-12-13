@@ -11,8 +11,8 @@ LOAD_FRAME_THRESHOLD = 3  # anything higher than this number is considered a loa
 SERIAL_TIMEOUT = float(settings.get("serial_timeout", fallback="0.1"))
 SERIAL_PORT = settings.get("serial_port", fallback="COM4")
 SERIAL_BAUDRATE = settings.get_int("serial_baudrate", fallback=115200)
-SERIAL_PAYLOAD_SIZE = settings.get_int("serial_payload_size", fallback=10)
-LATENCY_FRAMES_SERIAL = settings.get_int("latency_frames_serial", fallback=0)
+SERIAL_PAYLOAD_SIZE = settings.get_int("serial_payload_size", fallback=2)
+SERIAL_LATENCY_FRAMES = settings.get_int("serial_latency_frames", fallback=0)
 
 
 def handler(_signum, _frame):
@@ -81,7 +81,7 @@ class SerialServer:
             events.emit(
                 self,
                 events.LagFramesObserved(
-                    current_frame - LATENCY_FRAMES_SERIAL,
+                    current_frame - SERIAL_LATENCY_FRAMES,
                     new_lag_frames_observed,
                     new_load_frames_observed,
                 ),
