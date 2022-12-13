@@ -131,8 +131,7 @@ class OpencvComputer:
                 self.current_frame,
                 self.ewma_tick,
                 self.ewma_read_frame,
-                self.state.total_observed_lag_frames,
-                self.state.total_observed_load_frames,
+                self.state,
             )
         _ = cv2.waitKey(1)
 

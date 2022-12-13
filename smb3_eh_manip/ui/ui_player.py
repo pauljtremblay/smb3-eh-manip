@@ -3,6 +3,7 @@ import logging
 import cv2
 import numpy as np
 
+from smb3_eh_manip.app.state import State
 from smb3_eh_manip.util import events
 from smb3_eh_manip.util.settings import get_int, ACTION_FRAMES, FREQUENCY
 
@@ -31,11 +32,9 @@ class UiPlayer:
         self.window_open = True
         self.trigger_frames = list(ACTION_FRAMES)
 
-    def tick(self, current_frame, ewma_tick, ewma_read_frame, lag_frames, load_frames):
+    def tick(self, current_frame, ewma_tick, ewma_read_frame, state: State):
         if self.window_open:
-            self.draw(
-                current_frame, ewma_tick, ewma_read_frame, lag_frames, load_frames
-            )
+            self.draw(current_frame, ewma_tick, ewma_read_frame, state)
 
             if (
                 self.auto_close_ui_frame > 0
@@ -45,7 +44,7 @@ class UiPlayer:
                 logging.debug(f"Auto closing ui window at {current_frame}")
                 self.window_open = False
 
-    def draw(self, current_frame, ewma_tick, ewma_read_frame, lag_frames, load_frames):
+    def draw(self, current_frame, ewma_tick, ewma_read_frame, state: State):
         ui = UiPlayer.get_base_frame()
         if self.trigger_frames:
             next_trigger_distance = (
@@ -65,14 +64,10 @@ class UiPlayer:
                 logging.debug(
                     f"Popped trigger frame {trigger_frame} at {current_frame}"
                 )
-        self.show_text(
-            ui, current_frame, ewma_tick, ewma_read_frame, lag_frames, load_frames
-        )
+        self.show_text(ui, current_frame, ewma_tick, ewma_read_frame, state)
         cv2.imshow(WINDOW_TITLE, ui)
 
-    def show_text(
-        self, ui, current_frame, ewma_tick, ewma_read_frame, lag_frames, load_frames
-    ):
+    def show_text(self, ui, current_frame, ewma_tick, ewma_read_frame, state: State):
         x0 = 0
         x1 = WINDOW_WIDTH // 2
         y = VISUAL_CUE_HEIGHT + 24
@@ -80,13 +75,15 @@ class UiPlayer:
         frame_str = f"Frame: {round(ewma_read_frame*1000)}ms"
         cv2.putText(ui, frame_str, (x1, y), TYPEFACE, 1, FONT_COLOR, 2)
         y += 20
-        lag_frames_str = f"Lag frames: {lag_frames}"
+        lag_frames_str = f"Lag frames: {state.total_observed_lag_frames}"
         cv2.putText(ui, lag_frames_str, (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
         tick_str = f"Tick: {round(ewma_tick*1000)}ms"
         cv2.putText(ui, tick_str, (x1, y), TYPEFACE, 1, FONT_COLOR, 2)
         y += 20
-        load_frames_str = f"Load frames: {load_frames}"
+        load_frames_str = f"Load frames: {state.total_observed_load_frames}"
         cv2.putText(ui, load_frames_str, (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
+        rng_str = f"RNG: {state.lsfr.data}"
+        cv2.putText(ui, rng_str, (x1, y), TYPEFACE, 1, FONT_COLOR, 2)
 
     def handle_add_action_frame(self, event: events.AddActionFrame):
         self.trigger_frames.append(event.action_frame)
