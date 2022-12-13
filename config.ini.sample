@@ -58,6 +58,7 @@ computer = eh
 ; [OPTIONAL] these values are more rarely changed
 
 ; [beta] Detect and remediate lag frames during gameplay
+;auto_detect_lag_frames_serial = false
 ;auto_detect_lag_frames_retrospy = false
 ;auto_detect_lag_frames_video = false
 ;auto_detect_lag_frame_windows = 2500-2725

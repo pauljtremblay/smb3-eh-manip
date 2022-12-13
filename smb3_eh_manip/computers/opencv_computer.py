@@ -7,6 +7,7 @@ import numpy as np
 
 from smb3_eh_manip.app.servers.fceux_lua_server import *
 from smb3_eh_manip.app.servers.retrospy_server import RetroSpyServer
+from smb3_eh_manip.app.servers.serial_server import SerialServer
 from smb3_eh_manip.ui.audio_player import AudioPlayer
 from smb3_eh_manip.ui.ui_player import UiPlayer
 from smb3_eh_manip.ui.video_player import VideoPlayer
@@ -36,6 +37,9 @@ class OpencvComputer:
         )
         self.auto_detect_lag_frames_retrospy = settings.get_boolean(
             "auto_detect_lag_frames_retrospy"
+        )
+        self.auto_detect_lag_frames_serial = settings.get_boolean(
+            "auto_detect_lag_frames_serial"
         )
         self.enable_auto_detect_lag_frame_ui = settings.get_boolean(
             "enable_auto_detect_lag_frame_ui"
@@ -73,6 +77,8 @@ class OpencvComputer:
 
         if self.auto_detect_lag_frames_retrospy:
             self.retrospy_server = RetroSpyServer()
+        if self.auto_detect_lag_frames_serial:
+            self.serial_server = SerialServer()
 
         if self.track_end_stage_clear_text_time:
             self.last_clear_sighting_time = -1
@@ -173,6 +179,8 @@ class OpencvComputer:
             taseditor.setplayback(self.video_offset_frames + latency_offset)
         if self.auto_detect_lag_frames_retrospy:
             self.retrospy_server.reset()
+        if self.auto_detect_lag_frames_serial:
+            self.serial_server.reset()
 
     def check_and_update_begin_playing(self, frame):
         if not self.playing:
@@ -201,6 +209,8 @@ class OpencvComputer:
             # lag frames can errantly be between reset and start,
             # especially on first run. lets just clear these values out.
             self.retrospy_server.reset()
+        if self.auto_detect_lag_frames_serial:
+            self.serial_server.reset()
         if self.enable_video_player:
             self.video_player.play()
         if self.enable_audio_player:
@@ -209,9 +219,12 @@ class OpencvComputer:
             self.ui_player.reset()
 
     def check_and_update_lag_frames(self, frame):
-        if self.auto_detect_lag_frames_retrospy:
+        if self.auto_detect_lag_frames_retrospy or self.auto_detect_lag_frames_serial:
             lag_frame_detect_start = time.time()
-            self.retrospy_server.tick(self.current_frame)
+            if self.auto_detect_lag_frames_serial:
+                self.serial_server.tick(self.current_frame)
+            elif self.auto_detect_lag_frames_retrospy:
+                self.retrospy_server.tick(self.current_frame)
             self.lag_frames = self.retrospy_server.lag_frames_observed
             self.load_frames = self.retrospy_server.load_frames_observed
             detect_duration = time.time() - lag_frame_detect_start
