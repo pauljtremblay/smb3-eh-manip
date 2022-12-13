@@ -42,9 +42,6 @@ run-test:
 run-main:
 	python -m smb3_eh_manip.main
 
-run-retrospy-server:
-	python -m smb3_eh_manip.app.servers.retrospy_server
-
 run-serial-server:
 	python -m smb3_eh_manip.app.servers.serial_server
 
@@ -58,7 +55,6 @@ release-prod: clean
 
 release: run-test release-test release-prod clean
 
-rrss: run-retrospy-server
 rsss: run-serial-server
 m: run-main
 main: init m

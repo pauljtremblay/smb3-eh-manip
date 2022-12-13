@@ -13,6 +13,8 @@ class Controller:
     def __init__(self):
         self.computer = Controller.create_computer()
         self.state = State()
+        # TODO temporary :\
+        self.computer.state = self.state
 
     def reset(self):
         self.computer.reset()

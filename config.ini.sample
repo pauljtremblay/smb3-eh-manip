@@ -59,9 +59,6 @@ computer = eh
 
 ; [beta] Detect and remediate lag frames during gameplay
 ;auto_detect_lag_frames_serial = false
-;auto_detect_lag_frames_retrospy = false
-;auto_detect_lag_frames_video = false
-;auto_detect_lag_frame_windows = 2500-2725
 enable_auto_detect_lag_frame_ui = false
 
 ; [beta] after getting the end level card, the text
@@ -86,9 +83,6 @@ enable_auto_detect_lag_frame_ui = false
 ; currently, the action frame is the last of the window, so if anything
 ; press early.
 ; enable_nohands = false
-
-; what is the latency, in frames, observed from retrospy?
-; latency_frames_retrospy = 0
 
 ; scale playback video
 ; video_player_scale = 1

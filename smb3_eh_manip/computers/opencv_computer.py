@@ -6,7 +6,6 @@ import cv2
 import numpy as np
 
 from smb3_eh_manip.app.servers.fceux_lua_server import *
-from smb3_eh_manip.app.servers.retrospy_server import RetroSpyServer
 from smb3_eh_manip.app.servers.serial_server import SerialServer
 from smb3_eh_manip.ui.audio_player import AudioPlayer
 from smb3_eh_manip.ui.ui_player import UiPlayer
@@ -32,12 +31,6 @@ class OpencvComputer:
         self.latency_ms = settings.get_int("latency_ms")
         self.show_capture_video = settings.get_boolean("show_capture_video")
         self.autoreset = settings.get_boolean("autoreset")
-        self.auto_detect_lag_frames_video = settings.get_boolean(
-            "auto_detect_lag_frames_video"
-        )
-        self.auto_detect_lag_frames_retrospy = settings.get_boolean(
-            "auto_detect_lag_frames_retrospy"
-        )
         self.auto_detect_lag_frames_serial = settings.get_boolean(
             "auto_detect_lag_frames_serial"
         )
@@ -65,18 +58,7 @@ class OpencvComputer:
         self.start_time = -1
         self.ewma_tick = 0
         self.ewma_read_frame = 0
-        self.lag_frames = 0
-        self.load_frames = 0
-        self.lag_frames_default = 0
 
-        if self.auto_detect_lag_frames_video:
-            self.auto_detect_lag_frame_windows = settings.get_frame_windows(
-                "auto_detect_lag_frame_windows", fallback="2500-2725"
-            )
-            self.last_frame_sliced = None
-
-        if self.auto_detect_lag_frames_retrospy:
-            self.retrospy_server = RetroSpyServer()
         if self.auto_detect_lag_frames_serial:
             self.serial_server = SerialServer()
 
@@ -137,24 +119,22 @@ class OpencvComputer:
         if self.show_capture_video:
             cv2.imshow("capture", frame)
         if self.enable_audio_player and self.playing:
-            self.audio_player.tick(self.current_frame - self.lag_frames)
+            # TODO the early hammer audio cues are predetermined and need to be accounted for
+            # by subtracting any automatically found lag frames, however, newly generated
+            # action frames should not be! :grimace:
+            self.audio_player.tick(self.current_frame)
         if self.enable_ui_player and self.playing:
+            # TODO the early hammer audio cues are predetermined and need to be accounted for
+            # by subtracting any automatically found lag frames, however, newly generated
+            # action frames should not be! :grimace:
             self.ui_player.tick(
-                self.current_frame - self.lag_frames,
+                self.current_frame,
                 self.ewma_tick,
                 self.ewma_read_frame,
-                self.lag_frames,
-                self.load_frames,
+                self.state.total_observed_lag_frames,
+                self.state.total_observed_load_frames,
             )
-        key = cv2.waitKey(1)
-        if key == ord("l"):
-            self.lag_frames += 1
-            self.lag_frames_default += 1
-            logging.info(f"Lag frame default incremented to {self.lag_frames_default}")
-        elif key == ord("k"):
-            self.lag_frames -= 1
-            self.lag_frames_default -= 1
-            logging.info(f"Lag frame default decremented to {self.lag_frames_default}")
+        _ = cv2.waitKey(1)
 
     def should_autoreset(self):
         return (
@@ -170,15 +150,12 @@ class OpencvComputer:
     def reset(self):
         self.playing = False
         self.current_frame = -1
-        self.lag_frames = self.lag_frames_default
         if self.enable_video_player:
             self.video_player.reset()
         if self.enable_fceux_tas_start:
             emu.pause()
             latency_offset = round(self.latency_ms / settings.NES_MS_PER_FRAME)
             taseditor.setplayback(self.video_offset_frames + latency_offset)
-        if self.auto_detect_lag_frames_retrospy:
-            self.retrospy_server.reset()
         if self.auto_detect_lag_frames_serial:
             self.serial_server.reset()
 
@@ -205,10 +182,7 @@ class OpencvComputer:
         self.current_time = 0
         if self.enable_fceux_tas_start:
             emu.unpause()
-        if self.auto_detect_lag_frames_retrospy:
-            # lag frames can errantly be between reset and start,
-            # especially on first run. lets just clear these values out.
-            self.retrospy_server.reset()
+        self.state.reset()
         if self.auto_detect_lag_frames_serial:
             self.serial_server.reset()
         if self.enable_video_player:
@@ -219,37 +193,13 @@ class OpencvComputer:
             self.ui_player.reset()
 
     def check_and_update_lag_frames(self, frame):
-        if self.auto_detect_lag_frames_retrospy or self.auto_detect_lag_frames_serial:
+        if self.auto_detect_lag_frames_serial:
             lag_frame_detect_start = time.time()
             if self.auto_detect_lag_frames_serial:
                 self.serial_server.tick(self.current_frame)
-                self.lag_frames = self.serial_server.lag_frames_observed
-                self.load_frames = self.serial_server.load_frames_observed
-            elif self.auto_detect_lag_frames_retrospy:
-                self.retrospy_server.tick(self.current_frame)
-                self.lag_frames = self.retrospy_server.lag_frames_observed
-                self.load_frames = self.retrospy_server.load_frames_observed
             detect_duration = time.time() - lag_frame_detect_start
             if self.playing and detect_duration > 0.002:
                 logging.info(f"Took {detect_duration}s detecting lag frames")
-        if self.auto_detect_lag_frames_video and self.playing:
-            for frame_window in self.auto_detect_lag_frame_windows:
-                if (
-                    self.current_frame >= frame_window[0]
-                    and self.current_frame <= frame_window[1]
-                ):
-                    # i dont want to compare the entire frame, since even for lag
-                    # frames they can change. let's remove a 100px border.
-                    current_frame_sliced = frame[100:-100, 100:-100]
-                    if (self.last_frame_sliced == current_frame_sliced).all():
-                        self.lag_frames += 1
-                        logging.info(f"Detected lag frame, total {self.lag_frames}")
-                        if self.enable_auto_detect_lag_frame_ui:
-                            cv2.imshow("last lag frame", current_frame_sliced)
-                    self.last_frame_sliced = current_frame_sliced
-
-                    if self.enable_auto_detect_lag_frame_ui:
-                        cv2.imshow("lag frame ui", current_frame_sliced)
 
     def check_and_update_end_stage(self, frame):
         if (
