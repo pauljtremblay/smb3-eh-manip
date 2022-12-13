@@ -223,10 +223,12 @@ class OpencvComputer:
             lag_frame_detect_start = time.time()
             if self.auto_detect_lag_frames_serial:
                 self.serial_server.tick(self.current_frame)
+                self.lag_frames = self.serial_server.lag_frames_observed
+                self.load_frames = self.serial_server.load_frames_observed
             elif self.auto_detect_lag_frames_retrospy:
                 self.retrospy_server.tick(self.current_frame)
-            self.lag_frames = self.retrospy_server.lag_frames_observed
-            self.load_frames = self.retrospy_server.load_frames_observed
+                self.lag_frames = self.retrospy_server.lag_frames_observed
+                self.load_frames = self.retrospy_server.load_frames_observed
             detect_duration = time.time() - lag_frame_detect_start
             if self.playing and detect_duration > 0.002:
                 logging.info(f"Took {detect_duration}s detecting lag frames")
