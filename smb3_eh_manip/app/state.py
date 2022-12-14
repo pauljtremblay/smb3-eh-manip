@@ -98,8 +98,8 @@ class State:
 
     def reset(self):
         self.total_observed_lag_frames = 0
-        self.total_observed_load_frames = 0
-        self.lsfr_frame = 12
+        self.total_observed_load_frames = 12
+        self.lsfr_frame = 0
         self.category = Category.load(self.category_name)
         self.lsfr = LSFR()
 
