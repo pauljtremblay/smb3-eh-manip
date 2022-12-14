@@ -25,7 +25,7 @@ class TestState(unittest.TestCase):
         state.handle_lag_frames_observed(events.LagFramesObserved(2, 0, 63))
         # would be 75, but frames of rng increment during 1-1 enter, so we
         # trigger framerngincrement
-        self.assertEqual(14, state.total_observed_load_frames)
+        self.assertEqual(87, state.total_observed_load_frames)
 
     def test_load_frames_condition(self):
         state = State()

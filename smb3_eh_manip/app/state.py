@@ -73,18 +73,20 @@ class State:
     def check_and_update_rng_frames_incremented_during_load(self, section):
         if section.trigger != "framerngincrement":
             return
-        self.total_observed_load_frames -= 61
+        self.total_lag_incremented_frames += 60
         logging.debug(f"RNG frames incremented during load, offsetting")
 
-    def tick(self, current_frame):
+    def tick(self, current_frame: int):
         # we need to see how much time has gone by and increment RNG that amount
         lsfr_increments = (
-            round(current_frame)
-            - self.lsfr_frame
+            current_frame
             - self.total_observed_lag_frames
             - self.total_observed_load_frames
+            + self.total_lag_incremented_frames
+            - self.lsfr_frame
         )
         if lsfr_increments > 0:
+            # would be cool to go backwards here, but we wait to catch up instead
             self.lsfr.next_n(lsfr_increments)
             self.lsfr_frame += lsfr_increments
 
@@ -97,6 +99,7 @@ class State:
         self.check_and_update_nohands(current_frame, section)
 
     def reset(self):
+        self.total_lag_incremented_frames = 0
         self.total_observed_lag_frames = 0
         self.total_observed_load_frames = 12
         self.lsfr_frame = 0

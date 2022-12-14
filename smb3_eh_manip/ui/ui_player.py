@@ -10,7 +10,7 @@ from smb3_eh_manip.util.settings import get_int, ACTION_FRAMES, FREQUENCY
 WINDOW_TITLE = "eh manip ui"
 LINE_COUNT = 6
 WINDOW_SCALAR = 3
-WINDOW_HEIGHT = FREQUENCY * WINDOW_SCALAR * 2
+WINDOW_HEIGHT = int(FREQUENCY * WINDOW_SCALAR * 2.5)
 VISUAL_CUE_HEIGHT = WINDOW_HEIGHT // 2
 WINDOW_WIDTH = FREQUENCY * WINDOW_SCALAR * LINE_COUNT
 LINE_COLOR = (255, 255, 255)
@@ -84,6 +84,9 @@ class UiPlayer:
         cv2.putText(ui, load_frames_str, (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
         rng_str = f"RNG: {state.lsfr.data}"
         cv2.putText(ui, rng_str, (x1, y), TYPEFACE, 1, FONT_COLOR, 2)
+        y += 20
+        lag_inc_str = f"Lag RNG Inc: {state.total_lag_incremented_frames}"
+        cv2.putText(ui, lag_inc_str, (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
 
     def handle_add_action_frame(self, event: events.AddActionFrame):
         self.trigger_frames.append(event.action_frame)

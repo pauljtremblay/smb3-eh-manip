@@ -101,7 +101,7 @@ class OpencvComputer:
             self.update_times()
         self.check_and_update_lag_frames()
         if self.playing:
-            self.state.tick(self.current_frame)
+            self.state.tick(round(self.current_frame))
         self.frame = frame
         self.check_and_update_begin_playing(frame)
         if self.show_capture_video:
