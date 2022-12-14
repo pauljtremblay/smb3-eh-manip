@@ -18,14 +18,14 @@ class TestState(unittest.TestCase):
         self.assertEqual(102, state.lsfr.get(1))
         self.assertEqual(100, state.lsfr.get(2))
 
-    def test_trigger_offset2framerngincrement(self):
+    def test_trigger_framerngincrement(self):
         state = State()
         state.handle_lag_frames_observed(events.LagFramesObserved(1, 0, 12))
         self.assertEqual("1-1 enter", state.active_section().name)
         state.handle_lag_frames_observed(events.LagFramesObserved(2, 0, 63))
-        # would be 75, but two frames of rng increment during 1-1 enter, so we
-        # trigger offset2framerngincrement and end up with 73
-        self.assertEqual(73, state.total_observed_load_frames)
+        # would be 75, but frames of rng increment during 1-1 enter, so we
+        # trigger framerngincrement
+        self.assertEqual(14, state.total_observed_load_frames)
 
     def test_load_frames_condition(self):
         state = State()

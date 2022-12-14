@@ -71,21 +71,22 @@ class State:
         )
 
     def check_and_update_rng_frames_incremented_during_load(self, section):
-        if section.trigger != "offset2framerngincrement":
+        if section.trigger != "framerngincrement":
             return
-        self.total_observed_load_frames -= 2
-        logging.debug(f"RNG frames incremented during load, offsetting by 2")
+        self.total_observed_load_frames -= 61
+        logging.debug(f"RNG frames incremented during load, offsetting")
 
     def tick(self, current_frame):
         # we need to see how much time has gone by and increment RNG that amount
         lsfr_increments = (
-            int(current_frame)
+            round(current_frame)
             - self.lsfr_frame
             - self.total_observed_lag_frames
             - self.total_observed_load_frames
         )
-        self.lsfr.next_n(lsfr_increments)
-        self.lsfr_frame += lsfr_increments
+        if lsfr_increments > 0:
+            self.lsfr.next_n(lsfr_increments)
+            self.lsfr_frame += lsfr_increments
 
         while self.check_complete_frame_condition(current_frame):
             self.completed_section(current_frame, self.category.sections.pop(0))
