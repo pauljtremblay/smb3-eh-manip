@@ -10,10 +10,10 @@ from smb3_eh_manip.util import settings
 
 
 def handler(_signum, _frame):
-    global computer
+    global controller
     print("SIGINT or CTRL-C detected. Exiting gracefully")
-    computer.terminate()
-    computer = None
+    controller.terminate()
+    controller = None
 
 
 def print_camera_info():
@@ -28,16 +28,16 @@ def print_camera_info():
 
 
 def main():
-    global computer
+    global controller
     signal(SIGINT, handler)
     initialize_logging()
     print_camera_info()
     try:
-        computer = Controller()
+        controller = Controller()
         last_tick_duration = -1
-        while computer is not None:
+        while controller is not None:
             start_time = time.time()
-            computer.tick(last_tick_duration)
+            controller.tick(last_tick_duration)
             last_tick_duration = time.time() - start_time
             logging.debug(f"Took {last_tick_duration}s to tick")
     except Exception as e:

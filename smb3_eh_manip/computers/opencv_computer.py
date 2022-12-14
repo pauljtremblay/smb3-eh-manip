@@ -7,12 +7,11 @@ import numpy as np
 
 from smb3_eh_manip.app.servers.fceux_lua_server import *
 from smb3_eh_manip.app.servers.serial_server import SerialServer
+from smb3_eh_manip.app.state import State
 from smb3_eh_manip.ui.audio_player import AudioPlayer
 from smb3_eh_manip.ui.ui_player import UiPlayer
 from smb3_eh_manip.ui.video_player import VideoPlayer
 from smb3_eh_manip.util import settings
-
-CLEAR_SIGHTING_DURATION_SECONDS = 10
 
 
 class OpencvComputer:
@@ -46,9 +45,6 @@ class OpencvComputer:
         self.enable_video_player = settings.get_boolean("enable_video_player")
         self.enable_audio_player = settings.get_boolean("enable_audio_player")
         self.enable_ui_player = settings.get_boolean("enable_ui_player")
-        self.track_end_stage_clear_text_time = settings.get_boolean(
-            "track_end_stage_clear_text_time", fallback=False
-        )
         self.offset_ewma_read_frame = settings.get_boolean(
             "offset_ewma_read_frame", fallback=False
         )
@@ -62,13 +58,6 @@ class OpencvComputer:
         if self.auto_detect_lag_frames_serial:
             self.serial_server = SerialServer()
 
-        if self.track_end_stage_clear_text_time:
-            self.last_clear_sighting_time = -1
-            self.end_stage_clear_text_template = cv2.imread(
-                settings.get(
-                    "end_stage_clear_text_path", fallback="data/endStageClearText.png"
-                )
-            )
         self.reset_template = cv2.imread(
             settings.get("reset_image_path", fallback="data/reset.png")
         )
@@ -77,6 +66,7 @@ class OpencvComputer:
         if not self.capture.isOpened():
             logging.info("Cannot open camera")
             sys.exit()
+        self.state = State()
         if self.write_capture_video:
             path = settings.get("write_capture_video_path", fallback="capture.avi")
             fps = float(self.capture.get(cv2.CAP_PROP_FPS)) or 60
@@ -88,9 +78,6 @@ class OpencvComputer:
         if self.enable_video_player:
             self.video_player = VideoPlayer(player_video_path, video_offset_frames)
         self.reset_image_region = settings.get_config_region("reset_image_region")
-        self.end_stage_clear_text_region = settings.get_config_region(
-            "end_stage_clear_text_region"
-        )
         if self.enable_fceux_tas_start:
             waitForFceuxConnection()
         if self.enable_audio_player:
@@ -112,10 +99,11 @@ class OpencvComputer:
             self.output_video.write(frame)
         if self.playing:
             self.update_times()
+        self.check_and_update_lag_frames()
+        if self.playing:
+            self.state.tick(self.current_frame)
         self.frame = frame
-        self.check_and_update_end_stage(frame)
         self.check_and_update_begin_playing(frame)
-        self.check_and_update_lag_frames(frame)
         if self.show_capture_video:
             cv2.imshow("capture", frame)
         if self.enable_audio_player and self.playing:
@@ -149,6 +137,7 @@ class OpencvComputer:
     def reset(self):
         self.playing = False
         self.current_frame = -1
+        self.state.reset()
         if self.enable_video_player:
             self.video_player.reset()
         if self.enable_fceux_tas_start:
@@ -191,7 +180,7 @@ class OpencvComputer:
         if self.enable_ui_player:
             self.ui_player.reset()
 
-    def check_and_update_lag_frames(self, frame):
+    def check_and_update_lag_frames(self):
         if self.auto_detect_lag_frames_serial:
             lag_frame_detect_start = time.time()
             if self.auto_detect_lag_frames_serial:
@@ -199,25 +188,6 @@ class OpencvComputer:
             detect_duration = time.time() - lag_frame_detect_start
             if self.playing and detect_duration > 0.002:
                 logging.info(f"Took {detect_duration}s detecting lag frames")
-
-    def check_and_update_end_stage(self, frame):
-        if (
-            self.track_end_stage_clear_text_time
-            and self.playing
-            and self.current_time - self.last_clear_sighting_time
-            > CLEAR_SIGHTING_DURATION_SECONDS
-            and list(
-                OpencvComputer.locate_all_opencv(
-                    self.end_stage_clear_text_template,
-                    frame,
-                    region=self.end_stage_clear_text_region,
-                )
-            )
-        ):
-            self.last_clear_sighting_time = self.current_time
-            logging.info(
-                f"Cleared a level at {self.current_time} on frame {self.current_frame}"
-            )
 
     def update_times(self):
         self.current_time = time.time() - self.start_time

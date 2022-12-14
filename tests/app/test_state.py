@@ -5,6 +5,19 @@ from smb3_eh_manip.util import events
 
 
 class TestState(unittest.TestCase):
+    def test_rng_at_frame_120(self):
+        state = State()
+        state.tick(110)
+        state.tick(120)
+        self.assertEqual(129, state.lsfr.get(0))
+        self.assertEqual(102, state.lsfr.get(1))
+        self.assertEqual(100, state.lsfr.get(2))
+        state.reset()
+        state.tick(120)
+        self.assertEqual(129, state.lsfr.get(0))
+        self.assertEqual(102, state.lsfr.get(1))
+        self.assertEqual(100, state.lsfr.get(2))
+
     def test_trigger_offset2framerngincrement(self):
         state = State()
         state.handle_lag_frames_observed(events.LagFramesObserved(1, 0, 12))

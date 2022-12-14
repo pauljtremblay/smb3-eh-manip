@@ -61,11 +61,6 @@ computer = eh
 ;auto_detect_lag_frames_serial = false
 enable_auto_detect_lag_frame_ui = false
 
-; [beta] after getting the end level card, the text
-; "level clear" appears. With this set to true, the tool will write the time
-; since the run started (start trigger was seen).
-; track_end_stage_clear_text_time = false
-
 ; Enable/disables sending fceux the 'pause' keystroke
 ; when the trigger frame has been detected.
 ; enable_fceux_tas_start = false
@@ -95,7 +90,6 @@ enable_auto_detect_lag_frame_ui = false
 ; Overwrite wherever you'd like your audio cue to be found
 ; audio_cue_path = data/audio_cue.wav
 
-; end_stage_clear_text_path = data/endStageClearText.png
 ; reset_image_path = data/reset.png
 ; calibration_start_frame_image_path = data/calibration/trigger.png
 ; calibration_video_path = data/calibration/video.mp4

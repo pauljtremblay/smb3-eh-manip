@@ -12,13 +12,9 @@ from smb3_eh_manip.util import settings
 class Controller:
     def __init__(self):
         self.computer = Controller.create_computer()
-        self.state = State()
-        # TODO temporary :\
-        self.computer.state = self.state
 
     def reset(self):
         self.computer.reset()
-        self.state.reset()
 
     def terminate(self):
         self.computer.terminate()
@@ -28,8 +24,6 @@ class Controller:
         if self.computer.should_autoreset():
             self.reset()
             logging.info(f"Detected reset")
-        if self.computer.playing:
-            self.state.tick(self.computer.current_frame)
 
     @classmethod
     def create_computer(cls):
