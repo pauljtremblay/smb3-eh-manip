@@ -21,7 +21,7 @@ def handler(_signum, _frame):
     running = False
 
 
-def server_process(lag_frames_observed, load_frames_observed):
+def server_process(lag_frames_observed: Value, load_frames_observed: Value):
     initialize_logging(console_log_level="DEBUG", filename="restrospy_server.log")
     arduino = serial.Serial(
         port=SERIAL_PORT, baudrate=SERIAL_BAUDRATE, timeout=SERIAL_TIMEOUT

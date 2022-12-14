@@ -13,6 +13,7 @@ sections:
     lag_frames: 12
   - name: 1-3 enter
     lag_frames: 63
+    trigger: framerngincrement
   - name: 1-3 transition
     lag_frames: 10
   - name: 1-3 exit
