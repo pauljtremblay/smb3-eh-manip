@@ -44,6 +44,6 @@ sections:
     lag_frames: 13
   - name: 8 first pipe enter
     lag_frames: 61
+  - name: 8 first pipe middle
+    wait_frames: 80
     trigger: nohands
-  - name: 8 first pipe exit
-    lag_frames: 13

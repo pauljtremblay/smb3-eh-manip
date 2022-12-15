@@ -15,6 +15,7 @@ from smb3_eh_manip.app.models import Window
 from smb3_eh_manip.util import settings
 
 INTRA_PIPE_DURATION = 197
+HALFWAY_PIPE_OFFSET = settings.get_int("nohands_intra_pipe_offset", fallback=80)
 POST_PIPE_TO_CONTROL_DURATION = 56
 PIPE_EXIT_LAG_FRAMES = 13
 # When we go in the pipe before hands, we want to start calculating which
@@ -22,7 +23,7 @@ PIPE_EXIT_LAG_FRAMES = 13
 # the pipe and having control of mario on the overworld, minus pipe
 # transition lag frames.
 SECTION_TRIGGER_TO_OVERWORLD_CONTROL_RNG_FRAMES = (
-    INTRA_PIPE_DURATION + POST_PIPE_TO_CONTROL_DURATION
+    INTRA_PIPE_DURATION - HALFWAY_PIPE_OFFSET + POST_PIPE_TO_CONTROL_DURATION
 )
 # when holding left exiting the pipe, the frame# from origin to specific hand
 TO_HAND1_CHECK_FRAME_DURATION = 17

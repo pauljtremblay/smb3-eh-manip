@@ -1,6 +1,6 @@
 import unittest
 
-from smb3_eh_manip.app.state import State
+from smb3_eh_manip.app.state import Category, Section, State
 from smb3_eh_manip.util import events
 
 
@@ -28,6 +28,17 @@ class TestState(unittest.TestCase):
         self.assertEqual(87, state.total_observed_load_frames)
 
     def test_load_frames_condition(self):
+        section = Section(name="testsection", wait_frames=5)
+        state = State()
+        state.category = Category([section])
+        self.assertEqual(False, state.check_and_update_wait_frames_condition(100))
+        self.assertEqual(False, state.check_and_update_wait_frames_condition(101))
+        self.assertEqual(False, state.check_and_update_wait_frames_condition(102))
+        self.assertEqual(False, state.check_and_update_wait_frames_condition(103))
+        self.assertEqual(False, state.check_and_update_wait_frames_condition(104))
+        self.assertEqual(True, state.check_and_update_wait_frames_condition(105))
+
+    def test_wait_frames_condition(self):
         state = State()
         state.handle_lag_frames_observed(events.LagFramesObserved(1, 0, 12))
         state.handle_lag_frames_observed(events.LagFramesObserved(2, 0, 63))

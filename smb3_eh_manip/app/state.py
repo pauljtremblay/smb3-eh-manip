@@ -13,6 +13,7 @@ class Section:
     lag_frames: Optional[int] = None
     trigger: Optional[str] = None
     complete_frame: Optional[int] = None
+    wait_frames: Optional[int] = None
 
 
 @dataclass
@@ -56,7 +57,7 @@ class State:
             and expected_section_lag <= observed_load_frames + 1
         )
 
-    def check_and_update_nohands(self, current_frame, section):
+    def check_and_update_nohands(self, current_frame, section: Section):
         if not self.enable_nohands or section.trigger != "nohands":
             return
         nohands_window = self.nohands.calculate_optimal_window(self.lsfr)
@@ -74,6 +75,18 @@ class State:
         self.total_lag_incremented_frames += 60
         logging.debug(f"RNG frames incremented during load, offsetting")
 
+    def check_and_update_wait_frames_condition(self, current_frame: int):
+        active_section = self.active_section()
+        if not active_section or active_section.wait_frames is None:
+            return False
+        if self.target_wait_frame:
+            if current_frame >= self.target_wait_frame:
+                self.target_wait_frame = 0
+                return True
+        else:
+            self.target_wait_frame = current_frame + active_section.wait_frames
+        return False
+
     def tick(self, current_frame: int):
         # we need to see how much time has gone by and increment RNG that amount
         lsfr_increments = (
@@ -88,10 +101,12 @@ class State:
             self.lsfr.next_n(lsfr_increments)
             self.lsfr_frame += lsfr_increments
 
-        while self.check_complete_frame_condition(current_frame):
+        while self.check_complete_frame_condition(
+            current_frame
+        ) or self.check_and_update_wait_frames_condition(current_frame):
             self.completed_section(current_frame, self.category.sections.pop(0))
 
-    def completed_section(self, current_frame, section):
+    def completed_section(self, current_frame, section: Section):
         logging.debug(f"Completed {section.name}")
         self.check_and_update_rng_frames_incremented_during_load(section)
         self.check_and_update_nohands(current_frame, section)
@@ -103,6 +118,7 @@ class State:
         self.lsfr_frame = 0
         self.category = Category.load(self.category_name)
         self.lsfr = LSFR()
+        self.target_wait_frame = 0
 
     def active_section(self):
         if not self.category.sections:
