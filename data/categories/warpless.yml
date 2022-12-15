@@ -4,24 +4,24 @@ sections:
     lag_frames: 12
   - name: 1-1 enter
     lag_frames: 63
-    trigger: framerngincrement
+    action: framerngincrement
   - name: w2 airship mid
     complete_frame: 28000
   - name: 3-3 enter
     lag_frames: 63
-    trigger: framerngincrement
+    action: framerngincrement
   - name: 4-6 enter
     complete_frame: 65000
-    trigger: framerngincrement
+    action: framerngincrement
   - name: 5-1 enter
     complete_frame: 78000
-    trigger: framerngincrement
+    action: framerngincrement
   - name: 5-5 pipe
     complete_frame: 88000
-    trigger: framerngincrement
+    action: framerngincrement
   - name: 7-8 enter
     complete_frame: 135000
-    trigger: framerngincrement
+    action: framerngincrement
     notes: this is wrong if the runner goes to 7-7, which does not have the offset issue. tracking from w6 airship should be feasible
   - name: 8-navy mid
     complete_frame: 160000
@@ -33,4 +33,4 @@ sections:
     lag_frames: 61
   - name: 8 first pipe middle
     wait_frames: 80
-    trigger: nohands
+    action: nohands

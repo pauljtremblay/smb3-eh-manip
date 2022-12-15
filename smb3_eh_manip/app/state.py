@@ -11,7 +11,7 @@ from smb3_eh_manip.util import events, settings, wizard_mixins
 class Section:
     name: str
     lag_frames: Optional[int] = None
-    trigger: Optional[str] = None
+    action: Optional[str] = None
     complete_frame: Optional[int] = None
     wait_frames: Optional[int] = None
 
@@ -58,7 +58,7 @@ class State:
         )
 
     def check_and_update_nohands_action(self, current_frame, section: Section):
-        if not self.enable_nohands or section.trigger != "nohands":
+        if not self.enable_nohands or section.action != "nohands":
             return
         nohands_window = self.nohands.calculate_optimal_window(self.lsfr)
         if not nohands_window:
@@ -70,7 +70,7 @@ class State:
         )
 
     def check_and_update_rng_frames_incremented_during_load_action(self, section):
-        if section.trigger != "framerngincrement":
+        if section.action != "framerngincrement":
             return
         self.total_lag_incremented_frames += 60
         logging.debug(f"RNG frames incremented during load, offsetting")

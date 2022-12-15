@@ -39,14 +39,6 @@ MAXIMUM_FRAMES_TO_LOOK_FORWARD = settings.get_int(
     "nohands_max_frames_to_look_forward", fallback=120
 )
 
-# *: upon using the start/end pipe, identify frame windows in the
-# second after exiting the pipe to trigger audio cue
-# *: trigger audio cue :D
-
-TRIGGER_SECTION_NAME = settings.get(
-    "nohands_trigger_section_name", fallback="8 first pipe enter"
-)
-
 
 class NoHands:
     def calculate_optimal_window(self, seed_lsfr: LSFR):
