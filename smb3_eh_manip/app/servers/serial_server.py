@@ -32,7 +32,7 @@ def server_process(lag_frames_observed: Value, load_frames_observed: Value):
             logging.debug(f"Data frame not sized properly {len(data)}")
             continue
         timestamp_diff = (data[-1] << 8) + data[-2]
-        packet_lag_frames = int((timestamp_diff + 2) / settings.NES_MS_PER_FRAME) - 1
+        packet_lag_frames = round(timestamp_diff / settings.NES_MS_PER_FRAME) - 1
         if packet_lag_frames < 0:
             logging.debug(
                 f"We think we got {packet_lag_frames} frames, correcting to 0. timestamp_diff: {timestamp_diff}"
