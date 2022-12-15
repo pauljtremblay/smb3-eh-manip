@@ -10,6 +10,7 @@ This class watches for level changes and times when the hands should occur.
 A higher level class should be keeping track of what levels we have beaten.
 """
 
+from smb3_eh_manip.app.lsfr import LSFR
 from smb3_eh_manip.app.models import Window
 from smb3_eh_manip.util import settings
 
@@ -47,9 +48,7 @@ TRIGGER_SECTION_NAME = settings.get(
 
 
 class NoHands:
-    def calculate_optimal_window(self, section, seed_lsfr):
-        if section.name != TRIGGER_SECTION_NAME:
-            return
+    def calculate_optimal_window(self, seed_lsfr: LSFR):
         lsfr = seed_lsfr.clone()
         lsfr.next_n(SECTION_TRIGGER_TO_OVERWORLD_CONTROL_RNG_FRAMES)
         lsfr.next_n(TO_HAND1_CHECK_FRAME_DURATION)

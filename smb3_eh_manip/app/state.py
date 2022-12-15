@@ -59,9 +59,7 @@ class State:
     def check_and_update_nohands(self, current_frame, section):
         if not self.enable_nohands or section.trigger != "nohands":
             return
-        nohands_window = self.nohands.calculate_optimal_window(
-            section, self.lsfr.clone()
-        )
+        nohands_window = self.nohands.calculate_optimal_window(self.lsfr)
         if not nohands_window:
             return
         action_frame = round(current_frame + nohands_window.action_frame)
