@@ -27,25 +27,25 @@ class TestState(unittest.TestCase):
         # trigger framerngincrement
         self.assertEqual(87, state.total_observed_load_frames)
 
-    def test_load_frames_condition(self):
+    def test_load_frames_trigger(self):
         section = Section(name="testsection", wait_frames=5)
         state = State()
         state.category = Category([section])
-        self.assertEqual(False, state.check_and_update_wait_frames_condition(100))
-        self.assertEqual(False, state.check_and_update_wait_frames_condition(101))
-        self.assertEqual(False, state.check_and_update_wait_frames_condition(102))
-        self.assertEqual(False, state.check_and_update_wait_frames_condition(103))
-        self.assertEqual(False, state.check_and_update_wait_frames_condition(104))
-        self.assertEqual(True, state.check_and_update_wait_frames_condition(105))
+        self.assertEqual(False, state.check_and_update_wait_frames_trigger(100))
+        self.assertEqual(False, state.check_and_update_wait_frames_trigger(101))
+        self.assertEqual(False, state.check_and_update_wait_frames_trigger(102))
+        self.assertEqual(False, state.check_and_update_wait_frames_trigger(103))
+        self.assertEqual(False, state.check_and_update_wait_frames_trigger(104))
+        self.assertEqual(True, state.check_and_update_wait_frames_trigger(105))
 
-    def test_wait_frames_condition(self):
+    def test_wait_frames_trigger(self):
         state = State()
         state.handle_lag_frames_observed(events.LagFramesObserved(1, 0, 12))
         state.handle_lag_frames_observed(events.LagFramesObserved(2, 0, 63))
         state.handle_lag_frames_observed(events.LagFramesObserved(3, 1, 0))
         self.assertEqual("1-1 exit", state.active_section().name)
 
-    def test_frame_completed_condition(self):
+    def test_frame_completed_trigger(self):
         state = State(category_name="warpless")
         state.tick(1)
         self.assertEqual("w1 enter", state.active_section().name)
