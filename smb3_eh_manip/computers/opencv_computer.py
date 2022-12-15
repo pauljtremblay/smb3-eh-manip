@@ -107,14 +107,8 @@ class OpencvComputer:
         if self.show_capture_video:
             cv2.imshow("capture", frame)
         if self.enable_audio_player and self.playing:
-            # TODO the early hammer audio cues are predetermined and need to be accounted for
-            # by subtracting any automatically found lag frames, however, newly generated
-            # action frames should not be! :grimace:
             self.audio_player.tick(self.current_frame)
         if self.enable_ui_player and self.playing:
-            # TODO the early hammer audio cues are predetermined and need to be accounted for
-            # by subtracting any automatically found lag frames, however, newly generated
-            # action frames should not be! :grimace:
             self.ui_player.tick(
                 self.current_frame,
                 self.ewma_tick,

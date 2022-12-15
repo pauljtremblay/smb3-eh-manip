@@ -27,6 +27,7 @@ class UiPlayer:
         self.window_open = True
         cv2.imshow(WINDOW_TITLE, UiPlayer.get_base_frame())
         events.listen(events.AddActionFrame, self.handle_add_action_frame)
+        events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
 
     def reset(self):
         self.window_open = True
@@ -91,6 +92,11 @@ class UiPlayer:
     def handle_add_action_frame(self, event: events.AddActionFrame):
         self.trigger_frames.append(event.action_frame)
         self.trigger_frames.sort()
+
+    def handle_lag_frames_observed(self, event: events.LagFramesObserved):
+        self.trigger_frames = [
+            frame + event.observed_lag_frames for frame in self.trigger_frames
+        ]
 
     @classmethod
     def get_base_frame(self):
