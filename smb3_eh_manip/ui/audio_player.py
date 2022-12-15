@@ -2,8 +2,6 @@ import logging
 import time
 from multiprocessing import Process, Value
 
-import pygame
-
 from smb3_eh_manip.util import events, settings
 from smb3_eh_manip.util.settings import ACTION_FRAMES, FREQUENCY
 
@@ -12,8 +10,9 @@ AUDIO_CUE_PATH = settings.get("audio_cue_path", fallback=DEFAULT_AUDIO_CUE_PATH)
 
 
 def play_audio_cue(play):
-    pygame.mixer.init()
-    pygame.mixer.music.load(AUDIO_CUE_PATH)
+    from pygame import mixer
+    mixer.init()
+    mixer.music.load(AUDIO_CUE_PATH)
     while True:
         play_sound = False
         with play.get_lock():
@@ -21,15 +20,18 @@ def play_audio_cue(play):
                 play.value = 0
                 play_sound = True
         if play_sound:
-            pygame.mixer.music.play()
+            mixer.music.play()
         else:
             time.sleep(0.001)
 
 
 class AudioPlayer:
     def __init__(self):
+        self.trigger_frames = []
         self.play = Value("i", 0)
-        self.play_process = Process(target=play_audio_cue, args=(self.play,)).start()
+        self.play_process = Process(target=play_audio_cue, args=(self.play,))
+        self.play_process.daemon = True
+        self.play_process.start()
         events.listen(events.AddActionFrame, self.handle_add_action_frame)
         events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
 

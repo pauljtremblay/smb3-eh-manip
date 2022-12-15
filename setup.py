@@ -25,6 +25,7 @@ setup(
         "pydispatcher",
         "pygame",
         "pygrabber",
+        "pyserial",
         "python-vlc",
         "pyyaml",
     ],

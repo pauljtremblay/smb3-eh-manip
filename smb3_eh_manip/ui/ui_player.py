@@ -23,8 +23,9 @@ THICKNESS = 2
 
 class UiPlayer:
     def __init__(self):
-        self.auto_close_ui_frame = get_int("auto_close_ui_frame", fallback=0)
+        self.trigger_frames = list(ACTION_FRAMES)
         self.window_open = True
+        self.auto_close_ui_frame = get_int("auto_close_ui_frame", fallback=0)
         cv2.imshow(WINDOW_TITLE, UiPlayer.get_base_frame())
         events.listen(events.AddActionFrame, self.handle_add_action_frame)
         events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
