@@ -11,6 +11,7 @@ AUDIO_CUE_PATH = settings.get("audio_cue_path", fallback=DEFAULT_AUDIO_CUE_PATH)
 
 def play_audio_cue(play):
     from pygame import mixer
+
     mixer.init()
     mixer.music.load(AUDIO_CUE_PATH)
     while True:
