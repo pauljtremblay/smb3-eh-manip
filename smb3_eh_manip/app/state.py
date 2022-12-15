@@ -39,14 +39,14 @@ class State:
         if self.check_expected_lag_trigger(event.observed_load_frames):
             self.completed_section(event.current_frame, self.category.sections.pop(0))
 
-    def check_complete_frame_trigger(self, current_frame):
+    def check_complete_frame_trigger(self, current_frame: int):
         active_section = self.active_section()
         if not active_section:
             return False
         complete_frame = active_section.complete_frame
         return complete_frame and complete_frame <= current_frame
 
-    def check_expected_lag_trigger(self, observed_load_frames):
+    def check_expected_lag_trigger(self, observed_load_frames: int):
         active_section = self.active_section()
         if not active_section:
             return False
@@ -57,25 +57,7 @@ class State:
             and expected_section_lag <= observed_load_frames + 1
         )
 
-    def check_and_update_nohands_action(self, current_frame, section: Section):
-        if not self.enable_nohands or section.action != "nohands":
-            return
-        nohands_window = self.nohands.calculate_optimal_window(self.lsfr)
-        if not nohands_window:
-            return
-        action_frame = round(current_frame + nohands_window.action_frame)
-        events.emit(self, events.AddActionFrame(action_frame, nohands_window.window))
-        logging.info(
-            f"NoHands at frame: {action_frame} with window: {nohands_window.window}"
-        )
-
-    def check_and_update_rng_frames_incremented_during_load_action(self, section):
-        if section.action != "framerngincrement":
-            return
-        self.total_lag_incremented_frames += 60
-        logging.debug(f"RNG frames incremented during load, offsetting")
-
-    def check_and_update_wait_frames_trigger(self, current_frame: int):
+    def check_wait_frames_trigger(self, current_frame: int):
         active_section = self.active_section()
         if not active_section or active_section.wait_frames is None:
             return False
@@ -86,6 +68,26 @@ class State:
         else:
             self.target_wait_frame = current_frame + active_section.wait_frames
         return False
+
+    def check_and_update_nohands_action(self, current_frame: int, section: Section):
+        if not self.enable_nohands or section.action != "nohands":
+            return
+        nohands_window = self.nohands.calculate_optimal_window(self.lsfr)
+        if not nohands_window:
+            return
+        action_frame = current_frame + nohands_window.action_frame
+        events.emit(self, events.AddActionFrame(action_frame, nohands_window.window))
+        logging.info(
+            f"NoHands at frame: {action_frame} with window: {nohands_window.window}"
+        )
+
+    def check_and_update_rng_frames_incremented_during_load_action(
+        self, section: Section
+    ):
+        if section.action != "framerngincrement":
+            return
+        self.total_lag_incremented_frames += 60
+        logging.debug(f"RNG frames incremented during load, offsetting")
 
     def tick(self, current_frame: int):
         # we need to see how much time has gone by and increment RNG that amount
@@ -103,10 +105,10 @@ class State:
 
         while self.check_complete_frame_trigger(
             current_frame
-        ) or self.check_and_update_wait_frames_trigger(current_frame):
+        ) or self.check_wait_frames_trigger(current_frame):
             self.completed_section(current_frame, self.category.sections.pop(0))
 
-    def completed_section(self, current_frame, section: Section):
+    def completed_section(self, current_frame: int, section: Section):
         logging.debug(f"Completed {section.name}")
         self.check_and_update_rng_frames_incremented_during_load_action(section)
         self.check_and_update_nohands_action(current_frame, section)

@@ -31,12 +31,12 @@ class TestState(unittest.TestCase):
         section = Section(name="testsection", wait_frames=5)
         state = State()
         state.category = Category([section])
-        self.assertEqual(False, state.check_and_update_wait_frames_trigger(100))
-        self.assertEqual(False, state.check_and_update_wait_frames_trigger(101))
-        self.assertEqual(False, state.check_and_update_wait_frames_trigger(102))
-        self.assertEqual(False, state.check_and_update_wait_frames_trigger(103))
-        self.assertEqual(False, state.check_and_update_wait_frames_trigger(104))
-        self.assertEqual(True, state.check_and_update_wait_frames_trigger(105))
+        self.assertEqual(False, state.check_wait_frames_trigger(100))
+        self.assertEqual(False, state.check_wait_frames_trigger(101))
+        self.assertEqual(False, state.check_wait_frames_trigger(102))
+        self.assertEqual(False, state.check_wait_frames_trigger(103))
+        self.assertEqual(False, state.check_wait_frames_trigger(104))
+        self.assertEqual(True, state.check_wait_frames_trigger(105))
 
     def test_wait_frames_trigger(self):
         state = State()
