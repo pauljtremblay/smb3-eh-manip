@@ -51,6 +51,14 @@ class Window:
     action_frame: int
     window: int
 
+    @classmethod
+    def create_centered_window(cls, last_action_frame, window):
+        # create a centered window given an action frame that is last within the window
+        return Window(
+            last_action_frame - window // 2,
+            window,
+        )
+
 
 @dataclass
 class World(YAMLWizard):

@@ -36,3 +36,10 @@ class TestModels(unittest.TestCase):
             number=world.number, path_prefix=tempfile.tempdir
         )
         self.assertEqual(world, world_load)
+
+    def test_window_create_centered_window(self):
+        self.assertEqual(10, models.Window.create_centered_window(10, 1).action_frame)
+        self.assertEqual(10, models.Window.create_centered_window(11, 2).action_frame)
+        self.assertEqual(11, models.Window.create_centered_window(12, 3).action_frame)
+        self.assertEqual(11, models.Window.create_centered_window(13, 4).action_frame)
+        self.assertEqual(12, models.Window.create_centered_window(14, 5).action_frame)

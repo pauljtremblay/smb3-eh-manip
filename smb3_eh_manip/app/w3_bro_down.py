@@ -18,8 +18,8 @@ from smb3_eh_manip.util import settings
 THREE_ONE_SECOND_SECTION_BEFORE_JUMP_MIN_DURATION = 209
 THREE_ONE_SECOND_SECTION_AFTER_JUMP_MIN_DURATION = 389
 TRANSITION_WAIT_DURATION = settings.get_int("transition_wait_duration", fallback=80)
-
 LEVEL_TO_FACE_FRAMES = 17
+DEFAULT_MAX_WAIT_FRAMES = settings.get_int("w3brodown_max_wait_frames", fallback=60)
 
 
 class W3BroDown:
@@ -27,7 +27,9 @@ class W3BroDown:
         self.world = World.load(number=3)
         self.hb = self.world.hbs[1]
 
-    def calculate_3_1_window(self, seed_lsfr: LSFR, target_window=2):
+    def calculate_3_1_window(
+        self, seed_lsfr: LSFR, target_window=2, max_wait_frames=DEFAULT_MAX_WAIT_FRAMES
+    ):
         lsfr = seed_lsfr.clone()
         lsfr.next_n(
             THREE_ONE_SECOND_SECTION_BEFORE_JUMP_MIN_DURATION
@@ -37,15 +39,19 @@ class W3BroDown:
         )
         offset = 0
         current_window = 0
-        while True:
+        max_window = None
+        while offset < max_wait_frames:
             direction = hb.calculate_facing_direction(
                 lsfr, self.world, self.hb, hb.LEVEL_FACE_TO_MOVE_FRAMES
             ).direction
             if direction == Direction.DOWN:
                 current_window += 1
-                if current_window == target_window:
-                    return Window(offset - 1, current_window)
+                if max_window is None or max_window.window < current_window:
+                    max_window = Window.create_centered_window(offset, current_window)
+                    if current_window == target_window:
+                        return max_window
             else:
                 current_window = 0
             offset += 1
             lsfr.next()
+        return max_window
