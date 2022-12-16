@@ -46,21 +46,44 @@ class TestState(unittest.TestCase):
 
     def test_frame_completed_trigger(self):
         state = State(category_name="warpless")
-        state.tick(1)
+        current_frame = 10
+        state.tick(current_frame)
         self.assertEqual("w1 enter", state.active_section().name)
-        state.handle_lag_frames_observed(events.LagFramesObserved(1, 1, 12))
-        state.tick(100)
+        state.handle_lag_frames_observed(events.LagFramesObserved(current_frame, 1, 12))
+        current_frame += 90
+        state.tick(current_frame)
         self.assertEqual("1-1 enter", state.active_section().name)
-        state.handle_lag_frames_observed(events.LagFramesObserved(100, 1, 63))
+        state.handle_lag_frames_observed(events.LagFramesObserved(current_frame, 1, 63))
         self.assertEqual("w2 airship mid", state.active_section().name)
-        state.tick(200)
+        current_frame += 100
+        state.tick(current_frame)
         self.assertEqual("w2 airship mid", state.active_section().name)
-        state.tick(75000)
+        current_frame += 75000
+        state.tick(current_frame)
+        self.assertEqual("w2 airship koopaling enter", state.active_section().name)
+
+        state.handle_lag_frames_observed(events.LagFramesObserved(current_frame, 0, 10))
+        current_frame += 10
+        state.handle_lag_frames_observed(events.LagFramesObserved(current_frame, 0, 10))
+        current_frame += 10
+        state.handle_lag_frames_observed(events.LagFramesObserved(current_frame, 0, 13))
+        current_frame += 10
+        state.handle_lag_frames_observed(events.LagFramesObserved(current_frame, 0, 71))
+        current_frame += 10
+        state.handle_lag_frames_observed(events.LagFramesObserved(current_frame, 0, 10))
+        current_frame += 10
+        state.tick(current_frame)
+        self.assertEqual("3-1 brodown", state.active_section().name)
+        current_frame += 80
+        state.tick(current_frame)
         self.assertEqual("3-3 enter", state.active_section().name)
-        state.handle_lag_frames_observed(events.LagFramesObserved(100, 1, 63))
-        state.tick(75001)
+
+        state.handle_lag_frames_observed(events.LagFramesObserved(current_frame, 1, 63))
+        current_frame += 1
+        state.tick(current_frame)
         self.assertEqual("5-1 enter", state.active_section().name)
-        state.tick(75002)
+        current_frame += 1
+        state.tick(current_frame)
         self.assertEqual("5-1 enter", state.active_section().name)
 
     def test_lsfr(self):

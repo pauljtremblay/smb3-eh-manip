@@ -4,6 +4,7 @@ from typing import Optional
 
 from smb3_eh_manip.app.lsfr import LSFR
 from smb3_eh_manip.app.nohands import NoHands
+from smb3_eh_manip.app.w3_bro_down import W3BroDown
 from smb3_eh_manip.util import events, settings, wizard_mixins
 
 
@@ -29,7 +30,9 @@ class State:
     def __init__(self, category_name=settings.get("category", fallback="nww")):
         self.category_name = category_name
         self.enable_nohands = settings.get_boolean("enable_nohands", fallback=False)
+        self.enable_w3brodown = settings.get_boolean("enable_w3brodown", fallback=False)
         self.nohands = NoHands() if self.enable_nohands else None
+        self.w3brodown = W3BroDown() if self.enable_w3brodown else None
         self.reset()
         events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
 
@@ -86,6 +89,16 @@ class State:
         logging.info(
             f"NoHands at frame: {action_frame} with window: {nohands_window.window}"
         )
+
+    def check_and_update_w3brodown_action(self, current_frame: int, section: Section):
+        if not self.enable_w3brodown or section.action != "w3brodown":
+            return
+        window = self.w3brodown.calculate_3_1_window(self.lsfr)
+        if not window:
+            return
+        action_frame = current_frame + window.action_frame
+        events.emit(self, events.AddActionFrame(action_frame, window.window))
+        logging.info(f"w3brodown at frame: {action_frame} with window: {window.window}")
 
     def check_and_update_rng_frames_incremented_during_load_action(
         self, section: Section

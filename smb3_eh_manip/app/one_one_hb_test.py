@@ -8,7 +8,7 @@ from smb3_eh_manip.app.models import World
 
 
 ONE_ONE_DURATION_FRAMES = 1449  # stop and jump under the end card
-ONE_ONE_LEVEL_TO_FACE_FRAMES = 17
+LEVEL_TO_FACE_FRAMES = 17
 
 
 class OneOneHBTest:
@@ -18,7 +18,7 @@ class OneOneHBTest:
 
     def calculate_facing(self, seed_lsfr: LSFR):
         lsfr = seed_lsfr.clone()
-        lsfr.next_n(ONE_ONE_DURATION_FRAMES + ONE_ONE_LEVEL_TO_FACE_FRAMES)
+        lsfr.next_n(ONE_ONE_DURATION_FRAMES + LEVEL_TO_FACE_FRAMES)
         return hb.calculate_facing_direction(
             lsfr, self.world, self.hb, hb.LEVEL_FACE_TO_MOVE_FRAMES
         )

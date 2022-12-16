@@ -7,6 +7,19 @@ sections:
     action: framerngincrement
   - name: w2 airship mid
     complete_frame: 28000
+  - name: w2 airship koopaling enter
+    lag_Frames: 10
+  - name: w2 castle enter
+    lag_frames: 10
+  - name: w3 enter
+    lag_frames: 13
+  - name: 3-1 enter
+    lag_frames: 71
+  - name: 3-1 transition
+    lag_frames: 10
+  - name: 3-1 brodown
+    wait_frames: 80
+    action: w3brodown
   - name: 3-3 enter
     lag_frames: 63
     action: framerngincrement
