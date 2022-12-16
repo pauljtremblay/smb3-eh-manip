@@ -37,7 +37,9 @@ class State:
         self.total_observed_lag_frames += event.observed_lag_frames
         self.total_observed_load_frames += event.observed_load_frames
         if self.check_expected_lag_trigger(event.observed_load_frames):
-            self.completed_section(event.current_frame, self.category.sections.pop(0))
+            self.completed_section(
+                round(event.current_frame), self.category.sections.pop(0)
+            )
 
     def check_complete_frame_trigger(self, current_frame: int):
         active_section = self.active_section()
@@ -66,7 +68,11 @@ class State:
                 self.target_wait_frame = 0
                 return True
         else:
-            self.target_wait_frame = current_frame + active_section.wait_frames
+            self.target_wait_frame = (
+                current_frame
+                + active_section.wait_frames
+                - self.get_expected_lag_latency_frames()
+            )
         return False
 
     def check_and_update_nohands_action(self, current_frame: int, section: Section):
@@ -126,3 +132,14 @@ class State:
         if not self.category.sections:
             return None
         return self.category.sections[0]
+
+    def get_expected_lag_latency_frames(self):
+        # practically, there is only one way to triger completed sections, and
+        # it ultimately is from the serial server. while this class should be
+        # implementation independent, we need to still offset here, so this
+        # method (unfortunately) holds the details specific to serial server.
+        if not settings.get_boolean("auto_detect_lag_frames_serial"):
+            return
+        from smb3_eh_manip.app.servers.serial_server import SERIAL_LATENCY_MS
+
+        return round(SERIAL_LATENCY_MS / settings.NES_MS_PER_FRAME)

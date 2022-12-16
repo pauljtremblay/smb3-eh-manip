@@ -35,8 +35,7 @@ class TestState(unittest.TestCase):
         self.assertEqual(False, state.check_wait_frames_trigger(101))
         self.assertEqual(False, state.check_wait_frames_trigger(102))
         self.assertEqual(False, state.check_wait_frames_trigger(103))
-        self.assertEqual(False, state.check_wait_frames_trigger(104))
-        self.assertEqual(True, state.check_wait_frames_trigger(105))
+        self.assertEqual(True, state.check_wait_frames_trigger(104))
 
     def test_wait_frames_trigger(self):
         state = State()

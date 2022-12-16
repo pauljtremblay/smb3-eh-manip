@@ -9,7 +9,7 @@ from pydispatch import dispatcher
 
 @dataclass
 class LagFramesObserved:
-    current_frame: int
+    current_frame: float
     observed_lag_frames: int
     observed_load_frames: int
 

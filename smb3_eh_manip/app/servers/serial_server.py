@@ -12,7 +12,7 @@ SERIAL_TIMEOUT = float(settings.get("serial_timeout", fallback="0.1"))
 SERIAL_PORT = settings.get("serial_port", fallback="COM4")
 SERIAL_BAUDRATE = settings.get_int("serial_baudrate", fallback=115200)
 SERIAL_PAYLOAD_SIZE = settings.get_int("serial_payload_size", fallback=2)
-SERIAL_LATENCY_FRAMES = settings.get_int("serial_latency_frames", fallback=0)
+SERIAL_LATENCY_MS = settings.get_int("serial_latency_ms", fallback=16)
 
 
 def handler(_signum, _frame):
@@ -68,7 +68,7 @@ class SerialServer:
         self.server_process.daemon = True
         self.server_process.start()
 
-    def tick(self, current_frame=0):
+    def tick(self, current_frame=0.0):
         new_lag_frames_observed = (
             self.lag_frames_observed_value.value - self.lag_frames_observed
         )
@@ -81,7 +81,7 @@ class SerialServer:
             events.emit(
                 self,
                 events.LagFramesObserved(
-                    current_frame - SERIAL_LATENCY_FRAMES,
+                    current_frame - (SERIAL_LATENCY_MS / settings.NES_MS_PER_FRAME),
                     new_lag_frames_observed,
                     new_load_frames_observed,
                 ),
