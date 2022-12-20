@@ -5,6 +5,7 @@ from typing import Optional
 from smb3_eh_manip.app.lsfr import LSFR
 from smb3_eh_manip.app.nohands import NoHands
 from smb3_eh_manip.app.w3_bro_down import W3BroDown
+from smb3_eh_manip.app.w4_cloud_bro_manip import W4CloudBroManip
 from smb3_eh_manip.util import events, settings, wizard_mixins
 
 
@@ -31,8 +32,14 @@ class State:
         self.category_name = category_name
         self.enable_nohands = settings.get_boolean("enable_nohands", fallback=False)
         self.enable_w3brodown = settings.get_boolean("enable_w3brodown", fallback=False)
+        self.enable_w4cloudbromanip = settings.get_boolean(
+            "enable_w4cloudbromanip", fallback=False
+        )
         self.nohands = NoHands() if self.enable_nohands else None
         self.w3brodown = W3BroDown() if self.enable_w3brodown else None
+        self.w4cloudbromanips = (
+            W4CloudBroManip() if self.enable_w4cloudbromanip else None
+        )
         self.reset()
         events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
 
@@ -100,6 +107,20 @@ class State:
         events.emit(self, events.AddActionFrame(action_frame, window.window))
         logging.info(f"w3brodown at frame: {action_frame} with window: {window.window}")
 
+    def check_and_update_w4cloudbromanip_action(
+        self, current_frame: int, section: Section
+    ):
+        if not self.enable_w4cloudbromanip or section.action != "41cloudbromanip":
+            return
+        window = self.w4cloudbromanips.calculate_4_1_window(self.lsfr)
+        if not window:
+            return
+        action_frame = current_frame + window.action_frame
+        events.emit(self, events.AddActionFrame(action_frame, window.window))
+        logging.info(
+            f"w4cloudbromanips at frame: {action_frame} with window: {window.window}"
+        )
+
     def check_and_update_rng_frames_incremented_during_load_action(
         self, section: Section
     ):
@@ -131,6 +152,8 @@ class State:
         logging.debug(f"Completed {section.name}")
         self.check_and_update_rng_frames_incremented_during_load_action(section)
         self.check_and_update_nohands_action(current_frame, section)
+        self.check_and_update_w3brodown_action(current_frame, section)
+        self.check_and_update_w4cloudbromanip_action(current_frame, section)
 
     def reset(self):
         self.total_lag_incremented_frames = 0

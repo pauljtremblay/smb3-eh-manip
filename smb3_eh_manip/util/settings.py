@@ -66,4 +66,8 @@ def get_action_frames():
         )
 
 
+def set(name, value, domain=DEFAULT_DOMAIN):
+    return config.set(domain, name, value)
+
+
 ACTION_FRAMES = get_action_frames()

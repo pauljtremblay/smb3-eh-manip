@@ -39,6 +39,9 @@ sections:
     lag_frames: 62
   - name: 4-1 transition
     lag_frames: 12
+  - name: 4-1 cloudbroright
+    wait_frames: 80
+    action: 41cloudbromanip
   - name: 4-1 exit
     lag_frames: 13
   - name: 4-2 enter

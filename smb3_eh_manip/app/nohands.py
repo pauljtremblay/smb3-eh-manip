@@ -73,7 +73,6 @@ class NoHands:
                 current_window = 0
                 continue
             current_window += 1
-            center_window_offset = 0 if current_window == 0 else -1
             candidate_frame_offset = Window.create_centered_window(
                 PIPE_EXIT_LAG_FRAMES
                 + SECTION_TRIGGER_TO_OVERWORLD_CONTROL_RNG_FRAMES

@@ -1,0 +1,23 @@
+hbs:
+- facing-direction: 0
+  index: 2
+  item: cloud
+  x: 10
+  y: 3
+number: 4
+positions:
+- x: 9
+  y: 3
+  level:
+    name: 4f1
+- x: 10
+  y: 3
+- x: 11
+  y: 3
+  level:
+    name: 4-3
+- x: 12
+  y: 3
+- x: 12
+  y: 2
+  is_passable: false
