@@ -58,7 +58,7 @@ class TestState(unittest.TestCase):
         current_frame += 100
         state.tick(current_frame)
         self.assertEqual("w2 airship mid", state.active_section().name)
-        current_frame += 75000
+        current_frame += 28000
         state.tick(current_frame)
         self.assertEqual("w2 airship koopaling enter", state.active_section().name)
 
@@ -81,10 +81,10 @@ class TestState(unittest.TestCase):
         state.handle_lag_frames_observed(events.LagFramesObserved(current_frame, 1, 63))
         current_frame += 1
         state.tick(current_frame)
-        self.assertEqual("5-1 enter", state.active_section().name)
-        current_frame += 1
+        self.assertEqual("w3 airship mid", state.active_section().name)
+        current_frame += 25000
         state.tick(current_frame)
-        self.assertEqual("5-1 enter", state.active_section().name)
+        self.assertEqual("w3 airship koopaling enter", state.active_section().name)
 
     def test_lsfr(self):
         state = State()

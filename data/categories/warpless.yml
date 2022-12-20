@@ -23,6 +23,30 @@ sections:
   - name: 3-3 enter
     lag_frames: 63
     action: framerngincrement
+  - name: w3 airship mid
+    complete_frame: 50000
+  - name: w3 airship koopaling enter
+    lag_Frames: 10
+  - name: w3 castle enter
+    lag_frames: 10
+  - name: w4 enter
+    lag_frames: 13
+  - name: 4 first pipe enter
+    lag_frames: 61
+  - name: 4 first pipe exit
+    lag_frames: 13
+  - name: 4-1 enter
+    lag_frames: 62
+  - name: 4-1 transition
+    lag_frames: 12
+  - name: 4-1 exit
+    lag_frames: 13
+  - name: 4-2 enter
+    lag_frames: 61
+  - name: 4-2 transition
+    lag_frames: 10
+  - name: 4-2 exit
+    lag_frames: 13
   - name: 4-6 enter
     complete_frame: 65000
     action: framerngincrement
