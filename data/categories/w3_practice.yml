@@ -1,0 +1,15 @@
+---
+sections:
+  - name: w1 enter
+    lag_frames: 12
+  - name: first whistle
+    lag_frames: 11
+  - name: w3 enter
+    lag_frames: 62
+  - name: 3-1 enter
+    lag_frames: 71
+  - name: 3-1 transition
+    lag_frames: 10
+  - name: 3-1 brodown
+    wait_frames: 80
+    action: w3brodown
