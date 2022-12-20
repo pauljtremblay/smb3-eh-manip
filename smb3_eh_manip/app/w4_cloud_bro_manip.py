@@ -37,7 +37,12 @@ class W4CloudBroManip:
             if direction == Direction.RIGHT:
                 current_window += 1
                 if max_window is None or max_window.window < current_window:
-                    max_window = Window.create_centered_window(offset, current_window)
+                    max_window = Window.create_centered_window(
+                        SECOND_SECTION_BEFORE_JUMP_MIN_DURATION
+                        - TRANSITION_WAIT_DURATION
+                        + offset,
+                        current_window,
+                    )
                     if current_window == target_window:
                         return max_window
             else:

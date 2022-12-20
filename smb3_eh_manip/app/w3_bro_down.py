@@ -15,8 +15,8 @@ from smb3_eh_manip.util import settings
 # lots of frames, maybe its best to maintain pspeed? the y velocity is at least
 # 4px different with pspeed vs without, so gotta pick either full speed or no
 # speed IMO. This is safe.
-THREE_ONE_SECOND_SECTION_BEFORE_JUMP_MIN_DURATION = 209
-THREE_ONE_SECOND_SECTION_AFTER_JUMP_MIN_DURATION = 389
+SECOND_SECTION_BEFORE_JUMP_MIN_DURATION = 209
+SECOND_SECTION_AFTER_JUMP_MIN_DURATION = 389
 TRANSITION_WAIT_DURATION = settings.get_int("transition_wait_duration", fallback=80)
 LEVEL_TO_FACE_FRAMES = 17
 DEFAULT_MAX_WAIT_FRAMES = settings.get_int("w3brodown_max_wait_frames", fallback=60)
@@ -32,9 +32,9 @@ class W3BroDown:
     ):
         lsfr = seed_lsfr.clone()
         lsfr.next_n(
-            THREE_ONE_SECOND_SECTION_BEFORE_JUMP_MIN_DURATION
+            SECOND_SECTION_BEFORE_JUMP_MIN_DURATION
             - TRANSITION_WAIT_DURATION
-            + THREE_ONE_SECOND_SECTION_AFTER_JUMP_MIN_DURATION
+            + SECOND_SECTION_AFTER_JUMP_MIN_DURATION
             + LEVEL_TO_FACE_FRAMES
         )
         offset = 0
@@ -47,7 +47,12 @@ class W3BroDown:
             if direction == Direction.DOWN:
                 current_window += 1
                 if max_window is None or max_window.window < current_window:
-                    max_window = Window.create_centered_window(offset, current_window)
+                    max_window = Window.create_centered_window(
+                        SECOND_SECTION_BEFORE_JUMP_MIN_DURATION
+                        - TRANSITION_WAIT_DURATION
+                        + offset,
+                        current_window,
+                    )
                     if current_window == target_window:
                         return max_window
             else:
