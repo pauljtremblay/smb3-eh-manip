@@ -45,9 +45,15 @@ autoreset = false
 ; (if using the optional autoreset function). The processing time takes so long
 ; without regions, like 20-30ms, please consider configuring regions!
 ; Some examples which narfman0 uses:
+; Autoreset default image:
 ; reset_image_region = 120,340,100,100
-; calibration_start_frame_image_region = 139,318,30,40
+; The following applies to frame106 reset:
+; reset_image_region = 100,320,44,74
+; eh start - first frame with luigi on left, frame 106
 ; eh_start_frame_image_region = 100,320,44,74
+; luigi landing on marios head, trigger_frame470
+; eh_start_frame_image_region = 308,347,26,40
+; calibration_start_frame_image_region = 139,318,30,40
 
 ; Select what the tool is comparing against. Options:
 ; 'eh' is when attempting runs and runs your configured emu/video/ui
