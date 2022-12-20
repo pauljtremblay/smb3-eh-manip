@@ -89,6 +89,11 @@ class UiPlayer:
         y += 20
         lag_inc_str = f"Lag RNG Inc: {state.total_lag_incremented_frames}"
         cv2.putText(ui, lag_inc_str, (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
+        active_segment_name = (
+            state.active_section().name if state.category.sections else "N/A"
+        )
+        segment_str = f"Segment: {active_segment_name}"
+        cv2.putText(ui, segment_str, (x1, y), TYPEFACE, 1, FONT_COLOR, 2)
 
     def handle_add_action_frame(self, event: events.AddActionFrame):
         self.trigger_frames.append(event.action_frame)
