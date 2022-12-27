@@ -1,20 +1,14 @@
 import logging
-import sys
 import time
 
 import cv2
 import numpy as np
 
-from smb3_eh_manip.app.servers.fceux_lua_server import *
-from smb3_eh_manip.app.servers.serial_server import SerialServer
-from smb3_eh_manip.app.state import State
-from smb3_eh_manip.ui.audio_player import AudioPlayer
-from smb3_eh_manip.ui.ui_player import UiPlayer
 from smb3_eh_manip.ui.video_player import VideoPlayer
 from smb3_eh_manip.util import settings
 
 
-class OpencvComputer:
+class Opencv:
     def __init__(
         self,
         player_window_title="ehvideo",
@@ -33,34 +27,15 @@ class OpencvComputer:
         self.video_offset_frames = video_offset_frames
         self.latency_ms = settings.get_int("latency_ms")
         self.show_capture_video = settings.get_boolean("show_capture_video")
-        self.autoreset = settings.get_boolean("autoreset")
-        self.auto_detect_lag_frames_serial = settings.get_boolean(
-            "auto_detect_lag_frames_serial"
-        )
-        self.enable_auto_detect_lag_frame_ui = settings.get_boolean(
-            "enable_auto_detect_lag_frame_ui"
-        )
-        self.enable_fceux_tas_start = settings.get_boolean(
-            "enable_fceux_tas_start", fallback=False
-        )
         self.write_capture_video = settings.get_boolean(
             "write_capture_video", fallback=False
         )
         self.enable_video_player = settings.get_boolean("enable_video_player")
-        self.enable_audio_player = settings.get_boolean("enable_audio_player")
-        self.enable_ui_player = settings.get_boolean("enable_ui_player")
         self.offset_ewma_read_frame = settings.get_boolean(
             "offset_ewma_read_frame", fallback=False
         )
-        self.playing = False
-        self.current_time = -1
-        self.current_frame = -1
-        self.start_time = -1
         self.ewma_tick = 0
         self.ewma_read_frame = 0
-
-        if self.auto_detect_lag_frames_serial:
-            self.serial_server = SerialServer()
 
         self.reset_template = cv2.imread(
             settings.get("reset_image_path", fallback="data/reset.png")
@@ -68,9 +43,7 @@ class OpencvComputer:
         self.template = cv2.imread(self.start_frame_image_path)
         self.capture = cv2.VideoCapture(settings.get_int("video_capture_source"))
         if not self.capture.isOpened():
-            logging.info("Cannot open camera")
-            sys.exit()
-        self.state = State()
+            raise Exception("Cannot open camera")
         if self.write_capture_video:
             path = settings.get("write_capture_video_path", fallback="capture.avi")
             fps = float(self.capture.get(cv2.CAP_PROP_FPS)) or 60
@@ -82,12 +55,6 @@ class OpencvComputer:
         if self.enable_video_player:
             self.video_player = VideoPlayer(player_video_path, video_offset_frames)
         self.reset_image_region = settings.get_config_region("reset_image_region")
-        if self.enable_fceux_tas_start:
-            waitForFceuxConnection()
-        if self.enable_audio_player:
-            self.audio_player = AudioPlayer()
-        if self.enable_ui_player:
-            self.ui_player = UiPlayer()
 
     def tick(self, last_tick_duration):
         start_read_frame = time.time()
@@ -97,106 +64,44 @@ class OpencvComputer:
         self.ewma_tick = self.ewma_tick * 0.95 + last_tick_duration * 0.05
         self.ewma_read_frame = self.ewma_read_frame * 0.95 + read_frame_duration * 0.05
         if not ret:
-            logging.warning("Can't receive frame (stream end?). Exiting ...")
-            sys.exit()
+            raise Exception("Can't receive frame (stream end?)")
         if self.write_capture_video:
             self.output_video.write(frame)
-        if self.playing:
-            self.update_times()
-        self.check_and_update_lag_frames()
-        if self.playing:
-            self.state.tick(round(self.current_frame))
         self.frame = frame
-        self.check_and_update_begin_playing(frame)
         if self.show_capture_video:
             cv2.imshow("capture", frame)
-        if self.enable_audio_player and self.playing:
-            self.audio_player.tick(self.current_frame)
-        if self.enable_ui_player and self.playing:
-            self.ui_player.tick(
-                self.current_frame,
-                self.ewma_tick,
-                self.ewma_read_frame,
-                self.state,
-            )
         _ = cv2.waitKey(1)
 
     def should_autoreset(self):
-        return (
-            self.autoreset
-            and self.playing
-            and list(
-                OpencvComputer.locate_all_opencv(
-                    self.reset_template, self.frame, region=self.reset_image_region
-                )
+        return list(
+            Opencv.locate_all_opencv(
+                self.reset_template, self.frame, region=self.reset_image_region
             )
         )
 
     def reset(self):
-        self.playing = False
-        self.current_frame = -1
-        self.state.reset()
         if self.enable_video_player:
             self.video_player.reset()
-        if self.enable_fceux_tas_start:
-            emu.pause()
-            latency_offset = round(self.latency_ms / settings.NES_MS_PER_FRAME)
-            taseditor.setplayback(self.video_offset_frames + latency_offset)
-        if self.auto_detect_lag_frames_serial:
-            self.serial_server.reset()
 
-    def check_and_update_begin_playing(self, frame):
-        if not self.playing:
-            results = list(
-                OpencvComputer.locate_all_opencv(
-                    self.template, frame, region=self.start_frame_image_region
-                )
+    def should_start_playing(self):
+        results = list(
+            Opencv.locate_all_opencv(
+                self.template, self.frame, region=self.start_frame_image_region
             )
-            if self.show_capture_video:
-                for x, y, needleWidth, needleHeight in results:
-                    top_left = (x, y)
-                    bottom_right = (x + needleWidth, y + needleHeight)
-                    cv2.rectangle(frame, top_left, bottom_right, (0, 0, 255), 5)
-            if results:
-                self.start_playing()
-                logging.info(f"Detected start frame")
+        )
+        if self.show_capture_video:
+            for x, y, needleWidth, needleHeight in results:
+                top_left = (x, y)
+                bottom_right = (x + needleWidth, y + needleHeight)
+                cv2.rectangle(self.frame, top_left, bottom_right, (0, 0, 255), 5)
+        if results:
+            logging.info(f"Detected start frame")
+            return True
+        return False
 
     def start_playing(self):
-        self.playing = True
-        self.start_time = time.time()
-        self.current_frame = 0
-        self.current_time = 0
-        if self.enable_fceux_tas_start:
-            emu.unpause()
-        self.state.reset()
-        if self.auto_detect_lag_frames_serial:
-            self.serial_server.reset()
         if self.enable_video_player:
             self.video_player.play()
-        if self.enable_audio_player:
-            self.audio_player.reset()
-        if self.enable_ui_player:
-            self.ui_player.reset()
-
-    def check_and_update_lag_frames(self):
-        if self.auto_detect_lag_frames_serial:
-            lag_frame_detect_start = time.time()
-            if self.auto_detect_lag_frames_serial:
-                self.serial_server.tick(self.current_frame)
-            detect_duration = time.time() - lag_frame_detect_start
-            if self.playing and detect_duration > 0.002:
-                logging.info(f"Took {detect_duration}s detecting lag frames")
-
-    def update_times(self):
-        self.current_time = time.time() - self.start_time
-        ewma_read_frame_net = (
-            -self.ewma_read_frame if self.offset_ewma_read_frame else 0
-        )
-        self.current_frame = self.video_offset_frames + round(
-            (ewma_read_frame_net + self.latency_ms + self.current_time * 1000)
-            / settings.NES_MS_PER_FRAME,
-            1,
-        )
 
     def terminate(self):
         if self.enable_video_player:
