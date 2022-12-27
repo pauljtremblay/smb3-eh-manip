@@ -18,12 +18,7 @@ class Controller:
         self.auto_detect_lag_frames_serial = settings.get_boolean(
             "auto_detect_lag_frames_serial"
         )
-        self.enable_auto_detect_lag_frame_ui = settings.get_boolean(
-            "enable_auto_detect_lag_frame_ui"
-        )
-        self.enable_fceux_tas_start = settings.get_boolean(
-            "enable_fceux_tas_start", fallback=False
-        )
+        self.enable_fceux_tas_start = settings.get_boolean("enable_fceux_tas_start")
         self.enable_audio_player = settings.get_boolean("enable_audio_player")
         self.enable_ui_player = settings.get_boolean("enable_ui_player")
         self.playing = False

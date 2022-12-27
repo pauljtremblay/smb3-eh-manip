@@ -58,7 +58,6 @@ autoreset = false
 
 ; [beta] Detect and remediate lag frames during gameplay
 ;auto_detect_lag_frames_serial = false
-enable_auto_detect_lag_frame_ui = false
 
 ; Enable/disables sending fceux the 'pause' keystroke
 ; when the trigger frame has been detected.
