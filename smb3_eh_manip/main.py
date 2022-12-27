@@ -20,8 +20,10 @@ def print_camera_info():
     graph = FilterGraph()
     input_devices = graph.get_input_devices()
     video_capture_source = settings.get_int("video_capture_source")
-    if video_capture_source == -1:
-        logging.info("No camera selected, please update to one of the below:")
+    if video_capture_source == -1 or video_capture_source >= len(input_devices):
+        logging.info(
+            "No camera selected or invalid, please update to one of the below:"
+        )
         logging.info(input_devices)
         exit()
     logging.debug(f"Selected video source: {input_devices[video_capture_source]}")
