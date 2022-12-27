@@ -5,6 +5,7 @@ environment:
     - PYTHON: "C:\\Python310-x64"
 
 install:
+  - SET PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
   - pip install -r requirements_test.txt
 
 build: off
