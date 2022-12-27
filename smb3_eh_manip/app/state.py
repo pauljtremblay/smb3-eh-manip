@@ -27,8 +27,24 @@ class Category(wizard_mixins.YAMLWizard):
         return Category.from_yaml_file(f"data/categories/{category_name}.yml")
 
 
+def get_expected_lag_latency_frames():
+    # practically, there is only one way to triger completed sections, and
+    # it ultimately is from the serial server. while this class should be
+    # implementation independent, we need to still offset here, so this
+    # method (unfortunately) holds the details specific to serial server.
+    if not settings.get_boolean("auto_detect_lag_frames_serial"):
+        return 0
+    from smb3_eh_manip.app.servers.serial_server import SERIAL_LATENCY_MS
+
+    return round(SERIAL_LATENCY_MS / settings.NES_MS_PER_FRAME)
+
+
 class State:
-    def __init__(self, category_name=settings.get("category", fallback="nww")):
+    def __init__(
+        self,
+        category_name=settings.get("category", fallback="nww"),
+        expected_lag_latency_frames=get_expected_lag_latency_frames(),
+    ):
         self.category_name = category_name
         self.enable_nohands = settings.get_boolean("enable_nohands", fallback=False)
         self.enable_w3brodown = settings.get_boolean("enable_w3brodown", fallback=False)
@@ -40,6 +56,7 @@ class State:
         self.w4cloudbromanips = (
             W4CloudBroManip() if self.enable_w4cloudbromanip else None
         )
+        self.expected_lag_latency_frames = expected_lag_latency_frames
         self.reset()
         events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
 
@@ -81,7 +98,7 @@ class State:
             self.target_wait_frame = (
                 current_frame
                 + active_section.wait_frames
-                - self.get_expected_lag_latency_frames()
+                - self.expected_lag_latency_frames
             )
         return False
 
@@ -168,14 +185,3 @@ class State:
         if not self.category.sections:
             return None
         return self.category.sections[0]
-
-    def get_expected_lag_latency_frames(self):
-        # practically, there is only one way to triger completed sections, and
-        # it ultimately is from the serial server. while this class should be
-        # implementation independent, we need to still offset here, so this
-        # method (unfortunately) holds the details specific to serial server.
-        if not settings.get_boolean("auto_detect_lag_frames_serial"):
-            return
-        from smb3_eh_manip.app.servers.serial_server import SERIAL_LATENCY_MS
-
-        return round(SERIAL_LATENCY_MS / settings.NES_MS_PER_FRAME)

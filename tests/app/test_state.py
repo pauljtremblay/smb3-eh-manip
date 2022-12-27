@@ -29,7 +29,7 @@ class TestState(unittest.TestCase):
 
     def test_load_frames_trigger(self):
         section = Section(name="testsection", wait_frames=5)
-        state = State()
+        state = State(expected_lag_latency_frames=1)
         state.category = Category([section])
         self.assertEqual(False, state.check_wait_frames_trigger(100))
         self.assertEqual(False, state.check_wait_frames_trigger(101))
