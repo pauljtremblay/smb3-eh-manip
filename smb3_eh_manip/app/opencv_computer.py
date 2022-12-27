@@ -17,11 +17,15 @@ from smb3_eh_manip.util import settings
 class OpencvComputer:
     def __init__(
         self,
-        player_window_title,
-        player_video_path,
-        start_frame_image_path,
-        video_offset_frames=0,
-        start_frame_image_region=None,
+        player_window_title="ehvideo",
+        player_video_path=settings.get("eh_video_path", fallback="data/eh/video.avi"),
+        start_frame_image_path=settings.get(
+            "eh_start_frame_image_path", fallback="data/eh/trigger.png"
+        ),
+        video_offset_frames=106,
+        start_frame_image_region=settings.get_config_region(
+            "eh_start_frame_image_region"
+        ),
     ):
         self.player_window_title = player_window_title
         self.start_frame_image_path = start_frame_image_path

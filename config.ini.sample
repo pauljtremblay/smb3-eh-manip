@@ -53,13 +53,6 @@ autoreset = false
 ; eh_start_frame_image_region = 100,320,44,74
 ; luigi landing on marios head, trigger_frame470
 ; eh_start_frame_image_region = 308,347,26,40
-; calibration_start_frame_image_region = 139,318,30,40
-
-; Select what the tool is comparing against. Options:
-; 'eh' is when attempting runs and runs your configured emu/video/ui
-; 'twoone' is experimental but should aid in practice.
-; 'calibration' can make determinind latency_ms faster.
-computer = eh
 
 ; [OPTIONAL] these values are more rarely changed
 
@@ -97,12 +90,8 @@ enable_auto_detect_lag_frame_ui = false
 ; audio_cue_path = data/audio_cue.wav
 
 ; reset_image_path = data/reset.png
-; calibration_start_frame_image_path = data/calibration/trigger.png
-; calibration_video_path = data/calibration/video.mp4
 ; eh_start_frame_image_path = data/eh/trigger.png
 ; eh_video_path = data/eh/video.avi
-; two_one_start_frame_image_path = data/two_one/trigger.png
-; two_one_video_path = data/two_one/video.mp4
 
 ; console_log_level = INFO
 ; file_log_level = INFO
