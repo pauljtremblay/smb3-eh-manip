@@ -9,22 +9,17 @@ from smb3_eh_manip.util import settings
 
 
 class Opencv:
-    def __init__(
-        self,
-        player_window_title="ehvideo",
-        player_video_path=settings.get("eh_video_path", fallback="data/eh/video.avi"),
-        start_frame_image_path=settings.get(
+    def __init__(self):
+        self.player_window_title = settings.get(
+            "player_window_title", fallback="data/eh/video.avi"
+        )
+        self.start_frame_image_path = settings.get(
             "eh_start_frame_image_path", fallback="data/eh/trigger.png"
-        ),
-        video_offset_frames=106,
-        start_frame_image_region=settings.get_config_region(
+        )
+        self.start_frame_image_region = settings.get_config_region(
             "eh_start_frame_image_region"
-        ),
-    ):
-        self.player_window_title = player_window_title
-        self.start_frame_image_path = start_frame_image_path
-        self.start_frame_image_region = start_frame_image_region
-        self.video_offset_frames = video_offset_frames
+        )
+        self.video_offset_frames = settings.get_int("video_offset_frames", fallback=106)
         self.latency_ms = settings.get_int("latency_ms")
         self.show_capture_video = settings.get_boolean("show_capture_video")
         self.write_capture_video = settings.get_boolean(
@@ -53,7 +48,10 @@ class Opencv:
                 path, cv2.VideoWriter_fourcc(*"MPEG"), fps, (width, height)
             )
         if self.enable_video_player:
-            self.video_player = VideoPlayer(player_video_path, video_offset_frames)
+            self.video_player = VideoPlayer(
+                settings.get("eh_video_path", fallback="data/eh/video.avi"),
+                self.video_offset_frames,
+            )
         self.reset_image_region = settings.get_config_region("reset_image_region")
 
     def tick(self, last_tick_duration):
