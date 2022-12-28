@@ -9,7 +9,6 @@ from smb3_eh_manip.app.models import (
 from smb3_eh_manip.util import settings
 
 BRO_MOVEMENT_FRAMES = 32  # it takes 32 frames for a HB to make 1 movement
-LEVEL_TO_FACE_FRAMES = 17
 LEVEL_FACE_TO_MOVE_FRAMES = 39
 FORT_FACE_TO_MOVE_FRAMES = 102
 DEFAULT_MAX_WAIT_FRAMES = settings.get_int("hb_max_wait_frames", fallback=60)
@@ -62,28 +61,25 @@ def calculate_window(
     target_direction: Direction,
     world: World,
     hb: HammerBro,
+    level_face_to_move_frames=LEVEL_FACE_TO_MOVE_FRAMES,
+    transition_wait_duration=TRANSITION_WAIT_DURATION,
     target_window=2,
     max_wait_frames=DEFAULT_MAX_WAIT_FRAMES,
 ):
     lsfr = seed_lsfr.clone()
-    lsfr.next_n(
-        min_frames_before_jump
-        - TRANSITION_WAIT_DURATION
-        + frames_after_jump
-        + LEVEL_TO_FACE_FRAMES
-    )
+    lsfr.next_n(min_frames_before_jump - transition_wait_duration + frames_after_jump)
     offset = 0
     current_window = 0
     max_window = None
     while offset < max_wait_frames:
         direction = calculate_facing_direction(
-            lsfr, world, hb, LEVEL_FACE_TO_MOVE_FRAMES
+            lsfr, world, hb, level_face_to_move_frames
         ).direction
         if direction == target_direction:
             current_window += 1
             if max_window is None or max_window.window < current_window:
                 max_window = Window.create_centered_window(
-                    min_frames_before_jump - TRANSITION_WAIT_DURATION + offset,
+                    min_frames_before_jump - transition_wait_duration + offset,
                     current_window,
                 )
                 if current_window == target_window:
