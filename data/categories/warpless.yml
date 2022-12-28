@@ -19,7 +19,7 @@ sections:
     lag_frames: 10
   - name: 3-1 brodown
     wait_frames: 80
-    action: w3brodown
+    action: w3brodown31
   - name: 3-3 enter
     lag_frames: 63
     action: framerngincrement
@@ -41,13 +41,16 @@ sections:
     lag_frames: 11
   - name: 4-1 cloudbroright
     wait_frames: 80
-    action: 41cloudbromanip
+    action: w4cloudbromanip41
   - name: 4-1 exit
     lag_frames: 13
   - name: 4-2 enter
     lag_frames: 61
   - name: 4-2 transition
     lag_frames: 10
+  - name: 4-2 cloudbrodown
+    wait_frames: 80
+    action: w4cloudbromanip42
   - name: 4-2 exit
     lag_frames: 13
   - name: 4-6 enter
