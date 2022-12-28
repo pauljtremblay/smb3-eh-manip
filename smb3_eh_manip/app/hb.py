@@ -9,6 +9,7 @@ from smb3_eh_manip.app.models import (
 from smb3_eh_manip.util import settings
 
 BRO_MOVEMENT_FRAMES = 32  # it takes 32 frames for a HB to make 1 movement
+LEVEL_TO_FACE_FRAMES = 17
 LEVEL_FACE_TO_MOVE_FRAMES = 39
 FORT_FACE_TO_MOVE_FRAMES = 102
 DEFAULT_MAX_WAIT_FRAMES = settings.get_int("hb_max_wait_frames", fallback=60)
@@ -67,7 +68,12 @@ def calculate_window(
     max_wait_frames=DEFAULT_MAX_WAIT_FRAMES,
 ):
     lsfr = seed_lsfr.clone()
-    lsfr.next_n(min_frames_before_jump - transition_wait_duration + frames_after_jump)
+    lsfr.next_n(
+        min_frames_before_jump
+        - transition_wait_duration
+        + frames_after_jump
+        + LEVEL_TO_FACE_FRAMES
+    )
     offset = 0
     current_window = 0
     max_window = None
