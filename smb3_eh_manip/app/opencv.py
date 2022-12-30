@@ -14,10 +14,10 @@ class Opencv:
             "player_window_title", fallback="data/eh/video.avi"
         )
         self.start_frame_image_path = settings.get(
-            "eh_start_frame_image_path", fallback="data/eh/trigger.png"
+            "start_frame_image_path", fallback="data/eh/trigger.png"
         )
         self.start_frame_image_region = settings.get_config_region(
-            "eh_start_frame_image_region"
+            "start_frame_image_region"
         )
         self.video_offset_frames = settings.get_int("video_offset_frames", fallback=106)
         self.latency_ms = settings.get_int("latency_ms")
@@ -46,7 +46,7 @@ class Opencv:
             )
         if self.enable_video_player:
             self.video_player = VideoPlayer(
-                settings.get("eh_video_path", fallback="data/eh/video.avi"),
+                settings.get("video_path", fallback="data/eh/video.avi"),
                 self.video_offset_frames,
             )
         self.reset_image_region = settings.get_config_region("reset_image_region")

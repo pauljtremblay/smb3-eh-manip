@@ -25,7 +25,7 @@ We need to configure a few things minumum:
 
 * video_capture_source
 * trigger frame image(s)
-* eh_start_frame_image_region
+* start_frame_image_region
 * latency_ms
 
 Copy the config.ini.sample file config.ini.
@@ -44,14 +44,14 @@ devices configured.
 
 If you see your capture card in the tool, you win at life! If not,
 you cannot continue. Now let's overwrite the trigger frame image and
-eh_start_frame_image_region. By default the tool writes a capture.avi file
+start_frame_image_region. By default the tool writes a capture.avi file
 where the tool lives. Open the file in VLC (do not change its size!),
 enable advanced controls (so you
 can increment frame by frame), and find the image like what is in
 data/eh/trigger.png. IIRC it is frame 106. Take a screenshot, crop
 the image, and overwrite the current trigger.png. From the same screenshot,
 we need to help the tool know where to look for the image. We need
-to set the eh_start_frame_image_region. Identify where you copied the image
+to set the start_frame_image_region. Identify where you copied the image
 coordinates within the screenshot and set the region value like:
 left_x,top_y,right_x,bottom_y.
 
@@ -67,7 +67,7 @@ between 3 and 4 nes frames). You'll probably have to try a few iterations.
 
 Note: Highly recommended is also configuring reset_image_region,
 which is needed to use the autoreset feature. You can mirror the
-process for eh_start_frame_image_region to get it. Autoreset is really
+process for start_frame_image_region to get it. Autoreset is really
 handy and makes the tool shine.
 
 Configure Regions

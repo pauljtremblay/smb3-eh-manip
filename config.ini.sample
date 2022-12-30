@@ -50,9 +50,9 @@ autoreset = false
 ; The following applies to frame106 reset:
 ; reset_image_region = 100,320,44,74
 ; eh start - first frame with luigi on left, frame 106
-; eh_start_frame_image_region = 100,320,44,74
+; start_frame_image_region = 103,329,23,53
 ; luigi landing on marios head, trigger_frame470
-; eh_start_frame_image_region = 308,347,26,40
+; start_frame_image_region = 308,347,26,40
 
 ; [OPTIONAL] these values are more rarely changed
 
@@ -89,8 +89,8 @@ autoreset = false
 ; audio_cue_path = data/audio_cue.wav
 
 ; reset_image_path = data/reset.png
-; eh_start_frame_image_path = data/eh/trigger.png
-; eh_video_path = data/eh/video.avi
+; start_frame_image_path = data/eh/trigger.png
+; video_path = data/eh/video.avi
 
 ; console_log_level = INFO
 ; file_log_level = INFO
