@@ -26,9 +26,6 @@ class Opencv:
             "write_capture_video", fallback=False
         )
         self.enable_video_player = settings.get_boolean("enable_video_player")
-        self.offset_ewma_read_frame = settings.get_boolean(
-            "offset_ewma_read_frame", fallback=False
-        )
         self.ewma_tick = 0
         self.ewma_read_frame = 0
 
