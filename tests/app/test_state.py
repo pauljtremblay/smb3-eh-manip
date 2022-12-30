@@ -19,7 +19,7 @@ class TestState(unittest.TestCase):
         self.assertEqual(100, state.lsfr.get(2))
 
     def test_trigger_framerngincrement(self):
-        state = State()
+        state = State(category_name="nww")
         state.handle_lag_frames_observed(events.LagFramesObserved(1, 0, 12))
         self.assertEqual("1-1 enter", state.active_section().name)
         state.handle_lag_frames_observed(events.LagFramesObserved(2, 0, 63))
@@ -38,7 +38,7 @@ class TestState(unittest.TestCase):
         self.assertEqual(True, state.check_wait_frames_trigger(104))
 
     def test_wait_frames_trigger(self):
-        state = State()
+        state = State(category_name="nww")
         state.handle_lag_frames_observed(events.LagFramesObserved(1, 0, 12))
         state.handle_lag_frames_observed(events.LagFramesObserved(2, 0, 63))
         state.handle_lag_frames_observed(events.LagFramesObserved(3, 1, 0))
