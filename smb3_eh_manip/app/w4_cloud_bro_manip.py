@@ -14,6 +14,7 @@ class W4CloudBroManip:
         self.hb = self.world.hbs[0]
 
     def calculate_4_1_window(self, seed_lsfr: LSFR):
+        self.hb.x = 10  # let's assume we've reset in this scenario
         return hb.calculate_window(
             seed_lsfr,
             FOUR_ONE_BEFORE_JUMP_MIN_DURATION,
@@ -24,6 +25,7 @@ class W4CloudBroManip:
         )
 
     def calculate_4_2_window(self, seed_lsfr: LSFR):
+        self.hb.x = 12  # let's assume above manip was successful in this scenario
         return hb.calculate_window(
             seed_lsfr,
             FOUR_TWO_BEFORE_JUMP_MIN_DURATION,

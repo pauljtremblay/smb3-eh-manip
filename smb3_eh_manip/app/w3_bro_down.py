@@ -26,6 +26,7 @@ class W3BroDown:
         self.hb = self.world.hbs[1]
 
     def calculate_3_1_window(self, seed_lsfr: LSFR):
+        self.hb.y = 3  # let's assume we've reset in this scenario
         return hb.calculate_window(
             seed_lsfr,
             THREE_ONE_BEFORE_JUMP_MIN_DURATION,
@@ -36,6 +37,7 @@ class W3BroDown:
         )
 
     def calculate_3_2_window(self, seed_lsfr: LSFR):
+        self.hb.y = 2  # let's assume above manip was successful in this scenario
         return hb.calculate_window(
             seed_lsfr,
             THREE_TWO_BEFORE_JUMP_MIN_DURATION,
