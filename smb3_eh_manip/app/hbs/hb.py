@@ -12,7 +12,12 @@ BRO_MOVEMENT_FRAMES = 32  # it takes 32 frames for a HB to make 1 movement
 LEVEL_TO_FACE_FRAMES = 17
 LEVEL_FACE_TO_MOVE_FRAMES = 39
 FORT_FACE_TO_MOVE_FRAMES = 102
-DEFAULT_MAX_WAIT_FRAMES = settings.get_int("hb_max_wait_frames", fallback=60)
+# since the timer counts down and changes how long we are in the level,
+# this needs to be fairly tight :\ (due to timer and HUD lag).
+# specific handlers might have a better idea on this - if we reach a level transition,
+# we could have a pretty good guess how long level exit transition should take. but
+# not knowing that yet let's keep a tighter default.
+DEFAULT_MAX_WAIT_FRAMES = settings.get_int("hb_max_wait_frames", fallback=30)
 TRANSITION_WAIT_DURATION = settings.get_int("transition_wait_duration", fallback=80)
 
 

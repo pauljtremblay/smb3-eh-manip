@@ -16,4 +16,4 @@ sections:
     lag_frames: 12
   - name: 4-1 cloudbroright
     wait_frames: 80
-    action: 41cloudbromanip
+    action: w4cloudbromanip41

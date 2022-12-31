@@ -1,4 +1,10 @@
-number: 2
+hbs:
+- facing-direction: 0
+  index: 2
+  item: star
+  x: 4
+  y: 1
+number: 1
 positions:
 - x: 3
   y: 1
@@ -7,9 +13,4 @@ positions:
 - level:
     name: 1-airship
   x: 5
-  y: 1
-hbs:
-- index: 2
-  item: star
-  x: 4
   y: 1

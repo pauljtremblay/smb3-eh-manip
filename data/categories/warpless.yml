@@ -5,6 +5,9 @@ sections:
   - name: 1-1 enter
     lag_frames: 63
     action: framerngincrement
+  - name: 1-1 broleft
+    wait_frames: 80
+    action: w1broleft
   - name: w2 airship mid
     complete_frame: 28000
   - name: w2 airship koopaling enter

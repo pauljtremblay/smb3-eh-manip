@@ -54,6 +54,11 @@ class TestState(unittest.TestCase):
         state.tick(current_frame)
         self.assertEqual("1-1 enter", state.active_section().name)
         state.handle_lag_frames_observed(events.LagFramesObserved(current_frame, 1, 63))
+        self.assertEqual("1-1 broleft", state.active_section().name)
+        current_frame = 1
+        state.tick(current_frame)
+        current_frame += 80
+        state.tick(current_frame)
         self.assertEqual("w2 airship mid", state.active_section().name)
         current_frame += 100
         state.tick(current_frame)

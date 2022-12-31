@@ -33,8 +33,8 @@ TO_HAND3_CHECK_FRAME_DURATION = 16
 # How many frames does the window have to be before pressing left?
 # 3 is ideal if it happens within a second, otherwise 2 frames likely
 LEFT_PRESS_WINDOW = settings.get_int("nohands_left_press_window", fallback=1)
-# We cant look 10s in the future, so let's default this as a reasonable
-# couple seconds or so.
+# We cant look to the future, but let's default this as a reasonable
+# couple seconds.
 MAXIMUM_FRAMES_TO_LOOK_FORWARD = settings.get_int(
     "nohands_max_frames_to_look_forward", fallback=120
 )

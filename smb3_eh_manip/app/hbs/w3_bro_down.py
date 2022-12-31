@@ -6,7 +6,7 @@ We intend on playing the first sections of 3-1 and 3-2 normally, but coming
 out of the exit pipes, we calculate optimal windows in which we can end
 the level to move the HB bro down.
 """
-from smb3_eh_manip.app import hb
+from smb3_eh_manip.app.hbs import hb
 from smb3_eh_manip.app.lsfr import LSFR
 from smb3_eh_manip.app.models import Direction, World
 
