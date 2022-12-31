@@ -2,7 +2,7 @@ import unittest
 
 from smb3_eh_manip.app.lsfr import LSFR
 from smb3_eh_manip.app.models import Window
-from smb3_eh_manip.app.w3_bro_down import W3BroDown
+from smb3_eh_manip.app.hbs.w3_bro_down import W3BroDown
 
 
 class TestW3BroDown(unittest.TestCase):

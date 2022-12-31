@@ -11,7 +11,7 @@ ONE_ONE_DURATION_FRAMES = 1449  # stop and jump under the end card
 LEVEL_TO_FACE_FRAMES = 17
 
 
-class OneOneHBTest:
+class W1HBTest:
     def __init__(self):
         self.world = World.load(number=1)
         self.hb = self.world.hbs[0]

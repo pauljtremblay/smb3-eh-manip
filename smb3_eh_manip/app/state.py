@@ -4,8 +4,8 @@ from typing import Optional
 
 from smb3_eh_manip.app.lsfr import LSFR
 from smb3_eh_manip.app.nohands import NoHands
-from smb3_eh_manip.app.w3_bro_down import W3BroDown
-from smb3_eh_manip.app.w4_cloud_bro_manip import W4CloudBroManip
+from smb3_eh_manip.app.hbs.w3_bro_down import W3BroDown
+from smb3_eh_manip.app.hbs.w4_cloud_bro_manip import W4CloudBroManip
 from smb3_eh_manip.util import events, settings, wizard_mixins
 
 
