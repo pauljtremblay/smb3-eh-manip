@@ -26,7 +26,7 @@ def print_camera_info():
         )
         logging.info(input_devices)
         exit()
-    logging.debug(f"Selected video source: {input_devices[video_capture_source]}")
+    logging.info(f"Selected video source: {input_devices[video_capture_source]}")
 
 
 def main():

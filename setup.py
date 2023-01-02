@@ -21,7 +21,7 @@ setup(
     zip_safe=True,
     install_requires=[
         "dataclass_wizard",
-        "opencv-python==4.6.0.66",
+        "opencv-python",
         "pydispatcher",
         "pygame",
         "pygrabber",

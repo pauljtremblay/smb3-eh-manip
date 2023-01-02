@@ -3,6 +3,7 @@ import time
 
 import cv2
 import numpy as np
+from pygrabber.dshow_graph import FilterGraph, FilterType
 
 from smb3_eh_manip.ui.video_player import VideoPlayer
 from smb3_eh_manip.util import settings
@@ -33,14 +34,18 @@ class Opencv:
             settings.get("reset_image_path", fallback="data/reset.png")
         )
         self.template = cv2.imread(self.start_frame_image_path)
-        self.capture = cv2.VideoCapture(settings.get_int("video_capture_source"))
-        if not self.capture.isOpened():
-            raise Exception("Cannot open camera")
+        self.graph = FilterGraph()
+        self.graph.add_video_input_device(settings.get_int("video_capture_source"))
+        self.graph.add_sample_grabber(self.on_frame_received)
+        self.graph.add_null_render()
+        self.graph.prepare_preview_graph()
+        self.graph.run()
+        self.frame = None
         if self.write_capture_video:
             path = settings.get("write_capture_video_path", fallback="capture.avi")
-            fps = float(self.capture.get(cv2.CAP_PROP_FPS)) or 60
-            height = int(self.capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            width = int(self.capture.get(cv2.CAP_PROP_FRAME_WIDTH))
+            fps = 60
+            video_input = self.graph.filters[FilterType.video_input]
+            width, height = video_input.get_current_format()
             self.output_video = cv2.VideoWriter(
                 path, cv2.VideoWriter_fourcc(*"MPEG"), fps, (width, height)
             )
@@ -53,21 +58,20 @@ class Opencv:
 
     def tick(self, last_tick_duration):
         start_read_frame = time.time()
-        ret, frame = self.capture.read()
+        self.graph.grab_frame()
         read_frame_duration = time.time() - start_read_frame
         logging.debug(f"Took {read_frame_duration}s to read frame")
         self.ewma_tick = self.ewma_tick * 0.95 + last_tick_duration * 0.05
         self.ewma_read_frame = self.ewma_read_frame * 0.95 + read_frame_duration * 0.05
-        if not ret:
-            raise Exception("Can't receive frame (stream end?)")
-        if self.write_capture_video:
-            self.output_video.write(frame)
-        self.frame = frame
-        if self.show_capture_video:
-            cv2.imshow("capture", frame)
+        if self.write_capture_video and self.frame is not None:
+            self.output_video.write(self.frame)
+        if self.show_capture_video and self.frame is not None:
+            cv2.imshow("capture", self.frame)
         _ = cv2.waitKey(1)
 
     def should_autoreset(self):
+        if self.frame is None:
+            return False
         return list(
             Opencv.locate_all_opencv(
                 self.reset_template, self.frame, region=self.reset_image_region
@@ -79,6 +83,8 @@ class Opencv:
             self.video_player.reset()
 
     def should_start_playing(self):
+        if self.frame is None:
+            return False
         results = list(
             Opencv.locate_all_opencv(
                 self.template, self.frame, region=self.start_frame_image_region
@@ -88,7 +94,7 @@ class Opencv:
             for x, y, needleWidth, needleHeight in results:
                 top_left = (x, y)
                 bottom_right = (x + needleWidth, y + needleHeight)
-                cv2.rectangle(self.frame, top_left, bottom_right, (0, 0, 255), 5)
+                # cv2.rectangle(self.frame, top_left, bottom_right, (0, 0, 255), 5)
         if results:
             logging.info(f"Detected start frame")
             return True
@@ -103,8 +109,11 @@ class Opencv:
             self.video_player.terminate()
         if self.write_capture_video:
             self.output_video.release()
-        self.capture.release()
+        self.graph.stop()
         cv2.destroyAllWindows()
+
+    def on_frame_received(self, frame):
+        self.frame = frame
 
     @classmethod
     def locate_all_opencv(
