@@ -128,10 +128,8 @@ class State:
         )
 
     def check_and_update_w3brodown_action(self, current_frame: int, section: Section):
-        if (
-            not self.enable_w3brodown
-            or section.action != "w3brodown31"
-            or section.action != "w3brodown32"
+        if not self.enable_w3brodown or (
+            section.action != "w3brodown31" and section.action != "w3brodown32"
         ):
             return
         if section.action == "w3brodown31":
@@ -147,15 +145,13 @@ class State:
     def check_and_update_w4cloudbromanip_action(
         self, current_frame: int, section: Section
     ):
-        if (
-            not self.enable_w4cloudbromanip
-            or section.action != "w4cloudbromanip41"
-            or section.action != "w4cloudbromanip42"
+        if not self.enable_w4cloudbromanip or (
+            section.action != "w4cloud41" and section.action != "w4cloud42"
         ):
             return
-        if section.action == "w4cloudbromanip41":
+        if section.action == "w4cloud41":
             window = self.w4cloudbromanips.calculate_4_1_window(self.lsfr)
-        elif section.action == "w4cloudbromanip42":
+        elif section.action == "w4cloud42":
             window = self.w4cloudbromanips.calculate_4_2_window(self.lsfr)
         if not window:
             return

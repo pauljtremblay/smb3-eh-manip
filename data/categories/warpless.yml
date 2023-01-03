@@ -53,7 +53,7 @@ sections:
     lag_frames: 11
   - name: 4-1 cloudbroright
     wait_frames: 80
-    action: w4cloudbromanip41
+    action: w4cloud41
   - name: 4-1 exit
     lag_frames: 13
   - name: 4-2 enter
@@ -62,7 +62,7 @@ sections:
     lag_frames: 10
   - name: 4-2 cloudbrodown
     wait_frames: 80
-    action: w4cloudbromanip42
+    action: w4cloud42
   - name: 4-2 exit
     lag_frames: 13
   - name: 4-6 enter
