@@ -80,6 +80,17 @@ class TestState(unittest.TestCase):
         state.tick(current_frame)
         self.assertEqual("3-1 brodown", state.active_section().name)
         current_frame += 80
+        state.handle_lag_frames_observed(events.LagFramesObserved(current_frame, 0, 80))
+        state.tick(current_frame)
+        self.assertEqual("3-1 exit", state.active_section().name)
+        current_frame += 13
+        state.handle_lag_frames_observed(events.LagFramesObserved(current_frame, 0, 13))
+        current_frame += 61
+        state.handle_lag_frames_observed(events.LagFramesObserved(current_frame, 0, 61))
+        current_frame += 11
+        state.handle_lag_frames_observed(events.LagFramesObserved(current_frame, 0, 11))
+        state.tick(current_frame)
+        current_frame += 80
         state.tick(current_frame)
         self.assertEqual("3-3 enter", state.active_section().name)
 

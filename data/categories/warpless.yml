@@ -23,6 +23,15 @@ sections:
   - name: 3-1 brodown
     wait_frames: 80
     action: w3brodown31
+  - name: 3-1 exit
+    lag_frames: 13
+  - name: 3-2 enter
+    lag_frames: 61
+  - name: 3-2 transition
+    lag_frames: 11
+  - name: 3-2 brodown
+    wait_frames: 80
+    action: w3brodown32
   - name: 3-3 enter
     lag_frames: 63
     action: framerngincrement
