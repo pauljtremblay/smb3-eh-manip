@@ -2,6 +2,18 @@
 sections:
   - name: w1 enter
     lag_frames: 12
+  - name: 1-1 enter
+    lag_frames: 63
+    action: framerngincrement
+  - name: 1-1 exit
+    lag_frames: 12
+  - name: 1-3 enter
+    lag_frames: 63
+    action: framerngincrement
+  - name: 1-3 transition
+    lag_frames: 10
+  - name: 1-3 exit
+    lag_frames: 12
   - name: first whistle
     lag_frames: 11
   - name: w4 enter
