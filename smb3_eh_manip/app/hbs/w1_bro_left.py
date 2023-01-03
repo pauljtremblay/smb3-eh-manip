@@ -14,7 +14,7 @@ class W1BroLeft:
     def calculate_window(self, seed_lsfr: LSFR):
         return hb.calculate_window(
             seed_lsfr,
-            950,
+            965,
             385,
             Direction.LEFT,
             self.world,
