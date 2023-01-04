@@ -56,6 +56,10 @@ autoreset = false
 
 ; [OPTIONAL] these values are more rarely changed
 
+; Should event logging be info or debug verbosity.
+; True means info, False means debug.
+;event_logging_verbose = false
+
 ; [beta] Detect and remediate lag frames during gameplay
 ;auto_detect_lag_frames_serial = false
 

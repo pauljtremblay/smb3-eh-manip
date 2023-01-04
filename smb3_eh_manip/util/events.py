@@ -6,6 +6,12 @@ import logging
 
 from pydispatch import dispatcher
 
+from smb3_eh_manip.util import settings
+
+LOGGING_METHOD = (
+    logging.info if settings.get_boolean("event_logging_verbose") else logging.debug
+)
+
 
 @dataclass
 class LagFramesObserved:
@@ -27,5 +33,5 @@ def listen(event_type, callback, **kwargs):
 
 def emit(sender, event, **kwargs):
     # Emit an event with the given event_type
-    logging.debug(f"Emitting {type(event).__name__} event: {asdict(event)}")
+    LOGGING_METHOD(f"Emitting {type(event).__name__} event: {asdict(event)}")
     dispatcher.send(type(event), sender, event=event, **kwargs)
