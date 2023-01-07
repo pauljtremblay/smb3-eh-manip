@@ -17,6 +17,7 @@ after_test:
   - pyinstaller --noconfirm --onefile --console -n smb3_eh_manip --uac-admin app.py
   - cp -r data/ dist/
   - cp config.ini.sample dist/
+  - cp data/installer/*.dll dist/
   - cp README.* dist/
   - 7z a smb3_eh_manip.zip dist/*
   - 7z rn smb3_eh_manip.zip dist smb3_eh_manip

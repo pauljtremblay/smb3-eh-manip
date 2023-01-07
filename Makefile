@@ -32,7 +32,7 @@ pyinstaller: clean
 		app.py
 	cp -r data/ dist/
 	cp config.ini.sample dist/
-	cp data/installer/SDL2_mixer.dll dist/
+	cp data/installer/*.dll dist/
 	cp README.* dist/
 	7z a smb3_eh_manip.zip dist/*
 	7z rn smb3_eh_manip.zip dist smb3_eh_manip
