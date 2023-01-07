@@ -132,9 +132,7 @@ TODO
 ----
 
 * Configuration utility
-* Double check we are in sync from obs virtual cam (?is this doable?)
-* Develop practice methodology (starting from 2-1, validate if runner ended on correct frame)
-* Manual lag frame mitigation (e.g. if you exit 2-2 with the wrong score, autochange)
+* livesplit integration (for triggers)
 
 Development
 -----------
