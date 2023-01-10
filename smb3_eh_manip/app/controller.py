@@ -25,6 +25,7 @@ class Controller:
         self.current_time = -1
         self.current_frame = -1
         self.start_time = -1
+        self.ewma_tick = 0
         self.state = State()
 
         if self.auto_detect_lag_frames_serial:
@@ -68,6 +69,7 @@ class Controller:
         self.opencv.terminate()
 
     def tick(self, last_tick_duration):
+        self.ewma_tick = self.ewma_tick * 0.95 + last_tick_duration * 0.05
         self.opencv.tick(last_tick_duration)
         if not self.playing and self.opencv.should_start_playing():
             self.start_playing()
@@ -81,7 +83,7 @@ class Controller:
         if self.enable_ui_player and self.playing:
             self.ui_player.tick(
                 self.current_frame,
-                self.opencv.ewma_tick,
+                self.ewma_tick,
                 self.opencv.ewma_read_frame,
                 self.state,
             )

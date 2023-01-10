@@ -26,7 +26,6 @@ class Opencv:
             "write_capture_video", fallback=False
         )
         self.enable_video_player = settings.get_boolean("enable_video_player")
-        self.ewma_tick = 0
         self.ewma_read_frame = 0
 
         self.reset_template = cv2.imread(
@@ -60,7 +59,6 @@ class Opencv:
         self.graph.grab_frame()
         read_frame_duration = time.time() - start_read_frame
         logging.debug(f"Took {read_frame_duration}s to read frame")
-        self.ewma_tick = self.ewma_tick * 0.95 + last_tick_duration * 0.05
         self.ewma_read_frame = self.ewma_read_frame * 0.95 + read_frame_duration * 0.05
         if self.write_capture_video and self.frame is not None:
             self.output_video.write(self.frame)
