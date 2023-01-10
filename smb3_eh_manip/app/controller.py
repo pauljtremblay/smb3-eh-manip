@@ -71,7 +71,7 @@ class Controller:
 
     def tick(self, last_tick_duration):
         self.ewma_tick = self.ewma_tick * 0.95 + last_tick_duration * 0.05
-        self.opencv.tick(last_tick_duration)
+        self.opencv.tick()
         if not self.playing and self.opencv.should_start_playing():
             self.start_playing()
         if self.playing:
@@ -85,7 +85,6 @@ class Controller:
             self.ui_player.tick(
                 self.current_frame,
                 self.ewma_tick,
-                self.opencv.ewma_read_frame,
                 self.state,
             )
         if self.playing and self.autoreset and self.opencv.should_autoreset():

@@ -34,9 +34,9 @@ class UiPlayer:
         self.window_open = True
         self.trigger_frames = list(ACTION_FRAMES)
 
-    def tick(self, current_frame, ewma_tick, ewma_read_frame, state: State):
+    def tick(self, current_frame, ewma_tick, state: State):
         if self.window_open:
-            self.draw(current_frame, ewma_tick, ewma_read_frame, state)
+            self.draw(current_frame, ewma_tick, state)
 
             if (
                 self.auto_close_ui_frame > 0
@@ -46,7 +46,7 @@ class UiPlayer:
                 logging.debug(f"Auto closing ui window at {current_frame}")
                 self.window_open = False
 
-    def draw(self, current_frame, ewma_tick, ewma_read_frame, state: State):
+    def draw(self, current_frame, ewma_tick, state: State):
         ui = UiPlayer.get_base_frame()
         if self.trigger_frames:
             next_trigger_distance = (
@@ -66,16 +66,14 @@ class UiPlayer:
                 logging.debug(
                     f"Popped trigger frame {trigger_frame} at {current_frame}"
                 )
-        self.show_text(ui, current_frame, ewma_tick, ewma_read_frame, state)
+        self.show_text(ui, current_frame, ewma_tick, state)
         cv2.imshow(WINDOW_TITLE, ui)
 
-    def show_text(self, ui, current_frame, ewma_tick, ewma_read_frame, state: State):
+    def show_text(self, ui, current_frame, ewma_tick, state: State):
         x0 = 0
         x1 = WINDOW_WIDTH // 2
         y = VISUAL_CUE_HEIGHT + 24
         cv2.putText(ui, str(current_frame), (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
-        frame_str = f"Frame: {round(ewma_read_frame*1000)}ms"
-        cv2.putText(ui, frame_str, (x1, y), TYPEFACE, 1, FONT_COLOR, 2)
         y += 20
         lag_frames_str = f"Lag frames: {state.total_observed_lag_frames}"
         cv2.putText(ui, lag_frames_str, (x0, y), TYPEFACE, 1, FONT_COLOR, 2)

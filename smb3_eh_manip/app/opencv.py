@@ -25,7 +25,6 @@ class Opencv:
             "write_capture_video", fallback=False
         )
         self.enable_video_player = settings.get_boolean("enable_video_player")
-        self.ewma_read_frame = 0
 
         self.reset_template = cv2.imread(
             settings.get("reset_image_path", fallback="data/reset.png")
@@ -53,12 +52,11 @@ class Opencv:
             )
         self.reset_image_region = settings.get_config_region("reset_image_region")
 
-    def tick(self, last_tick_duration):
+    def tick(self):
         start_read_frame = time.time()
         self.graph.grab_frame()
         read_frame_duration = time.time() - start_read_frame
         logging.debug(f"Took {read_frame_duration}s to read frame")
-        self.ewma_read_frame = self.ewma_read_frame * 0.95 + read_frame_duration * 0.05
         if self.write_capture_video and self.frame is not None:
             self.output_video.write(self.frame)
         if self.show_capture_video and self.frame is not None:
