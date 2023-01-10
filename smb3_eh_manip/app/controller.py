@@ -1,6 +1,8 @@
 import logging
 import time
 
+import cv2
+
 from smb3_eh_manip.app.opencv import Opencv
 from smb3_eh_manip.app.servers.fceux_lua_server import *
 from smb3_eh_manip.app.servers.serial_server import SerialServer
@@ -20,6 +22,7 @@ class Controller:
         self.enable_fceux_tas_start = settings.get_boolean("enable_fceux_tas_start")
         self.enable_audio_player = settings.get_boolean("enable_audio_player")
         self.enable_ui_player = settings.get_boolean("enable_ui_player")
+        self.enable_opencv = settings.get_boolean("enable_opencv", fallback=True)
         self.offset_frames = settings.get_int("offset_frames", fallback=106)
         self.playing = False
         self.current_time = -1
@@ -27,8 +30,8 @@ class Controller:
         self.start_time = -1
         self.ewma_tick = 0
         self.state = State()
-        self.opencv = Opencv(self.offset_frames)
-
+        if self.enable_opencv:
+            self.opencv = Opencv(self.offset_frames)
         if self.auto_detect_lag_frames_serial:
             self.serial_server = SerialServer()
         if self.enable_fceux_tas_start:
@@ -42,7 +45,8 @@ class Controller:
         self.playing = False
         self.current_frame = -1
         self.state.reset()
-        self.opencv.reset()
+        if self.enable_opencv:
+            self.opencv.reset()
         if self.enable_fceux_tas_start:
             emu.pause()
             latency_offset = round(self.latency_ms / settings.NES_MS_PER_FRAME)
@@ -64,16 +68,21 @@ class Controller:
             self.audio_player.reset()
         if self.enable_ui_player:
             self.ui_player.reset()
-        self.opencv.start_playing()
+        if self.enable_opencv:
+            self.opencv.start_playing()
 
     def terminate(self):
-        self.opencv.terminate()
+        if self.enable_opencv:
+            self.opencv.terminate()
 
     def tick(self, last_tick_duration):
         self.ewma_tick = self.ewma_tick * 0.95 + last_tick_duration * 0.05
-        self.opencv.tick()
-        if not self.playing and self.opencv.should_start_playing():
-            self.start_playing()
+        if self.enable_opencv:
+            self.opencv.tick()
+        _ = cv2.waitKey(1)
+        if not self.playing and self.enable_opencv:
+            if self.opencv.should_start_playing():
+                self.start_playing()
         if self.playing:
             self.update_times()
         self.check_and_update_lag_frames()
@@ -87,9 +96,10 @@ class Controller:
                 self.ewma_tick,
                 self.state,
             )
-        if self.playing and self.autoreset and self.opencv.should_autoreset():
-            self.reset()
-            logging.info(f"Detected reset")
+        if self.playing and self.autoreset:
+            if self.opencv.should_autoreset():
+                self.reset()
+                logging.info(f"Detected reset")
 
     def check_and_update_lag_frames(self):
         if self.auto_detect_lag_frames_serial:

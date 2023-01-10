@@ -61,7 +61,6 @@ class Opencv:
             self.output_video.write(self.frame)
         if self.show_capture_video and self.frame is not None:
             cv2.imshow("capture", self.frame)
-        _ = cv2.waitKey(1)
 
     def should_autoreset(self):
         if self.frame is None:
