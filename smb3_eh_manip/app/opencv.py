@@ -10,7 +10,7 @@ from smb3_eh_manip.util import settings
 
 
 class Opencv:
-    def __init__(self):
+    def __init__(self, offset_frames):
         self.player_window_title = settings.get(
             "player_window_title", fallback="data/eh/video.avi"
         )
@@ -20,7 +20,6 @@ class Opencv:
         self.start_frame_image_region = settings.get_config_region(
             "start_frame_image_region"
         )
-        self.video_offset_frames = settings.get_int("video_offset_frames", fallback=106)
         self.show_capture_video = settings.get_boolean("show_capture_video")
         self.write_capture_video = settings.get_boolean(
             "write_capture_video", fallback=False
@@ -50,7 +49,7 @@ class Opencv:
         if self.enable_video_player:
             self.video_player = VideoPlayer(
                 settings.get("video_path", fallback="data/eh/video.avi"),
-                self.video_offset_frames,
+                offset_frames,
             )
         self.reset_image_region = settings.get_config_region("reset_image_region")
 

@@ -12,7 +12,6 @@ from smb3_eh_manip.util import settings
 
 class Controller:
     def __init__(self):
-        self.opencv = Opencv()
         self.latency_ms = settings.get_int("latency_ms")
         self.autoreset = settings.get_boolean("autoreset")
         self.auto_detect_lag_frames_serial = settings.get_boolean(
@@ -21,12 +20,14 @@ class Controller:
         self.enable_fceux_tas_start = settings.get_boolean("enable_fceux_tas_start")
         self.enable_audio_player = settings.get_boolean("enable_audio_player")
         self.enable_ui_player = settings.get_boolean("enable_ui_player")
+        self.offset_frames = settings.get_int("offset_frames", fallback=106)
         self.playing = False
         self.current_time = -1
         self.current_frame = -1
         self.start_time = -1
         self.ewma_tick = 0
         self.state = State()
+        self.opencv = Opencv(self.offset_frames)
 
         if self.auto_detect_lag_frames_serial:
             self.serial_server = SerialServer()
@@ -45,7 +46,7 @@ class Controller:
         if self.enable_fceux_tas_start:
             emu.pause()
             latency_offset = round(self.latency_ms / settings.NES_MS_PER_FRAME)
-            taseditor.setplayback(self.opencv.video_offset_frames + latency_offset)
+            taseditor.setplayback(self.offset_frames + latency_offset)
         if self.auto_detect_lag_frames_serial:
             self.serial_server.reset()
 
@@ -102,7 +103,7 @@ class Controller:
 
     def update_times(self):
         self.current_time = time.time() - self.start_time
-        self.current_frame = self.opencv.video_offset_frames + round(
+        self.current_frame = self.offset_frames + round(
             (self.latency_ms + self.current_time * 1000) / settings.NES_MS_PER_FRAME,
             1,
         )
