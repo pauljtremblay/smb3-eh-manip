@@ -21,7 +21,6 @@ class Opencv:
             "start_frame_image_region"
         )
         self.video_offset_frames = settings.get_int("video_offset_frames", fallback=106)
-        self.latency_ms = settings.get_int("latency_ms")
         self.show_capture_video = settings.get_boolean("show_capture_video")
         self.write_capture_video = settings.get_boolean(
             "write_capture_video", fallback=False
