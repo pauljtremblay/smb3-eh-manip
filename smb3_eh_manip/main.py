@@ -8,6 +8,8 @@ from smb3_eh_manip.app.controller import Controller
 from smb3_eh_manip.util.logging import initialize_logging
 from smb3_eh_manip.util import settings
 
+VERSION = open("data/version.txt", "r").read().strip()
+
 
 def handler(_signum, _frame):
     global controller
@@ -33,6 +35,7 @@ def main():
     global controller
     signal(SIGINT, handler)
     initialize_logging()
+    logging.info(f"Starting smb3 manip tool version {VERSION}")
     print_camera_info()
     try:
         controller = Controller()
