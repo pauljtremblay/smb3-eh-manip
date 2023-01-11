@@ -1,4 +1,5 @@
 import logging
+import pkg_resources
 
 import cv2
 import numpy as np
@@ -7,7 +8,8 @@ from smb3_eh_manip.app.state import State
 from smb3_eh_manip.util import events
 from smb3_eh_manip.util.settings import get_int, ACTION_FRAMES, FREQUENCY
 
-WINDOW_TITLE = "eh manip ui"
+VERSION = open("data/version.txt", "r").read().strip()
+WINDOW_TITLE = f"eh manip ui {VERSION}"
 LINE_COUNT = 6
 WINDOW_SCALAR = 3
 WINDOW_HEIGHT = int(FREQUENCY * WINDOW_SCALAR * 2.5)
