@@ -9,7 +9,11 @@ from smb3_eh_manip.app.servers.serial_server import SerialServer
 from smb3_eh_manip.app.state import State
 from smb3_eh_manip.ui.audio_player import AudioPlayer
 from smb3_eh_manip.ui.ui_player import UiPlayer
-from smb3_eh_manip.util import settings
+from smb3_eh_manip.util import events, settings
+
+LOAD_FRAMES_AUTORESET_THRESHOLD = settings.get_int(
+    "load_frames_autoreset_threshold", fallback=120
+)
 
 
 class Controller:
@@ -40,6 +44,7 @@ class Controller:
             self.audio_player = AudioPlayer()
         if self.enable_ui_player:
             self.ui_player = UiPlayer()
+        events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
 
     def reset(self):
         self.playing = False
@@ -96,10 +101,18 @@ class Controller:
                 self.ewma_tick,
                 self.state,
             )
-        if self.playing and self.autoreset:
+        if self.playing and self.autoreset and self.enable_opencv:
             if self.opencv.should_autoreset():
                 self.reset()
                 logging.info(f"Detected reset")
+
+    def handle_lag_frames_observed(self, event: events.LagFramesObserved):
+        if (
+            self.autoreset
+            and event.observed_load_frames > LOAD_FRAMES_AUTORESET_THRESHOLD
+        ):
+            self.reset()
+            self.start_playing()
 
     def check_and_update_lag_frames(self):
         if self.auto_detect_lag_frames_serial:
