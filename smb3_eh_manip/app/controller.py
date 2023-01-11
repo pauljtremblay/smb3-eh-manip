@@ -27,6 +27,9 @@ class Controller:
         self.enable_audio_player = settings.get_boolean("enable_audio_player")
         self.enable_ui_player = settings.get_boolean("enable_ui_player")
         self.enable_opencv = settings.get_boolean("enable_opencv", fallback=True)
+        self.enable_serial_autoreset = settings.get_boolean(
+            "enable_serial_autoreset", fallback=False
+        )
         self.offset_frames = settings.get_int("offset_frames", fallback=106)
         self.playing = False
         self.current_time = -1
@@ -108,7 +111,7 @@ class Controller:
 
     def handle_lag_frames_observed(self, event: events.LagFramesObserved):
         if (
-            self.autoreset
+            self.enable_serial_autoreset
             and event.observed_load_frames > LOAD_FRAMES_AUTORESET_THRESHOLD
         ):
             self.reset()
