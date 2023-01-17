@@ -86,6 +86,16 @@ class Controller:
             self.ui_player.reset()
         if self.enable_opencv:
             self.opencv.start_playing()
+        if self.enable_livesplit_smb3manip:
+            # need to send an abs/global time with offset already observed,
+            # since livesplit doesn't know about these offsets
+            start_time_ms = round(self.start_time * 1000)
+            offset_start_time = (
+                start_time_ms
+                - round(self.offset_frames * settings.NES_MS_PER_FRAME)
+                - self.latency_ms
+            )
+            self.livesplit_smb3manip.start_playing(offset_start_time)
 
     def terminate(self):
         if self.enable_opencv:
