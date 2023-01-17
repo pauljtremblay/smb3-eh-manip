@@ -5,6 +5,7 @@ import cv2
 
 from smb3_eh_manip.app.opencv import Opencv
 from smb3_eh_manip.app.servers.fceux_lua_server import *
+from smb3_eh_manip.app.servers.livesplit_smb3manip import LivesplitSmb3Manip
 from smb3_eh_manip.app.servers.serial_server import SerialServer
 from smb3_eh_manip.app.state import State
 from smb3_eh_manip.ui.audio_player import AudioPlayer
@@ -30,6 +31,9 @@ class Controller:
         self.enable_serial_autoreset = settings.get_boolean(
             "enable_serial_autoreset", fallback=False
         )
+        self.enable_livesplit_smb3manip = settings.get_boolean(
+            "enable_livesplit_smb3manip", fallback=False
+        )
         self.offset_frames = settings.get_int("offset_frames", fallback=106)
         self.playing = False
         self.current_time = -1
@@ -47,6 +51,8 @@ class Controller:
             self.audio_player = AudioPlayer()
         if self.enable_ui_player:
             self.ui_player = UiPlayer()
+        if self.enable_livesplit_smb3manip:
+            self.livesplit_smb3manip = LivesplitSmb3Manip()
         events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
 
     def reset(self):
@@ -61,6 +67,8 @@ class Controller:
             taseditor.setplayback(self.offset_frames + latency_offset)
         if self.auto_detect_lag_frames_serial:
             self.serial_server.reset()
+        if self.enable_livesplit_smb3manip:
+            self.livesplit_smb3manip.reset()
 
     def start_playing(self):
         self.playing = True
@@ -108,6 +116,8 @@ class Controller:
             if self.opencv.should_autoreset():
                 self.reset()
                 logging.info(f"Detected reset")
+        if self.enable_livesplit_smb3manip:
+            self.livesplit_smb3manip.tick(self)
 
     def handle_lag_frames_observed(self, event: events.LagFramesObserved):
         if (
