@@ -117,7 +117,7 @@ class Controller:
                 self.reset()
                 logging.info(f"Detected reset")
         if self.enable_livesplit_smb3manip:
-            self.livesplit_smb3manip.tick(self)
+            self.livesplit_smb3manip.tick(self.state, round(self.current_frame))
 
     def handle_lag_frames_observed(self, event: events.LagFramesObserved):
         if (
