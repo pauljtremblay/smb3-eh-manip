@@ -48,21 +48,8 @@
             this.btnColor2 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-            this.txtIncrement = new System.Windows.Forms.TextBox();
-            this.lblSmb3ManipIncrement = new System.Windows.Forms.Label();
-            this.lblSmb3ManipDecrement = new System.Windows.Forms.Label();
-            this.lblSmb3ManipReset = new System.Windows.Forms.Label();
-            this.txtDecrement = new System.Windows.Forms.TextBox();
-            this.txtReset = new System.Windows.Forms.TextBox();
-            this.chkGlobalHotKeys = new System.Windows.Forms.CheckBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.txtSmb3ManipText = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.numInitialValue = new System.Windows.Forms.NumericUpDown();
-            this.lblIncrementValue = new System.Windows.Forms.Label();
-            this.numIncrement = new System.Windows.Forms.NumericUpDown();
+            this.portLabel = new System.Windows.Forms.Label();
+            this.numPort = new System.Windows.Forms.NumericUpDown();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -70,10 +57,7 @@
             this.tableLayoutPanel2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.tableLayoutPanel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numInitialValue)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numIncrement)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numPort)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -98,7 +82,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 82F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 112F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(442, 448);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(442, 324);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox2
@@ -148,7 +132,7 @@
             // 
             // btnColor
             // 
-            this.btnColor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.btnColor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.btnColor.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnColor.Location = new System.Drawing.Point(142, 32);
@@ -180,7 +164,7 @@
             // 
             // btnColor3
             // 
-            this.btnColor3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.btnColor3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.btnColor3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnColor3.Location = new System.Drawing.Point(142, 61);
@@ -291,8 +275,8 @@
             // 
             // btnColor1
             // 
-            this.btnColor1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.btnColor1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnColor1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnColor1.Location = new System.Drawing.Point(154, 3);
@@ -304,8 +288,8 @@
             // 
             // btnColor2
             // 
-            this.btnColor2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.btnColor2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnColor2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnColor2.Location = new System.Drawing.Point(183, 3);
@@ -322,7 +306,7 @@
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox4.Location = new System.Drawing.Point(3, 226);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(436, 219);
+            this.groupBox4.Size = new System.Drawing.Size(436, 95);
             this.groupBox4.TabIndex = 42;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Smb3Manip";
@@ -332,209 +316,53 @@
             this.tableLayoutPanel5.ColumnCount = 2;
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 32.44F));
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 67.56F));
-            this.tableLayoutPanel5.Controls.Add(this.groupBox3, 0, 4);
-            this.tableLayoutPanel5.Controls.Add(this.chkGlobalHotKeys, 0, 3);
-            this.tableLayoutPanel5.Controls.Add(this.label2, 0, 0);
-            this.tableLayoutPanel5.Controls.Add(this.txtSmb3ManipText, 1, 0);
-            this.tableLayoutPanel5.Controls.Add(this.label4, 0, 1);
-            this.tableLayoutPanel5.Controls.Add(this.numInitialValue, 1, 1);
-            this.tableLayoutPanel5.Controls.Add(this.lblIncrementValue, 0, 2);
-            this.tableLayoutPanel5.Controls.Add(this.numIncrement, 1, 2);
+            this.tableLayoutPanel5.Controls.Add(this.portLabel, 0, 1);
+            this.tableLayoutPanel5.Controls.Add(this.numPort, 1, 1);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel5.Location = new System.Drawing.Point(3, 16);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
-            this.tableLayoutPanel5.RowCount = 5;
+            this.tableLayoutPanel5.RowCount = 4;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(430, 200);
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 63F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(430, 76);
             this.tableLayoutPanel5.TabIndex = 0;
             // 
-            // groupBox3
+            // portLabel
             // 
-            this.tableLayoutPanel5.SetColumnSpan(this.groupBox3, 2);
-            this.groupBox3.Controls.Add(this.tableLayoutPanel4);
-            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox3.Location = new System.Drawing.Point(3, 103);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(424, 94);
-            this.groupBox3.TabIndex = 41;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Hotkeys";
+            this.portLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.portLabel.AutoSize = true;
+            this.portLabel.Location = new System.Drawing.Point(3, 31);
+            this.portLabel.Name = "portLabel";
+            this.portLabel.Size = new System.Drawing.Size(29, 13);
+            this.portLabel.TabIndex = 44;
+            this.portLabel.Text = "Port:";
             // 
-            // tableLayoutPanel4
+            // numPort
             // 
-            this.tableLayoutPanel4.ColumnCount = 2;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.66842F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 68.33158F));
-            this.tableLayoutPanel4.Controls.Add(this.txtIncrement, 1, 0);
-            this.tableLayoutPanel4.Controls.Add(this.lblSmb3ManipIncrement, 0, 0);
-            this.tableLayoutPanel4.Controls.Add(this.lblSmb3ManipDecrement, 0, 1);
-            this.tableLayoutPanel4.Controls.Add(this.lblSmb3ManipReset, 0, 2);
-            this.tableLayoutPanel4.Controls.Add(this.txtDecrement, 1, 1);
-            this.tableLayoutPanel4.Controls.Add(this.txtReset, 1, 2);
-            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 16);
-            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-            this.tableLayoutPanel4.RowCount = 3;
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(418, 75);
-            this.tableLayoutPanel4.TabIndex = 0;
-            // 
-            // txtIncrement
-            // 
-            this.txtIncrement.BackColor = System.Drawing.SystemColors.Menu;
-            this.txtIncrement.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtIncrement.Location = new System.Drawing.Point(135, 3);
-            this.txtIncrement.Name = "txtIncrement";
-            this.txtIncrement.Size = new System.Drawing.Size(280, 20);
-            this.txtIncrement.TabIndex = 0;
-            this.txtIncrement.Enter += new System.EventHandler(this.txtIncrement_Enter);
-            this.txtIncrement.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtIncrement_KeyDown);
-            // 
-            // lblSmb3ManipIncrement
-            // 
-            this.lblSmb3ManipIncrement.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.lblSmb3ManipIncrement.AutoSize = true;
-            this.lblSmb3ManipIncrement.Location = new System.Drawing.Point(3, 6);
-            this.lblSmb3ManipIncrement.Name = "lblSmb3ManipIncrement";
-            this.lblSmb3ManipIncrement.Size = new System.Drawing.Size(97, 13);
-            this.lblSmb3ManipIncrement.TabIndex = 1;
-            this.lblSmb3ManipIncrement.Text = "Increment Smb3Manip:";
-            // 
-            // lblSmb3ManipDecrement
-            // 
-            this.lblSmb3ManipDecrement.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.lblSmb3ManipDecrement.AutoSize = true;
-            this.lblSmb3ManipDecrement.Location = new System.Drawing.Point(3, 31);
-            this.lblSmb3ManipDecrement.Name = "lblSmb3ManipDecrement";
-            this.lblSmb3ManipDecrement.Size = new System.Drawing.Size(102, 13);
-            this.lblSmb3ManipDecrement.TabIndex = 2;
-            this.lblSmb3ManipDecrement.Text = "Decrement Smb3Manip:";
-            // 
-            // lblSmb3ManipReset
-            // 
-            this.lblSmb3ManipReset.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.lblSmb3ManipReset.AutoSize = true;
-            this.lblSmb3ManipReset.Location = new System.Drawing.Point(3, 56);
-            this.lblSmb3ManipReset.Name = "lblSmb3ManipReset";
-            this.lblSmb3ManipReset.Size = new System.Drawing.Size(78, 13);
-            this.lblSmb3ManipReset.TabIndex = 3;
-            this.lblSmb3ManipReset.Text = "Reset Smb3Manip:";
-            // 
-            // txtDecrement
-            // 
-            this.txtDecrement.BackColor = System.Drawing.SystemColors.Menu;
-            this.txtDecrement.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtDecrement.Location = new System.Drawing.Point(135, 28);
-            this.txtDecrement.Name = "txtDecrement";
-            this.txtDecrement.Size = new System.Drawing.Size(280, 20);
-            this.txtDecrement.TabIndex = 4;
-            this.txtDecrement.Enter += new System.EventHandler(this.txtDecrement_Enter);
-            this.txtDecrement.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtDecrement_KeyDown);
-            // 
-            // txtReset
-            // 
-            this.txtReset.BackColor = System.Drawing.SystemColors.Menu;
-            this.txtReset.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtReset.Location = new System.Drawing.Point(135, 53);
-            this.txtReset.Name = "txtReset";
-            this.txtReset.Size = new System.Drawing.Size(280, 20);
-            this.txtReset.TabIndex = 5;
-            this.txtReset.Enter += new System.EventHandler(this.txtReset_Enter);
-            this.txtReset.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtReset_KeyDown);
-            // 
-            // chkGlobalHotKeys
-            // 
-            this.chkGlobalHotKeys.AutoSize = true;
-            this.tableLayoutPanel5.SetColumnSpan(this.chkGlobalHotKeys, 2);
-            this.chkGlobalHotKeys.Location = new System.Drawing.Point(7, 78);
-            this.chkGlobalHotKeys.Margin = new System.Windows.Forms.Padding(7, 3, 3, 3);
-            this.chkGlobalHotKeys.Name = "chkGlobalHotKeys";
-            this.chkGlobalHotKeys.Size = new System.Drawing.Size(138, 17);
-            this.chkGlobalHotKeys.TabIndex = 5;
-            this.chkGlobalHotKeys.Text = "Global Smb3Manip Hotkeys";
-            this.chkGlobalHotKeys.UseVisualStyleBackColor = true;
-            // 
-            // label2
-            // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 6);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(71, 13);
-            this.label2.TabIndex = 42;
-            this.label2.Text = "Smb3Manip Text:";
-            // 
-            // txtSmb3ManipText
-            // 
-            this.txtSmb3ManipText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSmb3ManipText.Location = new System.Drawing.Point(142, 3);
-            this.txtSmb3ManipText.Name = "txtSmb3ManipText";
-            this.txtSmb3ManipText.Size = new System.Drawing.Size(285, 20);
-            this.txtSmb3ManipText.TabIndex = 43;
-            // 
-            // label4
-            // 
-            this.label4.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 31);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(64, 13);
-            this.label4.TabIndex = 44;
-            this.label4.Text = "Initial Value:";
-            // 
-            // numInitialValue
-            // 
-            this.numInitialValue.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.numInitialValue.Location = new System.Drawing.Point(142, 28);
-            this.numInitialValue.Maximum = new decimal(new int[] {
+            this.numPort.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.numPort.Location = new System.Drawing.Point(142, 28);
+            this.numPort.Maximum = new decimal(new int[] {
             2147483647,
             0,
             0,
             0});
-            this.numInitialValue.Minimum = new decimal(new int[] {
+            this.numPort.Minimum = new decimal(new int[] {
             -2147483648,
             0,
             0,
             -2147483648});
-            this.numInitialValue.Name = "numInitialValue";
-            this.numInitialValue.Size = new System.Drawing.Size(285, 20);
-            this.numInitialValue.TabIndex = 45;
-            this.numInitialValue.ValueChanged += new System.EventHandler(this.numInitialValue_ValueChanged);
-            // 
-            // lblIncrementValue
-            // 
-            this.lblIncrementValue.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.lblIncrementValue.AutoSize = true;
-            this.lblIncrementValue.Location = new System.Drawing.Point(3, 56);
-            this.lblIncrementValue.Name = "lblIncrementValue";
-            this.lblIncrementValue.Size = new System.Drawing.Size(87, 13);
-            this.lblIncrementValue.TabIndex = 46;
-            this.lblIncrementValue.Text = "Increment Value:";
-            // 
-            // numIncrement
-            // 
-            this.numIncrement.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.numIncrement.Location = new System.Drawing.Point(142, 53);
-            this.numIncrement.Maximum = new decimal(new int[] {
-            2147483647,
+            this.numPort.Name = "numPort";
+            this.numPort.Size = new System.Drawing.Size(285, 20);
+            this.numPort.TabIndex = 45;
+            this.numPort.Value = new decimal(new int[] {
+            25345,
             0,
             0,
             0});
-            this.numIncrement.Name = "numIncrement";
-            this.numIncrement.Size = new System.Drawing.Size(285, 20);
-            this.numIncrement.TabIndex = 47;
-            this.numIncrement.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numIncrement.ValueChanged += new System.EventHandler(this.numIncrement_ValueChanged);
+            this.numPort.ValueChanged += new System.EventHandler(this.numPort_ValueChanged);
             // 
             // Smb3ManipComponentSettings
             // 
@@ -543,7 +371,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Smb3ManipComponentSettings";
             this.Padding = new System.Windows.Forms.Padding(7);
-            this.Size = new System.Drawing.Size(456, 462);
+            this.Size = new System.Drawing.Size(456, 338);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -555,11 +383,7 @@
             this.groupBox4.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel5.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.tableLayoutPanel4.ResumeLayout(false);
-            this.tableLayoutPanel4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numInitialValue)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numIncrement)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numPort)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -567,7 +391,6 @@
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.CheckBox chkGlobalHotKeys;
         private System.Windows.Forms.Label lblFont;
         private System.Windows.Forms.Button btnFont;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -583,23 +406,11 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Button btnColor1;
         private System.Windows.Forms.Button btnColor2;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
-        private System.Windows.Forms.TextBox txtIncrement;
-        private System.Windows.Forms.Label lblSmb3ManipIncrement;
-        private System.Windows.Forms.Label lblSmb3ManipDecrement;
-        private System.Windows.Forms.Label lblSmb3ManipReset;
-        private System.Windows.Forms.TextBox txtDecrement;
-        private System.Windows.Forms.TextBox txtReset;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txtSmb3ManipText;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.NumericUpDown numInitialValue;
-        private System.Windows.Forms.Label lblIncrementValue;
-        private System.Windows.Forms.NumericUpDown numIncrement;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button btnColor3;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+        private System.Windows.Forms.Label portLabel;
+        private System.Windows.Forms.NumericUpDown numPort;
     }
 }

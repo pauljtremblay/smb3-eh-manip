@@ -1,79 +1,35 @@
 ﻿namespace LiveSplit.UI.Components
 {
-    public class Smb3Manip : ISmb3Manip
+    public class Smb3Manip
     {
-        private int increment = 1;
-        private int initialValue = 0;
+        private const int DEFAULT_PORT = 25345;
+        private int port = DEFAULT_PORT;
+        private string currentStr = "nil";
 
-        public Smb3Manip(int initialValue = 0, int increment = 1)
+        public Smb3Manip(int port = DEFAULT_PORT)
         {
-            this.initialValue = initialValue;
-            this.increment = increment;
-            Count = initialValue;
-        }
-
-        public int Count { get; private set; }
-
-        public bool Increment()
-        {
-            if (Count == int.MaxValue)
-                return false;
-
-            try
-            {
-                Count = checked(Count + increment);
-            }
-            catch (System.OverflowException)
-            {
-                Count = int.MaxValue;
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool Decrement()
-        {
-            if (Count == int.MinValue)
-                return false;
-
-            try
-            {
-                Count = checked(Count - increment);
-            }
-            catch (System.OverflowException)
-            {
-                Count = int.MinValue;
-                return false;
-            }
-
-            return true;
+            this.port = port;
+            SetCurrentStr(0, 0);
         }
 
         public void Reset()
         {
-            Count = initialValue;
+            SetCurrentStr(0, 0);
         }
 
-        public void SetCount(int value)
+        public void SetPort(int port)
         {
-            Count = value;
+            this.port = port;
         }
 
-        public void SetIncrement(int incrementValue)
+        public void SetCurrentStr(int currentFrame, int lagFrames)
         {
-            increment = incrementValue;
+            currentStr = "Frame: " + currentFrame + " Lag Frames: " + lagFrames;
         }
-    }
 
-    public interface ISmb3Manip
-    {
-        int Count { get; }
-
-        bool Increment();
-        bool Decrement();
-        void Reset();
-        void SetCount(int value);
-        void SetIncrement(int incrementValue);
+        public string GetCurrentStr()
+        {
+            return currentStr;
+        }
     }
 }

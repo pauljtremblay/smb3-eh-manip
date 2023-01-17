@@ -20,13 +20,9 @@ namespace LiveSplit.UI.Components
             Smb3Manip = new Smb3Manip();
             this.state = state;
             Settings.Smb3ManipReinitialiseRequired += Settings_Smb3ManipReinitialiseRequired;
-            Settings.IncrementUpdateRequired += Settings_IncrementUpdateRequired;
-
-            // Subscribe to input hooks.
-            Settings.Hook.KeyOrButtonPressed += hook_KeyOrButtonPressed;
         }
 
-        public ISmb3Manip Smb3Manip { get; set; }
+        public Smb3Manip Smb3Manip { get; set; }
         public Smb3ManipComponentSettings Settings { get; set; }
 
         public GraphicsCache Cache { get; set; }
@@ -156,7 +152,7 @@ namespace LiveSplit.UI.Components
             Settings.SetSettings(settings);
 
             // Initialise Smb3Manip from settings.
-            Smb3Manip = new Smb3Manip(Settings.InitialValue, Settings.Increment);
+            Smb3Manip = new Smb3Manip(Settings.Port);
         }
 
         public void Update(IInvalidator invalidator, Model.LiveSplitState state, float width, float height, LayoutMode mode)
@@ -171,7 +167,7 @@ namespace LiveSplit.UI.Components
             this.state = state;
 
             Smb3ManipNameLabel.Text = Settings.Smb3ManipText;
-            Smb3ManipValueLabel.Text = Smb3Manip.Count.ToString();
+            Smb3ManipValueLabel.Text = Smb3Manip.GetCurrentStr();
 
             Cache.Restart();
             Cache["Smb3ManipNameLabel"] = Smb3ManipNameLabel.Text;
@@ -185,7 +181,6 @@ namespace LiveSplit.UI.Components
 
         public void Dispose()
         {
-            Settings.Hook.KeyOrButtonPressed -= hook_KeyOrButtonPressed;
         }
 
         public int GetSettingsHashCode()
@@ -198,31 +193,7 @@ namespace LiveSplit.UI.Components
         /// </summary>
         private void Settings_Smb3ManipReinitialiseRequired(object sender, EventArgs e)
         {
-            Smb3Manip = new Smb3Manip(Settings.InitialValue, Settings.Increment);
-        }
-
-        private void Settings_IncrementUpdateRequired(object sender, EventArgs e)
-        {
-            Smb3Manip.SetIncrement(Settings.Increment);
-        }
-
-        // Basic support for keyboard/button input.
-        private void hook_KeyOrButtonPressed(object sender, KeyOrButton e)
-        {
-            if ((Form.ActiveForm == state.Form && !Settings.GlobalHotkeysEnabled)
-                || Settings.GlobalHotkeysEnabled)
-            {
-                if (e == Settings.IncrementKey)
-                    Smb3Manip.Increment();
-
-                if (e == Settings.DecrementKey)
-                    Smb3Manip.Decrement();
-
-                if (e == Settings.ResetKey)
-                {
-                    Smb3Manip.Reset();
-                }
-            }
+            Smb3Manip = new Smb3Manip(Settings.Port);
         }
     }
 }
