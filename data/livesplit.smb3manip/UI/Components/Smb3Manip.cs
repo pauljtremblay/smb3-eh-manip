@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System.IO;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace LiveSplit.UI.Components
@@ -40,6 +41,7 @@ namespace LiveSplit.UI.Components
         {
             Task.Run(async () =>
             {
+                File.AppendAllText("smb3manip.log", "Listening on port " + port);
                 using (var udpClient = new UdpClient(port))
                 {
                     while (true)
@@ -47,6 +49,7 @@ namespace LiveSplit.UI.Components
                         var receivedResult = await udpClient.ReceiveAsync();
                         int currentFrame = System.BitConverter.ToInt32(receivedResult.Buffer, 0);
                         int lagFrames = System.BitConverter.ToInt32(receivedResult.Buffer, 4);
+                        File.AppendAllText("smb3manip.log", "Received " + currentFrame + " | " + lagFrames);
                         SetCurrentStr(currentFrame, lagFrames);
                     }
                 }
