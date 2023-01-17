@@ -1,6 +1,4 @@
-﻿using System.Net;
-using System.Net.Sockets;
-using System.Threading;
+﻿using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace LiveSplit.UI.Components
@@ -10,18 +8,17 @@ namespace LiveSplit.UI.Components
         private const int DEFAULT_PORT = 25345;
         private int port = DEFAULT_PORT;
         private string currentStr = "nil";
-        private Thread trd = null;
 
         public Smb3Manip(int port = DEFAULT_PORT)
         {
             this.port = port;
             SetCurrentStr(0, 0);
+            StartUpdateThread();
         }
 
         public void Reset()
         {
             SetCurrentStr(0, 0);
-            StartUpdateThread();
         }
 
         public void SetPort(int port)
@@ -41,28 +38,19 @@ namespace LiveSplit.UI.Components
 
         private void StartUpdateThread()
         {
-            if (trd != null && trd.IsAlive)
-                trd.Abort();
-            trd = new Thread(new ThreadStart(ThreadTask))
+            Task.Run(async () =>
             {
-                IsBackground = true
-            };
-            trd.Start();
-        }
-
-        private void ThreadTask()
-        {
-            var from = new IPEndPoint(0, 0);
-            using (var udpClient = new UdpClient(port))
-            {
-                while (true)
+                using (var udpClient = new UdpClient(port))
                 {
-                    var receivedResult = udpClient.Receive(ref from);
-                    int currentFrame = System.BitConverter.ToInt32(receivedResult, 0);
-                    int lagFrames = System.BitConverter.ToInt32(receivedResult, 4);
-                    SetCurrentStr(currentFrame, lagFrames);
+                    while (true)
+                    {
+                        var receivedResult = await udpClient.ReceiveAsync();
+                        int currentFrame = System.BitConverter.ToInt32(receivedResult.Buffer, 0);
+                        int lagFrames = System.BitConverter.ToInt32(receivedResult.Buffer, 4);
+                        SetCurrentStr(currentFrame, lagFrames);
+                    }
                 }
-            }
+            });
         }
     }
 }
