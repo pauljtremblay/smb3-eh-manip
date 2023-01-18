@@ -25,6 +25,7 @@ class PacketType(Enum):
     INVALID = 0
     START_TIME_UPDATED = 1
     LAG_FRAMES_UPDATED = 2
+    RESET = 3
 
 
 def send_packet(packet_type: PacketType, payload: bytes):
@@ -39,12 +40,14 @@ class LivesplitSmb3Manip:
 
     def reset(self):
         self.last_lag_frames = 0
+        self.emit_message(PacketType.RESET, bytes(0))
+        logging.debug(f"Emitted livesplit.smb3manip RESET")
 
     def start_playing(self, offset_start_time: int):
         payload = (offset_start_time - EPOCH_OFFSET).to_bytes(4, sys.byteorder)
         self.emit_message(PacketType.START_TIME_UPDATED, payload)
         logging.debug(
-            f"Emitted livesplit.smb3manip packet offset_start_time {offset_start_time}"
+            f"Emitted livesplit.smb3manip START_TIME_UPDATED {offset_start_time}"
         )
 
     def tick(self, state: State, current_frame: int):
@@ -54,7 +57,7 @@ class LivesplitSmb3Manip:
             payload = lag_frames.to_bytes(2, sys.byteorder)
             self.emit_message(PacketType.LAG_FRAMES_UPDATED, payload)
             logging.debug(
-                f"Emitted livesplit.smb3manip packet at frame {current_frame}"
+                f"Emitted livesplit.smb3manip LAG_FRAMES_UPDATED {lag_frames}"
             )
 
     def emit_message(self, packet_type: PacketType, payload: bytes):
