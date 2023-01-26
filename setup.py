@@ -27,6 +27,7 @@ setup(
         "pyserial",
         "python-vlc",
         "pyyaml",
+        "pywin32",
     ],
     test_suite="tests",
 )

@@ -37,8 +37,8 @@ pyinstaller: clean
 	7z a smb3_eh_manip.zip dist/*
 	7z rn smb3_eh_manip.zip dist smb3_eh_manip
 
-run-livesplit-wpipe:
-	py -m  smb3_eh_manip.app.servers.livesplit_wpipe
+run-livesplit-client:
+	py -m  smb3_eh_manip.app.servers.livesplit_client
 
 run-test:
 	pytest --cov=smb3_eh_manip --cov-report term-missing tests/
