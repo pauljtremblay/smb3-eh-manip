@@ -79,7 +79,7 @@ sections:
     action: framerngincrement
     notes: this is wrong if the runner goes to 7-7, which does not have the offset issue. tracking from w6 airship should be feasible
   - name: 8-navy mid
-    complete_frame: 160000
+    complete_frame: 163800
   - name: 8-navy pipe
     lag_frames: 10
   - name: 8-navy exit
