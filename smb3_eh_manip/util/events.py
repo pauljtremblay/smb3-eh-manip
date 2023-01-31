@@ -26,6 +26,12 @@ class AddActionFrame:
     window: int
 
 
+@dataclass
+class LivesplitCurrentSplitIndexChanged:
+    current_split_index: int
+    last_split_index: int
+
+
 def listen(event_type, callback, **kwargs):
     # Listen to all events with event_type
     dispatcher.connect(callback, signal=event_type, **kwargs)
