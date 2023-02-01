@@ -17,6 +17,7 @@ class Section:
     action: Optional[str] = None
     complete_frame: Optional[int] = None
     wait_frames: Optional[int] = None
+    target_split_index: Optional[int] = None
 
 
 @dataclass
@@ -62,6 +63,10 @@ class State:
         self.expected_lag_latency_frames = expected_lag_latency_frames
         self.reset()
         events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
+        events.listen(
+            events.LivesplitCurrentSplitIndexChanged,
+            self.handle_livesplit_current_split_index_changed,
+        )
 
     def handle_lag_frames_observed(self, event: events.LagFramesObserved):
         self.total_observed_lag_frames += event.observed_lag_frames
@@ -70,6 +75,21 @@ class State:
             self.completed_section(
                 round(event.current_frame), self.category.sections.pop(0)
             )
+
+    def handle_livesplit_current_split_index_changed(
+        self, event: events.LivesplitCurrentSplitIndexChanged
+    ):
+        if self.check_expected_livesplit_current_index_trigger(
+            event.current_split_index
+        ):
+            self.completed_section(None, self.category.sections.pop(0))
+
+    def check_expected_livesplit_current_index_trigger(self, current_split_index: int):
+        active_section = self.active_section()
+        if not active_section:
+            return False
+        target_split_index = active_section.target_split_index
+        return target_split_index and target_split_index == current_split_index
 
     def check_complete_frame_trigger(self, current_frame: int):
         active_section = self.active_section()
@@ -191,6 +211,8 @@ class State:
     def completed_section(self, current_frame: int, section: Section):
         logging.debug(f"Completed {section.name}")
         self.check_and_update_rng_frames_incremented_during_load_action(section)
+        if current_frame is None:
+            return  # sometimes we don't know specifically, let's support this and abort early
         self.check_and_update_nohands_action(current_frame, section)
         self.check_and_update_w1broleft_action(current_frame, section)
         self.check_and_update_w3brodown_action(current_frame, section)

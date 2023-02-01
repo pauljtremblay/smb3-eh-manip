@@ -5,6 +5,7 @@ import cv2
 
 from smb3_eh_manip.app.opencv import Opencv
 from smb3_eh_manip.app.servers.fceux_lua_server import *
+from smb3_eh_manip.app.servers.livesplit_client import LivesplitClient
 from smb3_eh_manip.app.servers.livesplit_smb3manip import LivesplitSmb3Manip
 from smb3_eh_manip.app.servers.serial_server import SerialServer
 from smb3_eh_manip.app.state import State
@@ -34,6 +35,9 @@ class Controller:
         self.enable_livesplit_smb3manip = settings.get_boolean(
             "enable_livesplit_smb3manip", fallback=False
         )
+        self.enable_livesplit_client = settings.get_boolean(
+            "enable_livesplit_client", fallback=False
+        )
         self.offset_frames = settings.get_int("offset_frames", fallback=106)
         self.playing = False
         self.current_time = -1
@@ -53,6 +57,8 @@ class Controller:
             self.ui_player = UiPlayer()
         if self.enable_livesplit_smb3manip:
             self.livesplit_smb3manip = LivesplitSmb3Manip()
+        if self.enable_livesplit_client:
+            self.livesplit_client = LivesplitClient()
         events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
 
     def reset(self):
@@ -128,6 +134,8 @@ class Controller:
                 logging.info(f"Detected reset")
         if self.enable_livesplit_smb3manip:
             self.livesplit_smb3manip.tick(self.state, round(self.current_frame))
+        if self.enable_livesplit_client:
+            self.livesplit_client.tick()
 
     def handle_lag_frames_observed(self, event: events.LagFramesObserved):
         if (
