@@ -25,6 +25,10 @@ def get_int(name, domain=DEFAULT_DOMAIN, fallback=None):
     return config.getint(domain, name, fallback=fallback)
 
 
+def get_float(name, domain=DEFAULT_DOMAIN, fallback=None):
+    return config.getfloat(domain, name, fallback=fallback)
+
+
 def get_config_region(name, domain=DEFAULT_DOMAIN, fallback=None):
     """Parse a region str from ini"""
     return get_list(name, domain=domain, fallback=fallback)

@@ -4,18 +4,40 @@ import socket
 import time
 import win32file, win32pipe
 
-from smb3_eh_manip.util import events
+from smb3_eh_manip.util import events, settings
 from smb3_eh_manip.util.logging import initialize_logging
 
 
+CONNECTION_REFUSED_ERROR = (
+    "Livesplit ConnectionRefusedError (is the server running?), waiting..."
+)
+LIVESPLIT_REQUEST_FREQUENCY = settings.get_float(
+    "livesplit_request_frequency", fallback=0.25
+)
+LIVESPLIT_SERVER_PORT = settings.get_int("livesplit_server_port", fallback=16834)
+
+
 def client_process(split_index_value: Value):
+    initialize_logging(
+        console_log_level="DEBUG",
+        file_log_level="DEBUG",
+        filename="livesplit_client.log",
+    )
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(("localhost", 16834))
+    connected = False
+    while not connected:
+        try:
+            s.connect(("localhost", LIVESPLIT_SERVER_PORT))
+            logging.info(f"Livesplit client socket connected")
+            connected = True
+        except ConnectionRefusedError:
+            logging.warn(CONNECTION_REFUSED_ERROR)
+            time.sleep(1)
     while True:
         s.send(b"getsplitindex\r\n")
         split_index = int(s.recv(1024).decode("utf-8"))
         split_index_value.value = split_index
-        time.sleep(0.2)
+        time.sleep(LIVESPLIT_REQUEST_FREQUENCY)
 
 
 class LivesplitClient:
@@ -70,9 +92,7 @@ if __name__ == "__main__":
         filename="livesplit_client.log",
     )
     client = LivesplitClient()
-    from time import sleep
 
     while True:
         client.tick()
-        sleep(1)
-    client.close()
+        time.sleep(1)
