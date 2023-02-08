@@ -91,7 +91,7 @@ class Controller:
         if self.enable_ui_player:
             self.ui_player.reset()
         if self.enable_opencv:
-            self.opencv.start_playing()
+            self.opencv.start_playing(self.start_time)
         if self.enable_livesplit_smb3manip:
             # need to send an abs/global time with offset already observed,
             # since livesplit doesn't know about these offsets

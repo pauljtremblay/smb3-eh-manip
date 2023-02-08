@@ -56,11 +56,16 @@ autoreset = false
 
 ; [OPTIONAL] these values are more rarely changed
 
-; enables a tool that allows the runner to test their input latency. Will auto add
+; enables a component that allows the runner to test their input latency. Will auto add
 ; audio cues, and print out how far from the audio cue a jump was. This does account
 ; for the 2 frame difference between pressing a and seeing mario jump.
 ;enable_input_latency_tester = false
 ;input_latency_tester_region = 429,721,79,86
+; enables a component that allows the runner to test their latency_ms. Judges how far from
+; frame 270 the tool thinks the user presse the 'start' button. This does account for
+; the 3 frame difference between pressing start and seeing the title screen.
+;enable_latency_ms_tester = false
+;latency_ms_tester_region = 749,133,91,121
 
 ; Should event logging be info or debug verbosity.
 ; True means info, False means debug.

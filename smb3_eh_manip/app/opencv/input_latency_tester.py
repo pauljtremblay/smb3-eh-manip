@@ -13,7 +13,8 @@ class InputLatencyTester:
         self.region = settings.get_config_region("input_latency_tester_region")
         self.template = cv2.imread(
             settings.get(
-                "input_latency_tester_path", fallback="data/input_latency_tester/trigger.png"
+                "input_latency_tester_path",
+                fallback="data/input_latency_tester/trigger.png",
             )
         )
         self.ewma_latency_frames = 0.0

@@ -5,6 +5,7 @@ import cv2
 from pygrabber.dshow_graph import FilterGraph, FilterType
 
 from smb3_eh_manip.app.opencv.input_latency_tester import InputLatencyTester
+from smb3_eh_manip.app.opencv.latency_ms_tester import LatencyMsTester
 from smb3_eh_manip.app.opencv.util import locate_all_opencv
 from smb3_eh_manip.ui.video_player import VideoPlayer
 from smb3_eh_manip.util import settings
@@ -26,7 +27,10 @@ class Opencv:
             "write_capture_video", fallback=False
         )
         self.enable_video_player = settings.get_boolean("enable_video_player")
-        self.enable_input_latency_tester = settings.get_boolean("enable_input_latency_tester")
+        self.enable_input_latency_tester = settings.get_boolean(
+            "enable_input_latency_tester"
+        )
+        self.enable_latency_ms_tester = settings.get_boolean("enable_latency_ms_tester")
 
         self.reset_template = cv2.imread(
             settings.get("reset_image_path", fallback="data/reset.png")
@@ -55,6 +59,8 @@ class Opencv:
         self.reset_image_region = settings.get_config_region("reset_image_region")
         if self.enable_input_latency_tester:
             self.input_latency_tester = InputLatencyTester()
+        if self.enable_latency_ms_tester:
+            self.latency_ms_tester = LatencyMsTester()
 
     def tick(self, current_frame):
         start_read_frame = time.time()
@@ -65,6 +71,8 @@ class Opencv:
             self.output_video.write(self.frame)
         if self.enable_input_latency_tester and self.frame is not None:
             self.input_latency_tester.tick(self.frame, current_frame)
+        if self.enable_latency_ms_tester and self.frame is not None:
+            self.latency_ms_tester.tick(self.frame, current_frame)
         if self.show_capture_video and self.frame is not None:
             cv2.imshow("capture", self.frame)
 
@@ -99,11 +107,13 @@ class Opencv:
             return True
         return False
 
-    def start_playing(self):
+    def start_playing(self, start_time):
         if self.enable_video_player:
             self.video_player.play()
         if self.enable_input_latency_tester:
             self.input_latency_tester.reset()
+        if self.enable_latency_ms_tester:
+            self.latency_ms_tester.reset(start_time)
 
     def terminate(self):
         if self.enable_video_player:
