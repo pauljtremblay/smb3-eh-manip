@@ -3,7 +3,7 @@ import time
 
 import cv2
 
-from smb3_eh_manip.app.opencv import Opencv
+from smb3_eh_manip.app.opencv.opencv import Opencv
 from smb3_eh_manip.app.servers.fceux_lua_server import *
 from smb3_eh_manip.app.servers.livesplit_client import LivesplitClient
 from smb3_eh_manip.app.servers.livesplit_smb3manip import LivesplitSmb3Manip
@@ -110,7 +110,7 @@ class Controller:
     def tick(self, last_tick_duration):
         self.ewma_tick = self.ewma_tick * 0.95 + last_tick_duration * 0.05
         if self.enable_opencv:
-            self.opencv.tick()
+            self.opencv.tick(self.current_frame)
         _ = cv2.waitKey(1)
         if not self.playing and self.enable_opencv:
             if self.opencv.should_start_playing():

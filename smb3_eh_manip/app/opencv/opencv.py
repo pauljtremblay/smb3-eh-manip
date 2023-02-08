@@ -2,9 +2,10 @@ import logging
 import time
 
 import cv2
-import numpy as np
 from pygrabber.dshow_graph import FilterGraph, FilterType
 
+from smb3_eh_manip.app.opencv.input_latency_tester import InputLatencyTester
+from smb3_eh_manip.app.opencv.util import locate_all_opencv
 from smb3_eh_manip.ui.video_player import VideoPlayer
 from smb3_eh_manip.util import settings
 
@@ -25,6 +26,7 @@ class Opencv:
             "write_capture_video", fallback=False
         )
         self.enable_video_player = settings.get_boolean("enable_video_player")
+        self.enable_input_latency_tester = settings.get_boolean("enable_input_latency_tester")
 
         self.reset_template = cv2.imread(
             settings.get("reset_image_path", fallback="data/reset.png")
@@ -51,14 +53,18 @@ class Opencv:
                 offset_frames,
             )
         self.reset_image_region = settings.get_config_region("reset_image_region")
+        if self.enable_input_latency_tester:
+            self.input_latency_tester = InputLatencyTester()
 
-    def tick(self):
+    def tick(self, current_frame):
         start_read_frame = time.time()
         self.graph.grab_frame()
         read_frame_duration = time.time() - start_read_frame
         logging.debug(f"Took {read_frame_duration}s to read frame")
         if self.write_capture_video and self.frame is not None:
             self.output_video.write(self.frame)
+        if self.enable_input_latency_tester and self.frame is not None:
+            self.input_latency_tester.tick(self.frame, current_frame)
         if self.show_capture_video and self.frame is not None:
             cv2.imshow("capture", self.frame)
 
@@ -66,7 +72,7 @@ class Opencv:
         if self.frame is None:
             return False
         return list(
-            Opencv.locate_all_opencv(
+            locate_all_opencv(
                 self.reset_template, self.frame, region=self.reset_image_region
             )
         )
@@ -79,7 +85,7 @@ class Opencv:
         if self.frame is None:
             return False
         results = list(
-            Opencv.locate_all_opencv(
+            locate_all_opencv(
                 self.template, self.frame, region=self.start_frame_image_region
             )
         )
@@ -96,6 +102,8 @@ class Opencv:
     def start_playing(self):
         if self.enable_video_player:
             self.video_player.play()
+        if self.enable_input_latency_tester:
+            self.input_latency_tester.reset()
 
     def terminate(self):
         if self.enable_video_player:
@@ -107,49 +115,3 @@ class Opencv:
 
     def on_frame_received(self, frame):
         self.frame = frame
-
-    @classmethod
-    def locate_all_opencv(
-        cls,
-        needleImage,
-        haystackImage,
-        limit=10000,
-        region=None,  # [x, y, width, height]
-        confidence=float(settings.get("confidence", fallback=0.95)),
-    ):
-        """
-        RGBA images are treated as RBG (ignores alpha channel)
-        """
-
-        confidence = float(confidence)
-
-        needleHeight, needleWidth = needleImage.shape[:2]
-
-        if region:
-            haystackImage = haystackImage[
-                region[1] : region[1] + region[3], region[0] : region[0] + region[2]
-            ]
-        else:
-            region = (0, 0)  # full image; these values used in the yield statement
-        if (
-            haystackImage.shape[0] < needleImage.shape[0]
-            or haystackImage.shape[1] < needleImage.shape[1]
-        ):
-            # avoid semi-cryptic OpenCV error below if bad size
-            raise ValueError(
-                "needle dimension(s) exceed the haystack image or region dimensions"
-            )
-
-        # get all matches at once, credit: https://stackoverflow.com/questions/7670112/finding-a-subimage-inside-a-numpy-image/9253805#9253805
-        result = cv2.matchTemplate(haystackImage, needleImage, cv2.TM_CCOEFF_NORMED)
-        match_indices = np.arange(result.size)[(result > confidence).flatten()]
-        matches = np.unravel_index(match_indices[:limit], result.shape)
-
-        if len(matches[0]) == 0:
-            return
-
-        # use a generator for API consistency:
-        matchx = matches[1] + region[0]  # vectorized
-        matchy = matches[0] + region[1]
-        for x, y in zip(matchx, matchy):
-            yield (x, y, needleWidth, needleHeight)
