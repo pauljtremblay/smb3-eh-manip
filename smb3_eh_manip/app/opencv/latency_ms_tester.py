@@ -6,6 +6,7 @@ import cv2
 from smb3_eh_manip.app.opencv.util import locate_all_opencv
 from smb3_eh_manip.util import settings
 
+LOGGER = logging.getLogger(__name__)
 TARGET_FRAME = settings.ACTION_FRAMES[0]
 # it takes 3 frames to show the 'super' ui from start press
 START_OFFSET_FRAMES = 3
@@ -42,7 +43,7 @@ class LatencyMsTester:
                 1,
             )
             frames_away = round(current_frame - TARGET_FRAME - START_OFFSET_FRAMES, 1)
-            logging.info(
+            LOGGER.info(
                 f"frames away from {TARGET_FRAME}: {frames_away} latency: {latency_ms}"
             )
             self.start_time = None

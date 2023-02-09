@@ -13,6 +13,7 @@ from smb3_eh_manip.ui.audio_player import AudioPlayer
 from smb3_eh_manip.ui.ui_player import UiPlayer
 from smb3_eh_manip.util import events, settings
 
+LOGGER = logging.getLogger(__name__)
 LOAD_FRAMES_AUTORESET_THRESHOLD = settings.get_int(
     "load_frames_autoreset_threshold", fallback=120
 )
@@ -131,7 +132,7 @@ class Controller:
         if self.playing and self.autoreset and self.enable_opencv:
             if self.opencv.should_autoreset():
                 self.reset()
-                logging.info(f"Detected reset")
+                LOGGER.info(f"Detected reset")
         if self.enable_livesplit_smb3manip:
             self.livesplit_smb3manip.tick(self.state, round(self.current_frame))
         if self.enable_livesplit_client:
@@ -152,7 +153,7 @@ class Controller:
                 self.serial_server.tick(self.current_frame)
             detect_duration = time.time() - lag_frame_detect_start
             if self.playing and detect_duration > 0.002:
-                logging.info(f"Took {detect_duration}s detecting lag frames")
+                LOGGER.info(f"Took {detect_duration}s detecting lag frames")
 
     def update_times(self):
         self.current_time = time.time() - self.start_time

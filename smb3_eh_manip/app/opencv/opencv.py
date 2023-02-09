@@ -10,6 +10,8 @@ from smb3_eh_manip.app.opencv.util import locate_all_opencv
 from smb3_eh_manip.ui.video_player import VideoPlayer
 from smb3_eh_manip.util import settings
 
+LOGGER = logging.getLogger(__name__)
+
 
 class Opencv:
     def __init__(self, offset_frames):
@@ -66,7 +68,7 @@ class Opencv:
         start_read_frame = time.time()
         self.graph.grab_frame()
         read_frame_duration = time.time() - start_read_frame
-        logging.debug(f"Took {read_frame_duration}s to read frame")
+        LOGGER.debug(f"Took {read_frame_duration}s to read frame")
         if self.write_capture_video and self.frame is not None:
             self.output_video.write(self.frame)
         if self.enable_input_latency_tester and self.frame is not None:
@@ -103,7 +105,7 @@ class Opencv:
                 bottom_right = (x + needleWidth, y + needleHeight)
                 # cv2.rectangle(self.frame, top_left, bottom_right, (0, 0, 255), 5)
         if results:
-            logging.info(f"Detected start frame")
+            LOGGER.info(f"Detected start frame")
             return True
         return False
 

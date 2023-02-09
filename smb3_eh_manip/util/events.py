@@ -8,8 +8,9 @@ from pydispatch import dispatcher
 
 from smb3_eh_manip.util import settings
 
+LOGGER = logging.getLogger(__name__)
 LOGGING_METHOD = (
-    logging.info if settings.get_boolean("event_logging_verbose") else logging.debug
+    LOGGER.info if settings.get_boolean("event_logging_verbose") else LOGGER.debug
 )
 
 

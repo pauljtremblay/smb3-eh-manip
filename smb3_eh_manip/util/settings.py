@@ -1,10 +1,11 @@
 from configparser import ConfigParser
 import logging
 
+LOGGER = logging.getLogger(__name__)
 config = ConfigParser()
 result = config.read("config.ini")
 if not result:
-    logging.warning("Failed to read config.ini! Using sample.")
+    LOGGER.warning("Failed to read config.ini! Using sample.")
     config.read("config.ini.sample")
 
 NES_FRAMERATE = 1008307711 / 256 / 65536

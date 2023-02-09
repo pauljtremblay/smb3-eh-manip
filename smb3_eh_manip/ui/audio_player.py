@@ -7,6 +7,7 @@ from smb3_eh_manip.util.settings import ACTION_FRAMES, FREQUENCY
 
 DEFAULT_AUDIO_CUE_PATH = "data/audio_cue.wav"
 AUDIO_CUE_PATH = settings.get("audio_cue_path", fallback=DEFAULT_AUDIO_CUE_PATH)
+LOGGER = logging.getLogger(__name__)
 
 
 def play_audio_cue(play):
@@ -41,7 +42,7 @@ class AudioPlayer:
         self.trigger_frames = []
         for action_frame in ACTION_FRAMES:
             self.add_action_frame(action_frame)
-        logging.info(f"Audio trigger frames set to {self.trigger_frames}")
+        LOGGER.debug(f"Audio trigger frames set to {self.trigger_frames}")
 
     def add_action_frame(self, action_frame):
         for increment in range(4, -1, -1):

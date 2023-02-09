@@ -16,6 +16,7 @@ This module emits packets the component needs to render, like when we reset
 and when lag frames are encountered.
 """
 
+LOGGER = logging.getLogger(__name__)
 EPOCH_OFFSET = 1673989120228  # TODO i dont want to pass 8 bytes so subtracting this ehre and adding on other side
 PORT = settings.get_int("livesplit_smb3manip_port", fallback=25345)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -41,12 +42,12 @@ class LivesplitSmb3Manip:
     def reset(self):
         self.last_lag_frames = 0
         self.emit_message(PacketType.RESET, bytes(0))
-        logging.debug(f"Emitted livesplit.smb3manip RESET")
+        LOGGER.debug(f"Emitted livesplit.smb3manip RESET")
 
     def start_playing(self, offset_start_time: int):
         payload = (offset_start_time - EPOCH_OFFSET).to_bytes(4, sys.byteorder)
         self.emit_message(PacketType.START_TIME_UPDATED, payload)
-        logging.debug(
+        LOGGER.debug(
             f"Emitted livesplit.smb3manip START_TIME_UPDATED {offset_start_time}"
         )
 
@@ -56,9 +57,7 @@ class LivesplitSmb3Manip:
             self.last_lag_frames = lag_frames
             payload = lag_frames.to_bytes(2, sys.byteorder)
             self.emit_message(PacketType.LAG_FRAMES_UPDATED, payload)
-            logging.debug(
-                f"Emitted livesplit.smb3manip LAG_FRAMES_UPDATED {lag_frames}"
-            )
+            LOGGER.debug(f"Emitted livesplit.smb3manip LAG_FRAMES_UPDATED {lag_frames}")
 
     def emit_message(self, packet_type: PacketType, payload: bytes):
         thread = Thread(target=send_packet, args=(packet_type, payload))

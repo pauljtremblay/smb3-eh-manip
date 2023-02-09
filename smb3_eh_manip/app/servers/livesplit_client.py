@@ -7,6 +7,7 @@ import win32file, win32pipe
 from smb3_eh_manip.util import events, settings
 from smb3_eh_manip.util.logging import initialize_logging
 
+LOGGER = logging.getLogger(__name__)
 LIVESPLIT_REQUEST_FREQUENCY = settings.get_float(
     "livesplit_request_frequency", fallback=0.25
 )
@@ -54,7 +55,7 @@ class LivesplitClient:
     def tick(self):
         split_index = self.split_index_value.value
         if split_index != self.last_split_index:
-            logging.info(
+            LOGGER.info(
                 f"Livesplit client detected split change from {self.last_split_index} to {split_index}"
             )
             events.emit(

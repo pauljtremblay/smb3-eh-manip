@@ -8,6 +8,7 @@ from smb3_eh_manip.app.controller import Controller
 from smb3_eh_manip.util.logging import initialize_logging
 from smb3_eh_manip.util import settings
 
+LOGGER = logging.getLogger(__name__)
 VERSION = open("data/version.txt", "r").read().strip()
 
 
@@ -23,19 +24,17 @@ def print_camera_info():
     input_devices = graph.get_input_devices()
     video_capture_source = settings.get_int("video_capture_source")
     if video_capture_source == -1 or video_capture_source >= len(input_devices):
-        logging.info(
-            "No camera selected or invalid, please update to one of the below:"
-        )
-        logging.info(input_devices)
+        LOGGER.info("No camera selected or invalid, please update to one of the below:")
+        LOGGER.info(input_devices)
         exit()
-    logging.info(f"Selected video source: {input_devices[video_capture_source]}")
+    LOGGER.info(f"Selected video source: {input_devices[video_capture_source]}")
 
 
 def main():
     global controller
     signal(SIGINT, handler)
     initialize_logging()
-    logging.info(f"Starting smb3 manip tool version {VERSION}")
+    LOGGER.info(f"Starting smb3 manip tool version {VERSION}")
     print_camera_info()
     try:
         controller = Controller()
@@ -44,7 +43,7 @@ def main():
             start_time = time.time()
             controller.tick(last_tick_duration)
             last_tick_duration = time.time() - start_time
-            logging.debug(f"Took {last_tick_duration}s to tick")
+            LOGGER.debug(f"Took {last_tick_duration}s to tick")
     except Exception as e:
         logging.error(f"Received fatal error: {e}")
         raise e

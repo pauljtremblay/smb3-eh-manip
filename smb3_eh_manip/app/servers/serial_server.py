@@ -7,6 +7,7 @@ from signal import signal, SIGINT
 from smb3_eh_manip.util import events, settings
 from smb3_eh_manip.util.logging import initialize_logging
 
+LOGGER = logging.getLogger(__name__)
 LOAD_FRAME_THRESHOLD = 3  # anything higher than this number is considered a load frame instead of lag frame
 SERIAL_TIMEOUT = float(settings.get("serial_timeout", fallback="0.1"))
 SERIAL_PORT = settings.get("serial_port", fallback="COM4")
@@ -29,23 +30,23 @@ def server_process(lag_frames_observed: Value, load_frames_observed: Value):
     while True:
         data = arduino.readline().strip()
         if len(data) != SERIAL_PAYLOAD_SIZE:
-            logging.debug(f"Data frame not sized properly {len(data)}")
+            LOGGER.debug(f"Data frame not sized properly {len(data)}")
             continue
         timestamp_diff = (data[-1] << 8) + data[-2]
         packet_lag_frames = round(timestamp_diff / settings.NES_MS_PER_FRAME) - 1
         if packet_lag_frames < 0:
-            logging.debug(
+            LOGGER.debug(
                 f"We think we got {packet_lag_frames} frames, correcting to 0. timestamp_diff: {timestamp_diff}"
             )
             packet_lag_frames = 0
         if packet_lag_frames:
             if packet_lag_frames > LOAD_FRAME_THRESHOLD:
-                logging.debug(f"Observed {packet_lag_frames} load frames")
+                LOGGER.debug(f"Observed {packet_lag_frames} load frames")
                 total = load_frames_observed.value + packet_lag_frames
                 with load_frames_observed.get_lock():
                     load_frames_observed.value = total
             else:
-                logging.debug(f"Observed {packet_lag_frames} lag frames")
+                LOGGER.debug(f"Observed {packet_lag_frames} lag frames")
                 total = lag_frames_observed.value + packet_lag_frames
                 with lag_frames_observed.get_lock():
                     lag_frames_observed.value = total
@@ -111,4 +112,4 @@ if __name__ == "__main__":
         server.tick()
         detect_duration = time.time() - lag_frame_detect_start
         if detect_duration > 0.002:
-            logging.info(f"Took {detect_duration}s detecting lag frames")
+            LOGGER.info(f"Took {detect_duration}s detecting lag frames")

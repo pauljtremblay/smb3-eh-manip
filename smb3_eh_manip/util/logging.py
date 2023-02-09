@@ -19,7 +19,7 @@ def initialize_logging(
     console = logging.StreamHandler()
     console.setLevel(console_log_level)
     # set a format which is simpler for console use
-    formatter = logging.Formatter("%(name)-12s: %(levelname)-8s %(message)s")
+    formatter = logging.Formatter("%(module)-12s: %(levelname)-8s %(message)s")
     console.setFormatter(formatter)
     # add the handler to the root logger
     logging.getLogger("").addHandler(console)

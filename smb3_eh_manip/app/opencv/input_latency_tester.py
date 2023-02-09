@@ -6,6 +6,7 @@ from smb3_eh_manip.app.opencv.util import locate_all_opencv
 from smb3_eh_manip.util import events, settings
 
 ACTION_FREQUENCY = 5 * 60  # roughly 5 seconds between audio cues
+LOGGER = logging.getLogger(__name__)
 
 
 class InputLatencyTester:
@@ -42,7 +43,7 @@ class InputLatencyTester:
             self.ewma_latency_frames = (
                 self.ewma_latency_frames * 0.95 + 0.05 * frames_away_frame_closest
             )
-            logging.info(
+            LOGGER.info(
                 f"ewma_latency_frames={self.ewma_latency_frames} frames_away_frame_closest={frames_away_frame_closest}"
             )
             self.last_tick_found_jump = True

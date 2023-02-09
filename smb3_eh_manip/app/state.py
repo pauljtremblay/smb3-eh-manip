@@ -9,6 +9,8 @@ from smb3_eh_manip.app.hbs.w3_bro_down import W3BroDown
 from smb3_eh_manip.app.hbs.w4_cloud_bro_manip import W4CloudBroManip
 from smb3_eh_manip.util import events, settings, wizard_mixins
 
+LOGGER = logging.getLogger(__name__)
+
 
 @dataclass
 class Section:
@@ -133,7 +135,7 @@ class State:
             return
         action_frame = current_frame + window.action_frame
         events.emit(self, events.AddActionFrame(action_frame, window.window))
-        logging.info(f"w1broleft at frame: {action_frame} with window: {window.window}")
+        LOGGER.info(f"w1broleft at frame: {action_frame} with window: {window.window}")
 
     def check_and_update_nohands_action(self, current_frame: int, section: Section):
         if not self.enable_nohands or section.action != "nohands":
@@ -143,7 +145,7 @@ class State:
             return
         action_frame = current_frame + nohands_window.action_frame
         events.emit(self, events.AddActionFrame(action_frame, nohands_window.window))
-        logging.info(
+        LOGGER.info(
             f"NoHands at frame: {action_frame} with window: {nohands_window.window}"
         )
 
@@ -160,7 +162,7 @@ class State:
             return
         action_frame = current_frame + window.action_frame
         events.emit(self, events.AddActionFrame(action_frame, window.window))
-        logging.info(f"w3brodown at frame: {action_frame} with window: {window.window}")
+        LOGGER.info(f"w3brodown at frame: {action_frame} with window: {window.window}")
 
     def check_and_update_w4cloudbromanip_action(
         self, current_frame: int, section: Section
@@ -177,7 +179,7 @@ class State:
             return
         action_frame = current_frame + window.action_frame
         events.emit(self, events.AddActionFrame(action_frame, window.window))
-        logging.info(
+        LOGGER.info(
             f"w4cloudbromanips at frame: {action_frame} with window: {window.window}"
         )
 
@@ -187,7 +189,7 @@ class State:
         if section.action != "framerngincrement":
             return
         self.total_lag_incremented_frames += 60
-        logging.debug(f"RNG frames incremented during load, offsetting")
+        LOGGER.debug(f"RNG frames incremented during load, offsetting")
 
     def tick(self, current_frame: int):
         # we need to see how much time has gone by and increment RNG that amount
@@ -209,7 +211,7 @@ class State:
             self.completed_section(current_frame, self.category.sections.pop(0))
 
     def completed_section(self, current_frame: int, section: Section):
-        logging.debug(f"Completed {section.name}")
+        LOGGER.debug(f"Completed {section.name}")
         self.check_and_update_rng_frames_incremented_during_load_action(section)
         if current_frame is None:
             return  # sometimes we don't know specifically, let's support this and abort early

@@ -8,6 +8,7 @@ from smb3_eh_manip.app.state import State
 from smb3_eh_manip.util import events
 from smb3_eh_manip.util.settings import get_int, ACTION_FRAMES, FREQUENCY
 
+LOGGER = logging.getLogger(__name__)
 VERSION = open("data/version.txt", "r").read().strip()
 WINDOW_TITLE = f"eh manip ui {VERSION}"
 LINE_COUNT = 6
@@ -45,7 +46,7 @@ class UiPlayer:
                 and current_frame > self.auto_close_ui_frame
             ):
                 cv2.destroyWindow(WINDOW_TITLE)
-                logging.debug(f"Auto closing ui window at {current_frame}")
+                LOGGER.debug(f"Auto closing ui window at {current_frame}")
                 self.window_open = False
 
     def draw(self, current_frame, ewma_tick, state: State):
@@ -65,9 +66,7 @@ class UiPlayer:
                 ui = cv2.rectangle(ui, start, end, LINE_COLOR, THICKNESS)
             if self.trigger_frames[0] < current_frame - 2 * FREQUENCY:
                 trigger_frame = self.trigger_frames.pop(0)
-                logging.debug(
-                    f"Popped trigger frame {trigger_frame} at {current_frame}"
-                )
+                LOGGER.debug(f"Popped trigger frame {trigger_frame} at {current_frame}")
         self.show_text(ui, current_frame, ewma_tick, state)
         cv2.imshow(WINDOW_TITLE, ui)
 
