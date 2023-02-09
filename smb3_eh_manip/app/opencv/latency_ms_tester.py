@@ -34,16 +34,13 @@ class LatencyMsTester:
         if list(locate_all_opencv(self.template, frame, region=self.region)):
             now = time.time()
             latency_ms = round(
-                (
-                    round((now - self.start_time) * 1000)
-                    - TARGET_FRAME_MS
-                    - START_OFFSET_MS
-                    + OFFSET_MS
-                ),
-                1,
+                round((now - self.start_time) * 1000)
+                - TARGET_FRAME_MS
+                - START_OFFSET_MS
+                + OFFSET_MS
             )
             frames_away = round(current_frame - TARGET_FRAME - START_OFFSET_FRAMES, 1)
             LOGGER.info(
-                f"frames away from {TARGET_FRAME}: {frames_away} latency: {latency_ms}"
+                f"Frames away from {TARGET_FRAME}: {frames_away} latency: {latency_ms}ms"
             )
             self.start_time = None
