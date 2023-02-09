@@ -13,7 +13,7 @@ to disable video and enable serial.
 Arduino firmware
 ----------------
 
-1. Download+install arduino IDE here: https://www.arduino.cc/en/software
+1. Download+install arduino IDE here: [arduino.cc downloads](https://www.arduino.cc/en/software)
 2. Open `firmware.ino` in the data/arduino directory
 3. In the upper left press the "Verify" button. It should say "Done Compiling" in the green status bar.
 4. Next to verify, click the "Upload" button. This will flash the special code to your arduino.

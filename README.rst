@@ -14,14 +14,14 @@ Installation
 
 Navigate to the most recent versioned release here:
 
-https://github.com/narfman0/smb3-eh-manip/tags
+https://github.com/narfman0/smb3-eh-manip/releases
 
 Download the zip and extract to your favorite directory.
 
 Quick Start
 -----------
 
-Copy the config.ini.sample file config.ini.
+Copy or move config.ini.sample file to config.ini.
 
 There are two methods to configure the tool, using video capture
 card and/or using a retrospy/arduino.

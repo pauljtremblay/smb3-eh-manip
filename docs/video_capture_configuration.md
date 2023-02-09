@@ -53,6 +53,9 @@ with my phone, and get the frame difference. I commonly get 3-4 frames.
 Each frame is 16.64ms, and I eventually set my latency_ms at 34 (which is
 between 3 and 4 nes frames). You'll probably have to try a few iterations.
 
+See [calibration](https://github.com/narfman0/smb3-eh-manip/blob/main/docs/calibration.md)
+for other details and methods.
+
 Autoreset
 ---------
 
