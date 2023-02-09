@@ -15,12 +15,13 @@ TARGET_FRAME_MS = TARGET_FRAME * settings.NES_MS_PER_FRAME
 OFFSET_MS = settings.get_int("offset_frames", fallback=106) * settings.NES_MS_PER_FRAME
 
 
-class LatencyMsTester:
+class VideoLatencyTester:
     def __init__(self):
-        self.region = settings.get_config_region("latency_ms_tester_region")
+        self.region = settings.get_config_region("video_latency_tester_region")
         self.template = cv2.imread(
             settings.get(
-                "latency_ms_tester_path", fallback="data/latency_ms_tester/trigger.png"
+                "video_latency_tester_path",
+                fallback="data/video_latency_tester/trigger.png",
             )
         )
         self.start_time = None

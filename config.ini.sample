@@ -64,8 +64,8 @@ autoreset = false
 ; enables a component that allows the runner to test their latency_ms. Judges how far from
 ; frame 270 the tool thinks the user presse the 'start' button. This does account for
 ; the 3 frame difference between pressing start and seeing the title screen.
-;enable_latency_ms_tester = false
-;latency_ms_tester_region = 749,133,91,121
+;enable_video_latency_tester = false
+;video_latency_tester_region = 749,133,91,121
 
 ; Should event logging be info or debug verbosity.
 ; True means info, False means debug.

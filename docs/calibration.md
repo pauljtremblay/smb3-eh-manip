@@ -56,9 +56,9 @@ you can get this to 0, but practically mine is around 1.5 or so, meaning,
 Second is the video latency tester. This identifies the lag between when the
 user perception of the video and the tools perception of the video.
 
-To enable the tester, in config.ini set `enable_latency_ms_tester = true`. You
+To enable the tester, in config.ini set `enable_video_latency_tester = true`. You
 will also need to update the trigger frame the tool uses to identify if mario
-is jumping: data/latency_ms_tester/trigger.png. There is a region to
+is jumping: data/video_latency_tester/trigger.png. There is a region to
 configure as well.
 
 After configuration, when running, the first action frame in your settings
@@ -70,10 +70,10 @@ it gives the user a latency. Do this several times to get an average/median.
 ### Final latency_ms
 
 Since that does not account for the user's input latency, subtract as such:
-`latency_ms = latency_ms_tester_value - input_latency_tester_value`
+`latency_ms = video_latency_tester_value - input_latency_tester_value`
 
 Example:
-Given: My latency_ms_tester_value is 27, meaning I very reliably press
+Given: My video_latency_tester_value is 27, meaning I very reliably press
 a 1.6 frames (27ms) after the audio cue. (Anywhere 0-16 is frame perfect).
 My `input_latency_tester_value` is similar at 1.8 frames ~30ms. 
 Then: my latency_ms should be at least initially set to 30ms-27ms=3ms.
