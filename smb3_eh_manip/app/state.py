@@ -189,6 +189,8 @@ class State:
         if section.action != "framerngincrement":
             return
         self.total_lag_incremented_frames += 60
+        # see disassembly LoadLevel_RandomPUpClouds:LDA #59 calls Randomize 60 times
+        # during level load
         LOGGER.debug(f"RNG frames incremented during load, offsetting")
 
     def tick(self, current_frame: int):
