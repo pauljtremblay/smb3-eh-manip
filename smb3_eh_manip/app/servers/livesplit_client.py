@@ -13,7 +13,7 @@ LIVESPLIT_REQUEST_FREQUENCY = settings.get_float(
 )
 
 
-def client_process(split_index_value: Value):
+def client_process(split_index_value: Value, do_split_value: Value):
     initialize_logging(
         console_log_level="DEBUG",
         file_log_level="DEBUG",
@@ -38,6 +38,11 @@ def client_process(split_index_value: Value):
         result, data = win32file.ReadFile(handle, 65536)
         if result == 0:
             split_index_value.value = int(data.decode("utf-8").strip())
+        if do_split_value.value:
+            do_split_value.value = 0
+            win32file.WriteFile(handle, b"split\r\n")
+            result, data = win32file.ReadFile(handle, 65536)
+            LOGGER.info(f"Livesplit client split result: {result}, data: {data}")
         time.sleep(LIVESPLIT_REQUEST_FREQUENCY)
 
 
@@ -45,9 +50,10 @@ class LivesplitClient:
     def __init__(self):
         self.last_split_index = -1
         self.split_index_value = Value("i", self.last_split_index)
+        self.do_split_value = Value("i", 0)
         self.process = Process(
             target=client_process,
-            args=(self.split_index_value,),
+            args=(self.split_index_value, self.do_split_value),
         )
         self.process.daemon = True
         self.process.start()
@@ -66,6 +72,9 @@ class LivesplitClient:
                 ),
             )
             self.last_split_index = split_index
+
+    def split(self):
+        self.do_split_value.value = 1
 
 
 if __name__ == "__main__":
