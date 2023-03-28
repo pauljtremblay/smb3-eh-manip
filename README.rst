@@ -45,7 +45,6 @@ and when the tool thinks the game started, so we need to account for that.
 TODO
 ----
 
-* Autosplitter with split delay
 * Verify w3 bro manips
 * Configuration utility
 * New UI (kivy? not opencv)

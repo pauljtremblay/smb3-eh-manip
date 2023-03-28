@@ -3,7 +3,6 @@ import time
 
 import cv2
 
-from smb3_eh_manip.app.opencv.autosplitter import Autosplitter
 from smb3_eh_manip.app.opencv.opencv import Opencv
 from smb3_eh_manip.app.servers.fceux_lua_server import *
 from smb3_eh_manip.app.servers.livesplit_client import LivesplitClient
@@ -40,9 +39,6 @@ class Controller:
         self.enable_livesplit_client = settings.get_boolean(
             "enable_livesplit_client", fallback=False
         )
-        self.enable_autosplitter = settings.get_boolean(
-            "enable_autosplitter", fallback=False
-        )
         self.offset_frames = settings.get_int("offset_frames", fallback=106)
         self.playing = False
         self.current_time = -1
@@ -64,12 +60,6 @@ class Controller:
             self.livesplit_smb3manip = LivesplitSmb3Manip()
         if self.enable_livesplit_client:
             self.livesplit_client = LivesplitClient()
-        if self.enable_autosplitter:
-            if not self.enable_livesplit_client:
-                raise "Autosplitter enabled, but enable_livesplit_client not set!"
-            if not self.enable_opencv:
-                raise "Autosplitter enabled, but enable_opencv not set!"
-            self.autosplitter = Autosplitter(self.livesplit_client)
         events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
 
     def reset(self):
@@ -86,8 +76,6 @@ class Controller:
             self.serial_server.reset()
         if self.enable_livesplit_smb3manip:
             self.livesplit_smb3manip.reset()
-        if self.enable_autosplitter:
-            self.autosplitter.reset()
 
     def start_playing(self):
         self.playing = True
@@ -149,8 +137,6 @@ class Controller:
             self.livesplit_smb3manip.tick(self.state, round(self.current_frame))
         if self.enable_livesplit_client:
             self.livesplit_client.tick()
-        if self.enable_autosplitter:
-            self.autosplitter.tick(self.opencv.frame, self.current_frame)
 
     def handle_lag_frames_observed(self, event: events.LagFramesObserved):
         if (

@@ -1,6 +1,5 @@
 import logging
 from multiprocessing import Process, Value
-import socket
 import time
 import win32file, win32pipe
 
