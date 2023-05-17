@@ -37,9 +37,6 @@ pyinstaller: clean
 	7z a smb3_eh_manip.zip dist/*
 	7z rn smb3_eh_manip.zip dist smb3_eh_manip
 
-run-autosplitter:
-	python -m smb3_eh_manip.autosplitter
-
 run-livesplit-client:
 	python -m smb3_eh_manip.app.servers.livesplit_client
 
