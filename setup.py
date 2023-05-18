@@ -28,6 +28,7 @@ setup(
         "python-vlc",
         "pyyaml",
         "pywin32",
+        "smb3-video-autosplitter",
     ],
     test_suite="tests",
 )

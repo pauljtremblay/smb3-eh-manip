@@ -2,6 +2,8 @@ import logging
 import time
 
 import cv2
+from smb3_video_autosplitter.autosplitter import Autosplitter
+from smb3_video_autosplitter.settings import Settings
 
 from smb3_eh_manip.app.opencv.opencv import Opencv
 from smb3_eh_manip.app.servers.fceux_lua_server import *
@@ -29,6 +31,7 @@ class Controller:
         self.enable_fceux_tas_start = settings.get_boolean("enable_fceux_tas_start")
         self.enable_audio_player = settings.get_boolean("enable_audio_player")
         self.enable_ui_player = settings.get_boolean("enable_ui_player")
+        self.enable_autosplitter = settings.get_boolean("enable_autosplitter")
         self.enable_opencv = settings.get_boolean("enable_opencv", fallback=True)
         self.enable_serial_autoreset = settings.get_boolean(
             "enable_serial_autoreset", fallback=False
@@ -60,6 +63,9 @@ class Controller:
             self.livesplit_smb3manip = LivesplitSmb3Manip()
         if self.enable_livesplit_client:
             self.livesplit_client = LivesplitClient()
+        if self.enable_autosplitter:
+            autosplitter_config = Settings.load("autosplitter_config.yml")
+            self.autosplitter = Autosplitter(autosplitter_config)
         events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
 
     def reset(self):
@@ -76,6 +82,8 @@ class Controller:
             self.serial_server.reset()
         if self.enable_livesplit_smb3manip:
             self.livesplit_smb3manip.reset()
+        if self.enable_autosplitter:
+            self.autosplitter.livesplit.send("reset")
 
     def start_playing(self):
         self.playing = True
@@ -137,6 +145,8 @@ class Controller:
             self.livesplit_smb3manip.tick(self.state, round(self.current_frame))
         if self.enable_livesplit_client:
             self.livesplit_client.tick()
+        if self.enable_autosplitter:
+            self.autosplitter.tick(self.opencv.frame)
 
     def handle_lag_frames_observed(self, event: events.LagFramesObserved):
         if (

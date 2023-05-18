@@ -97,3 +97,5 @@ output/
 smb3_eh_manip.zip
 taspart.fm2
 bin/
+*_config.*
+data/autosplitter/*.png
