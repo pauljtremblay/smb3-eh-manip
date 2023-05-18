@@ -2,9 +2,8 @@ import logging
 import time
 
 import cv2
-from smb3_video_autosplitter.autosplitter import Autosplitter
-from smb3_video_autosplitter.settings import Settings
 
+from smb3_eh_manip.app.autosplitter import Autosplitter
 from smb3_eh_manip.app.opencv.opencv import Opencv
 from smb3_eh_manip.app.servers.fceux_lua_server import *
 from smb3_eh_manip.app.servers.livesplit_client import LivesplitClient
@@ -64,8 +63,7 @@ class Controller:
         if self.enable_livesplit_client:
             self.livesplit_client = LivesplitClient()
         if self.enable_autosplitter:
-            autosplitter_config = Settings.load("autosplitter_config.yml")
-            self.autosplitter = Autosplitter(autosplitter_config)
+            self.autosplitter = Autosplitter()
         events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
 
     def reset(self):
@@ -83,7 +81,7 @@ class Controller:
         if self.enable_livesplit_smb3manip:
             self.livesplit_smb3manip.reset()
         if self.enable_autosplitter:
-            self.autosplitter.livesplit.send("reset")
+            self.autosplitter.reset()
 
     def start_playing(self):
         self.playing = True
@@ -115,6 +113,8 @@ class Controller:
     def terminate(self):
         if self.enable_opencv:
             self.opencv.terminate()
+        if self.enable_autosplitter:
+            self.autosplitter.terminate()
 
     def tick(self, last_tick_duration):
         self.ewma_tick = self.ewma_tick * 0.95 + last_tick_duration * 0.05
@@ -146,7 +146,7 @@ class Controller:
         if self.enable_livesplit_client:
             self.livesplit_client.tick()
         if self.enable_autosplitter:
-            self.autosplitter.tick(self.opencv.frame)
+            self.autosplitter.tick(self.current_frame, self.opencv.frame)
 
     def handle_lag_frames_observed(self, event: events.LagFramesObserved):
         if (
