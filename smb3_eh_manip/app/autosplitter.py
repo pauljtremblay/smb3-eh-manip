@@ -16,6 +16,7 @@ class Autosplitter:
     def reset(self):
         self.start_or_split_frames = list(self.default_start_or_split_frames)
         self.autosplitter.livesplit.send("reset")
+        self.autosplitter.reset()
 
     def tick(self, current_frame: int, frame):
         self.autosplitter.tick(frame)
