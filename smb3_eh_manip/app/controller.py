@@ -145,7 +145,7 @@ class Controller:
             self.livesplit_smb3manip.tick(self.state, round(self.current_frame))
         if self.enable_livesplit_client:
             self.livesplit_client.tick()
-        if self.enable_autosplitter:
+        if self.enable_autosplitter and self.playing:
             self.autosplitter.tick(self.current_frame, self.opencv.frame)
 
     def handle_lag_frames_observed(self, event: events.LagFramesObserved):
