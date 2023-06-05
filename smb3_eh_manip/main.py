@@ -44,9 +44,9 @@ def main():
             controller.tick(last_tick_duration)
             last_tick_duration = time.time() - start_time
             LOGGER.debug(f"Took {last_tick_duration}s to tick")
-    except Exception as e:
-        logging.error(f"Received fatal error: {e}")
-        raise e
+    except:
+        logging.exception("main handler exception")
+        raise
 
 
 if __name__ == "__main__":
