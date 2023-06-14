@@ -6,7 +6,7 @@ import numpy as np
 
 from smb3_eh_manip.app.state import State
 from smb3_eh_manip.util import events
-from smb3_eh_manip.util.settings import get_int, ACTION_FRAMES, FREQUENCY
+from smb3_eh_manip.util.settings import get_int, get_boolean, ACTION_FRAMES, FREQUENCY
 
 LOGGER = logging.getLogger(__name__)
 VERSION = open("data/version.txt", "r").read().strip()
@@ -29,6 +29,13 @@ class UiPlayer:
         self.trigger_frames = list(ACTION_FRAMES)
         self.window_open = True
         self.auto_close_ui_frame = get_int("auto_close_ui_frame", fallback=0)
+        lag_tracking_active = get_boolean("auto_detect_lag_frames_serial")
+        self.show_lag = get_boolean("ui_show_lag_frames", fallback=lag_tracking_active)
+        self.show_load = get_boolean("ui_show_load_frames", fallback=True)
+        self.show_inc = get_boolean("ui_show_increment_frames", fallback=True)
+        self.show_rng = get_boolean("ui_show_rng", fallback=True)
+        self.show_tick = get_boolean("ui_show_tick", fallback=True)
+        self.show_segment = get_boolean("ui_show_segment", fallback=True)
         cv2.imshow(WINDOW_TITLE, UiPlayer.get_base_frame())
         events.listen(events.AddActionFrame, self.handle_add_action_frame)
         events.listen(events.LagFramesObserved, self.handle_lag_frames_observed)
@@ -76,23 +83,29 @@ class UiPlayer:
         y = VISUAL_CUE_HEIGHT + 24
         cv2.putText(ui, str(current_frame), (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
         y += 20
-        lag_frames_str = f"Lag frames: {state.total_observed_lag_frames}"
-        cv2.putText(ui, lag_frames_str, (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
-        tick_str = f"Tick: {round(ewma_tick*1000)}ms"
-        cv2.putText(ui, tick_str, (x1, y), TYPEFACE, 1, FONT_COLOR, 2)
+        if self.show_lag:
+            lag_frames_str = f"Lag frames: {state.total_observed_lag_frames}"
+            cv2.putText(ui, lag_frames_str, (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
+        if self.show_tick:
+            tick_str = f"Tick: {round(ewma_tick*1000)}ms"
+            cv2.putText(ui, tick_str, (x1, y), TYPEFACE, 1, FONT_COLOR, 2)
         y += 20
-        load_frames_str = f"Load frames: {state.total_observed_load_frames}"
-        cv2.putText(ui, load_frames_str, (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
-        rng_str = f"RNG: {state.lsfr.data}"
-        cv2.putText(ui, rng_str, (x1, y), TYPEFACE, 1, FONT_COLOR, 2)
+        if self.show_load:
+            load_frames_str = f"Load frames: {state.total_observed_load_frames}"
+            cv2.putText(ui, load_frames_str, (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
+        if self.show_rng:
+            rng_str = f"RNG: {state.lsfr.data}"
+            cv2.putText(ui, rng_str, (x1, y), TYPEFACE, 1, FONT_COLOR, 2)
         y += 20
-        lag_inc_str = f"Lag RNG Inc: {state.total_lag_incremented_frames}"
-        cv2.putText(ui, lag_inc_str, (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
-        active_segment_name = (
-            state.active_section().name if state.category.sections else "N/A"
-        )
-        segment_str = f"Segment: {active_segment_name}"
-        cv2.putText(ui, segment_str, (x1, y), TYPEFACE, 1, FONT_COLOR, 2)
+        if self.show_inc:
+            lag_inc_str = f"Lag RNG Inc: {state.total_lag_incremented_frames}"
+            cv2.putText(ui, lag_inc_str, (x0, y), TYPEFACE, 1, FONT_COLOR, 2)
+        if self.show_segment:
+            active_segment_name = (
+                state.active_section().name if state.category.sections else "N/A"
+            )
+            segment_str = f"Segment: {active_segment_name}"
+            cv2.putText(ui, segment_str, (x1, y), TYPEFACE, 1, FONT_COLOR, 2)
 
     def handle_add_action_frame(self, event: events.AddActionFrame):
         self.trigger_frames.append(event.action_frame)
