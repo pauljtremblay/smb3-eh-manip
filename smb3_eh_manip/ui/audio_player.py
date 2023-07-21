@@ -17,10 +17,11 @@ def play_audio_cue(play):
     mixer.music.load(AUDIO_CUE_PATH)
     while True:
         play_sound = False
-        with play.get_lock():
-            if play.value == 1:
-                play.value = 0
-                play_sound = True
+        if play.value == 1:
+            with play.get_lock():
+                if play.value == 1:
+                    play.value = 0
+                    play_sound = True
         if play_sound:
             mixer.music.play()
         else:
@@ -51,8 +52,9 @@ class AudioPlayer:
     def tick(self, current_frame):
         if self.trigger_frames and self.trigger_frames[0] <= current_frame:
             self.trigger_frames.pop(0)
-            with self.play.get_lock():
-                self.play.value = 1
+            if self.play.value == 0:
+                with self.play.get_lock():
+                    self.play.value = 1
 
     def handle_add_action_frame(self, event: events.AddActionFrame):
         self.add_action_frame(event.action_frame)
