@@ -15,7 +15,7 @@ We want to write a video of what the tool sees, then copy the trigger
 frame(s). First, we need the tool to know which video 
 capture source to use, and set video_capture_source in config.ini.
 
-Double click run.bat to run the tool. The terminal window that pops up should
+Run the tool. The terminal window that pops up should
 say "Selected video source: <your capture card>". Another video window pops
 up by default, rendering the same video source. If it doesn't, press ctrl-c
 on the terminal window to close it, go to config.ini, and change the
