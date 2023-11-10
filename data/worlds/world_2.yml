@@ -21,6 +21,12 @@ positions:
   y: 4
 - x: 6
   y: 3
+- x: 6
+  y: 4
+  level:
+    name: mushroom house
+- x: 7
+  y: 2
 - level:
     name: 2-quicksand
   x: 7
@@ -37,3 +43,7 @@ positions:
   y: 3
 - x: 9
   y: 2
+- level:
+    name: 2-pyramid
+  x: 9
+  y: 1
