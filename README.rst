@@ -38,6 +38,8 @@ and when the tool thinks the game started, so we need to account for that.
 
 `Calibration <https://github.com/narfman0/smb3-eh-manip/blob/main/docs/calibration.md>`_
 
+`Movements <https://github.com/narfman0/smb3-eh-manip/blob/main/docs/movements.md>`_
+
 `Notes <https://github.com/narfman0/smb3-eh-manip/blob/main/docs/notes.md>`_
 
 `Development <https://github.com/narfman0/smb3-eh-manip/blob/main/docs/development.md>`_

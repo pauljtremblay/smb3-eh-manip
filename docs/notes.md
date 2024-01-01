@@ -6,11 +6,16 @@ IS past the threshold in 2-2.
 
 1-Airship is all about setting yourself up for
 success at the end of 2-1. So get any of the following:
+
 65660 before 243 firekill, bonk strats for EZ 243
+
 65610 before 244 firekill
+
 65560 before 245 firekill, fast strat
+
 2-1: Skip the final goomba in 2-1 if you are ahead, or kill the extra pirahnas if
 you are behind for the hundredths place.
+
 2-2: A little hop before the hill helps control the speed variance. Get 2, 3,
 or 4 coins for 50 modifications.
 
