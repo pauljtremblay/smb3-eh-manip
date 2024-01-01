@@ -4,6 +4,8 @@ Some outcomes of movements from mitch
 
 ## Post 2-1
 
+| Frame | Description |
+|-------|-------------|
 | 18034 | Left and up |
 | 18035 | Left and down |
 | 18036 | face right go right |
@@ -29,6 +31,8 @@ Some outcomes of movements from mitch
 
 ## Post 2-2
 
+| Frame | Description |
+|-------|-------------|
 | 19936 | Over mushroom house and back  |
 | 19937 | Over mushroom house and back |
 | 19938 | Over mushroom house and back |
@@ -55,6 +59,8 @@ Some outcomes of movements from mitch
 
 ## Post 2F
 
+| Frame | Description |
+|-------|-------------|
 | 22676 | above sun and behind 4 |
 | 22675 | Below sun and 2 above pyramid |
 | 22674 | Both behind level 4 |
