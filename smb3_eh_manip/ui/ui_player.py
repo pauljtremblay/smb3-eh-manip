@@ -9,8 +9,7 @@ from smb3_eh_manip.util import events
 from smb3_eh_manip.util.settings import get_int, get_boolean, ACTION_FRAMES, FREQUENCY
 
 LOGGER = logging.getLogger(__name__)
-VERSION = open("data/version.txt", "r").read().strip()
-WINDOW_TITLE = f"eh manip ui {VERSION}"
+WINDOW_TITLE = f"eh manip ui"
 LINE_COUNT = 6
 WINDOW_SCALAR = 3
 WINDOW_HEIGHT = int(FREQUENCY * WINDOW_SCALAR * 2.5)
