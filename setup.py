@@ -19,7 +19,7 @@ setup(
     include_package_data=True,
     zip_safe=True,
     install_requires=[
-        "dataclass_wizard",
+        "dataclass_wizard==0.32.0", # newer versions break wizard_mixins
         "opencv-python",
         "pydispatcher",
         "pygame",
