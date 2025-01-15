@@ -8,9 +8,9 @@ if not result:
     LOGGER.warning("Failed to read config.ini! Using sample.")
     config.read("config.ini.sample")
 
-NES_FRAMERATE = 1008307711 / 256 / 65536
-NES_MS_PER_FRAME = 1000.0 / NES_FRAMERATE
 DEFAULT_DOMAIN = "app"
+NES_FRAMERATE = config.getfloat(DEFAULT_DOMAIN, "nes_framerate", fallback=60.0988139)
+NES_MS_PER_FRAME = 1000.0 / NES_FRAMERATE
 FREQUENCY = 24
 
 
