@@ -99,3 +99,6 @@ taspart.fm2
 bin/
 *_config.*
 data/autosplitter/*.png
+
+# to keep IntelliJ project metadata out of source control
+.idea
