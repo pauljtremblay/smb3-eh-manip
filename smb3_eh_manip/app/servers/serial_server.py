@@ -30,14 +30,13 @@ def server_process(lag_frames_observed: Value, load_frames_observed: Value):
     while True:
         data = arduino.readline().strip()
         if len(data) != SERIAL_PAYLOAD_SIZE:
-            LOGGER.debug(f"Data frame not sized properly {len(data)}")
+            LOGGER.debug("Data frame not sized properly %d", len(data))
             continue
         timestamp_diff = (data[-1] << 8) + data[-2]
         packet_lag_frames = round(timestamp_diff / settings.NES_MS_PER_FRAME) - 1
         if packet_lag_frames < 0:
-            LOGGER.debug(
-                f"We think we got {packet_lag_frames} frames, correcting to 0. timestamp_diff: {timestamp_diff}"
-            )
+            LOGGER.debug("We think we got %d frames, correcting to 0. timestamp_diff: %d",
+                         packet_lag_frames, timestamp_diff)
             packet_lag_frames = 0
         if packet_lag_frames:
             if packet_lag_frames > LOAD_FRAME_THRESHOLD:
@@ -112,4 +111,4 @@ if __name__ == "__main__":
         server.tick()
         detect_duration = time.time() - lag_frame_detect_start
         if detect_duration > 0.002:
-            LOGGER.info(f"Took {detect_duration}s detecting lag frames")
+            LOGGER.info("Took %d s detecting lag frames", detect_duration)

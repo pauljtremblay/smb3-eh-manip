@@ -41,7 +41,7 @@ def client_process(split_index_value: Value, do_split_value: Value):
             do_split_value.value = 0
             win32file.WriteFile(handle, b"split\r\n")
             result, data = win32file.ReadFile(handle, 65536)
-            LOGGER.info(f"Livesplit client split result: {result}, data: {data}")
+            LOGGER.info("Livesplit client split result: %d, data: %s", result, data)
         time.sleep(LIVESPLIT_REQUEST_FREQUENCY)
 
 
@@ -60,9 +60,8 @@ class LivesplitClient:
     def tick(self):
         split_index = self.split_index_value.value
         if split_index != self.last_split_index:
-            LOGGER.info(
-                f"Livesplit client detected split change from {self.last_split_index} to {split_index}"
-            )
+            LOGGER.info("Livesplit client detected split change from %d to %d",
+                        self.last_split_index, split_index)
             events.emit(
                 self,
                 events.LivesplitCurrentSplitIndexChanged(

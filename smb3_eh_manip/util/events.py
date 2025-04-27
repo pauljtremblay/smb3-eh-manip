@@ -9,9 +9,7 @@ from pydispatch import dispatcher
 from smb3_eh_manip.util import settings
 
 LOGGER = logging.getLogger(__name__)
-LOGGING_METHOD = (
-    LOGGER.info if settings.get_boolean("event_logging_verbose") else LOGGER.debug
-)
+log_at_level: int = logging.INFO if settings.get_boolean("event_logging_verbose") else logging.DEBUG
 
 
 @dataclass
@@ -40,5 +38,5 @@ def listen(event_type, callback, **kwargs):
 
 def emit(sender, event, **kwargs):
     # Emit an event with the given event_type
-    LOGGING_METHOD(f"Emitting {type(event).__name__} event: {asdict(event)}")
+    LOGGER.log(log_at_level, "Emitting %s event: %s", type(event).__name__, asdict(event))
     dispatcher.send(type(event), sender, event=event, **kwargs)

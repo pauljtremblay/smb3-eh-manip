@@ -163,7 +163,7 @@ class Controller:
                 self.serial_server.tick(self.current_frame)
             detect_duration = time.time() - lag_frame_detect_start
             if self.playing and detect_duration > 0.002:
-                LOGGER.info(f"Took {detect_duration}s detecting lag frames")
+                LOGGER.info(f"Took %d s detecting lag frames", detect_duration)
 
     def update_times(self):
         self.current_time = time.time() - self.start_time
