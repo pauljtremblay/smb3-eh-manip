@@ -1,7 +1,7 @@
 import math
 import statistics
 from dataclasses import dataclass
-from typing import Dict, Optional, List
+from typing import Dict, Optional, List, Tuple
 
 from smb3_video_autosplitter.settings import NES_FRAMERATE
 
@@ -100,10 +100,15 @@ class NoHandsScanner:
                                            hand_1_to_2_iterations: int = TO_HAND2_CHECK_FRAME_DURATION,
                                            hand_2_to_3_iterations: int = TO_HAND3_CHECK_FRAME_DURATION,
                                            min_score_mean: float = 6.0,
-                                           max_score_std_dev: float = 5.0) -> List[GoodHandSequence]:
+                                           max_score_std_dev: float = 5.0,
+                                           only_streaks: bool = False,
+                                           iter_range: Optional[Tuple[int, int]] = None) -> List[GoodHandSequence]:
         print("\nGood all no-hands sequences")
+        (min_iter, max_iter) = iter_range if iter_range is not None else (0, self.max_iteration)
         good_sequences: List[GoodHandSequence] = []
         for h1_iter in range(self.max_iteration - hand_1_to_2_iterations - hand_2_to_3_iterations):
+            if not min_iter <= h1_iter <= max_iter:
+                continue
             h2_iter = h1_iter + TO_HAND2_CHECK_FRAME_DURATION
             h3_iter = h2_iter + TO_HAND3_CHECK_FRAME_DURATION
             # only proceed if all 3 spaced iterations are not hand traps
@@ -116,6 +121,8 @@ class NoHandsScanner:
                             for iteration in [h1_iter, h2_iter, h3_iter]
                             if (good_window := self.get_good_hand_window(iteration))
                             if good_window is not None]
+            if only_streaks and len(good_windows) < 3:
+                continue
             mean = statistics.mean([h1_score, h2_score, h3_score])
             std_dev = statistics.stdev([h1_score, h2_score, h3_score])
             if mean >= min_score_mean and std_dev < max_score_std_dev:

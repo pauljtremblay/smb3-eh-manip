@@ -10,7 +10,7 @@ class TestFFNoHandsScanner(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.scanner = NoHandsScanner(minutes_to_scan=60,
-                                     score_cap=12)
+                                     score_cap=14)
 
     def test_show_good_hand_sequences(self):
         TestFFNoHandsScanner.scanner.show_good_hand_sequences()
@@ -19,8 +19,10 @@ class TestFFNoHandsScanner(unittest.TestCase):
         # fiddle with statistics:
         # min score mean (avg):  ignores all no-hands sequences below this average set score
         # max score std dev:     ignores all no-hands sequences above the given variance (diff between weighted scores)
-        ideal_matches = TestFFNoHandsScanner.scanner.scan_for_ideal_good_hand_sequences(min_score_mean = 6.3,
-                                                                                        max_score_std_dev = 4.5)
+        ideal_matches = TestFFNoHandsScanner.scanner.scan_for_ideal_good_hand_sequences(min_score_mean = 8.0,
+                                                                                        max_score_std_dev = 8.0,
+                                                                                        only_streaks=True,
+                                                                                        iter_range=(150000, 165000))
         for match in ideal_matches:
             print(match)
 
