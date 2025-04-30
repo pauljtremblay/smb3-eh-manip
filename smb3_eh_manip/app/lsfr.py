@@ -76,7 +76,7 @@ class LSFR:
     def lsfr_from_cache(cls, iteration: int) -> 'LSFR':
         if len(cls.iter_to_lsfr) == 0:
             cls.initialize_lsfr_state_cache()
-        return cls.iter_to_lsfr[cls.get_effective_iteration(iteration)]
+        return cls.iter_to_lsfr[cls.get_effective_iteration(iteration)].clone()
 
     @classmethod
     def iter_from_cache(cls, lsrf_state: str | List[int]) -> Optional[int]:
